@@ -1,0 +1,385 @@
+// RepairHub — Phase 1 data model
+// SQLite connector does not support native `enum`, so role/status fields are
+// declared as String here. Allowed values are documented above each field as
+// a comment; validate them with the TS unions in src/lib/constants.ts.
+// When migrating to Postgres, these String fields can be converted to
+// Prisma `enum` types with the same value sets.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// role: USER | PARTNER | ADMIN | SUPER_ADMIN
+// status: ACTIVE | SUSPENDED | DELETED
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  phone     String?
+  role      String   @default("USER")
+  status    String   @default("ACTIVE")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Set when role == PARTNER: the company this user manages.
+  companyId String?
+  company   Company? @relation("CompanyOwner", fields: [companyId], references: [id])
+
+  reservations      Reservation[]
+  estimates         Estimate[]
+  reviews           Review[]
+  favorites         Favorite[]
+  recentViews       RecentView[]
+  inquiries         Inquiry[]
+  reportsFiled      Report[]           @relation("ReportReporter")
+  adminActivityLogs AdminActivityLog[]
+  aiUsageLogs       AiUsageLog[]
+  payments          Payment[]
+
+  @@index([role])
+}
+
+// status: PENDING | APPROVED | SUSPENDED | UNVERIFIED
+model Company {
+  id            String   @id @default(cuid())
+  name          String
+  ownerName     String? // 대표자
+  bizRegNo      String? // 사업자번호
+  address       String?
+  region        String? // AI 지역 페이지 생성용 (시/도, 시/군/구)
+  phone         String?
+  homepage      String?
+  sns           String? // JSON: { instagram, youtube, facebook, ... }
+  introduction  String?
+  seoDescription String? // AI SEO 생성용 메타 설명
+  logoUrl       String?
+  photos        String? // JSON array of photo URLs
+  businessHours String? // JSON: { mon: "10:00-19:00", ... }
+  closedDays    String? // JSON array e.g. ["SUN"]
+  status        String   @default("UNVERIFIED")
+  isPremium     Boolean  @default(false)
+  isFeatured    Boolean  @default(false)
+  onSiteVisit   Boolean  @default(false) // 출장 가능
+  courierDrop   Boolean  @default(false) // 택배 가능
+  viewCount     Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  owners        User[]         @relation("CompanyOwner")
+  services      Service[]
+  brands        Brand[]
+  priceItems    PriceItem[]
+  reservations  Reservation[]
+  estimates     Estimate[]
+  reviews       Review[]
+  favorites     Favorite[]
+  recentViews   RecentView[]
+  inquiries     Inquiry[]
+  ads           Ad[]
+  subscriptions Subscription[]
+  workCases     WorkCase[]
+
+  @@index([status])
+  @@index([region])
+}
+
+model Service {
+  id        String   @id @default(cuid())
+  companyId String
+  company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  name      String
+  createdAt DateTime @default(now())
+
+  @@index([companyId])
+}
+
+model Brand {
+  id        String   @id @default(cuid())
+  companyId String
+  company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  name      String
+  createdAt DateTime @default(now())
+
+  @@index([companyId])
+}
+
+model PriceItem {
+  id        String   @id @default(cuid())
+  companyId String
+  company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  label     String
+  price     Int
+  createdAt DateTime @default(now())
+
+  @@index([companyId])
+}
+
+// status: REQUESTED | APPROVED | CHANGED | CANCELED | COMPLETED | NO_SHOW
+model Reservation {
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id])
+  companyId   String
+  company     Company   @relation(fields: [companyId], references: [id])
+  status      String    @default("REQUESTED")
+  scheduledAt DateTime?
+  memo        String? // 파트너 예약 메모
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([userId])
+  @@index([companyId])
+  @@index([status])
+}
+
+// status: REQUESTED | ANSWERED | CLOSED
+model Estimate {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  companyId String
+  company   Company  @relation(fields: [companyId], references: [id])
+  request   String
+  answer    String?
+  status    String   @default("REQUESTED")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([companyId])
+}
+
+// status: VISIBLE | HIDDEN | REPORTED | DELETED
+model Review {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id])
+  companyId    String
+  company      Company  @relation(fields: [companyId], references: [id])
+  rating       Int
+  content      String
+  photos       String? // JSON array of photo URLs
+  partnerReply String?
+  status       String   @default("VISIBLE")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  reports Report[]
+
+  @@index([companyId])
+  @@index([status])
+}
+
+// targetType: USER | COMPANY | REVIEW | PHOTO
+// status: PENDING | RESOLVED | DISMISSED
+model Report {
+  id         String   @id @default(cuid())
+  targetType String
+  targetId   String
+  reason     String
+  status     String   @default("PENDING")
+  reporterId String
+  reporter   User     @relation("ReportReporter", fields: [reporterId], references: [id])
+  reviewId   String?
+  review     Review?  @relation(fields: [reviewId], references: [id])
+  createdAt  DateTime @default(now())
+
+  @@index([targetType, targetId])
+  @@index([status])
+}
+
+model Favorite {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  companyId String
+  company   Company  @relation(fields: [companyId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@unique([userId, companyId])
+}
+
+model RecentView {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  companyId String
+  company   Company  @relation(fields: [companyId], references: [id])
+  viewedAt  DateTime @default(now())
+
+  @@index([userId])
+}
+
+// status: OPEN | ANSWERED | CLOSED
+model Inquiry {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  companyId String
+  company   Company  @relation(fields: [companyId], references: [id])
+  message   String
+  answer    String?
+  status    String   @default("OPEN")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([companyId])
+}
+
+model WorkCase {
+  id        String   @id @default(cuid())
+  companyId String
+  company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  title     String
+  content   String
+  photos    String? // JSON array of photo URLs
+  seoMeta   String? // AI-generated SEO description
+  createdAt DateTime @default(now())
+
+  @@index([companyId])
+}
+
+model Notice {
+  id        String   @id @default(cuid())
+  title     String
+  content   String
+  createdAt DateTime @default(now())
+}
+
+model Faq {
+  id        String   @id @default(cuid())
+  question  String
+  answer    String
+  createdAt DateTime @default(now())
+}
+
+model Banner {
+  id        String    @id @default(cuid())
+  imageUrl  String
+  linkUrl   String?
+  startAt   DateTime?
+  endAt     DateTime?
+  createdAt DateTime  @default(now())
+}
+
+model Event {
+  id        String    @id @default(cuid())
+  title     String
+  content   String
+  startAt   DateTime?
+  endAt     DateTime?
+  createdAt DateTime  @default(now())
+}
+
+// status: ACTIVE | ENDED
+model Ad {
+  id        String    @id @default(cuid())
+  companyId String
+  company   Company   @relation(fields: [companyId], references: [id])
+  title     String
+  status    String    @default("ACTIVE")
+  startAt   DateTime?
+  endAt     DateTime?
+  createdAt DateTime  @default(now())
+
+  stats AdStat[]
+
+  @@index([companyId])
+}
+
+model AdStat {
+  id          String   @id @default(cuid())
+  adId        String
+  ad          Ad       @relation(fields: [adId], references: [id], onDelete: Cascade)
+  date        DateTime
+  impressions Int      @default(0)
+  clicks      Int      @default(0)
+
+  @@index([adId])
+}
+
+// plan: PRO
+// status: ACTIVE | CANCELED | EXPIRED
+model Subscription {
+  id        String    @id @default(cuid())
+  companyId String
+  company   Company   @relation(fields: [companyId], references: [id])
+  plan      String    @default("PRO")
+  status    String    @default("ACTIVE")
+  startedAt DateTime  @default(now())
+  endsAt    DateTime?
+
+  payments Payment[]
+
+  @@index([companyId])
+}
+
+// status: PENDING | PAID | REFUNDED | FAILED
+model Payment {
+  id             String        @id @default(cuid())
+  userId         String
+  user           User          @relation(fields: [userId], references: [id])
+  subscriptionId String?
+  subscription   Subscription? @relation(fields: [subscriptionId], references: [id])
+  amount         Int
+  status         String        @default("PENDING")
+  orderName      String?
+  paymentKey     String? // PG(토스페이먼츠) 결제 식별자 - 환불/취소 호출에 필요
+  createdAt      DateTime      @default(now())
+
+  @@index([userId])
+}
+
+// type: DIAGNOSIS | RECOMMENDATION | COST_ESTIMATE | CHATBOT | BLOG | AD_COPY |
+//       WORK_CASE | REVIEW_REPLY | FAQ | CUSTOMER_CHAT | SEO | MODERATION |
+//       REPORT_CLASSIFY | OPS_REPORT | INQUIRY_CLASSIFY
+model AiUsageLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  type      String
+  tokens    Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@index([type])
+}
+
+// action examples: LOGIN_SUCCESS | LOGIN_FAILURE | ROLE_CHANGE | COMPANY_APPROVE | ...
+model AdminActivityLog {
+  id        String   @id @default(cuid())
+  adminId   String
+  admin     User     @relation(fields: [adminId], references: [id])
+  action    String
+  detail    String?
+  createdAt DateTime @default(now())
+
+  @@index([adminId])
+}
+
+model SystemSetting {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt
+}
+
+// type: REGION | BRAND | SYMPTOM
+// AI가 생성한 SEO 랜딩페이지 콘텐츠. 실제 업체 목록은 keyword로 즉시 조회하며,
+// 여기서는 소개글(introText)만 캐싱한다.
+model SeoPage {
+  id        String   @id @default(cuid())
+  type      String
+  keyword   String
+  title     String
+  introText String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([type, keyword])
+  @@index([type])
+}
