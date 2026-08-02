@@ -120,15 +120,44 @@ export default async function CompanyDetailPage({
 
       <main className="mx-auto w-full max-w-3xl flex-1 px-6 py-8">
         <div className="flex items-start justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
-              {company.name}
-            </h1>
-            <p className="mt-1 text-sm text-neutral-500">{company.address ?? company.region}</p>
-            <p className="mt-1 text-sm text-neutral-500">{company.phone}</p>
-            <p className="mt-2 text-sm text-neutral-500">
-              {avgRating ? `★ ${avgRating.toFixed(1)} (후기 ${reviewCount}개)` : "아직 후기가 없습니다"}
-            </p>
+          <div className="flex items-start gap-4">
+            <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-neutral-100 text-xl font-semibold text-neutral-400 dark:bg-neutral-800">
+              {company.logoUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={company.logoUrl} alt={company.name} className="h-full w-full object-cover" />
+              ) : (
+                company.name.slice(0, 1)
+              )}
+            </div>
+            <div>
+              <div className="flex flex-wrap items-center gap-2">
+                <h1 className="text-2xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100">
+                  {company.name}
+                </h1>
+                {company.isFeatured && (
+                  <span className="rounded-full bg-brand/10 px-2 py-0.5 text-xs font-medium text-brand">
+                    추천
+                  </span>
+                )}
+                {company.isPremium && (
+                  <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700 dark:bg-amber-950 dark:text-amber-300">
+                    프리미엄
+                  </span>
+                )}
+              </div>
+              <p className="mt-1 text-sm text-neutral-500">{company.address ?? company.region}</p>
+              <p className="mt-1 text-sm text-neutral-500">{company.phone}</p>
+              <p className="mt-2 text-sm">
+                {avgRating ? (
+                  <span className="font-medium text-amber-600 dark:text-amber-400">
+                    ★ {avgRating.toFixed(1)}{" "}
+                    <span className="font-normal text-neutral-500">(후기 {reviewCount}개)</span>
+                  </span>
+                ) : (
+                  <span className="text-neutral-500">아직 후기가 없습니다</span>
+                )}
+              </p>
+            </div>
           </div>
           <div className="flex flex-col items-end gap-1.5">
             <FavoriteButton
@@ -146,65 +175,98 @@ export default async function CompanyDetailPage({
           </p>
         )}
 
-        <section className="mt-8 grid gap-6 sm:grid-cols-2">
-          <div>
-            <h2 className="mb-2 text-sm font-semibold text-neutral-900 dark:text-neutral-100">
-              수리 품목
-            </h2>
-            <div className="flex flex-wrap gap-1.5">
-              {company.services.map((s) => (
-                <span
-                  key={s.id}
-                  className="rounded-full bg-neutral-100 px-2 py-0.5 text-xs text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300"
-                >
-                  {s.name}
-                </span>
-              ))}
+        {company.photos && JSON.parse(company.photos).length > 0 && (
+          <div className="mt-4 flex gap-2 overflow-x-auto">
+            {(JSON.parse(company.photos) as string[]).map((url) => (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                key={url}
+                src={url}
+                alt={`${company.name} 사진`}
+                className="h-28 w-28 shrink-0 rounded-lg object-cover"
+              />
+            ))}
+          </div>
+        )}
+
+        <section className="mt-8 rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
+          <div className="grid gap-6 sm:grid-cols-2">
+            <div>
+              <h2 className="mb-2 text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+                수리 품목
+              </h2>
+              <div className="flex flex-wrap gap-1.5">
+                {company.services.map((s) => (
+                  <span
+                    key={s.id}
+                    className="rounded-full bg-neutral-100 px-2 py-0.5 text-xs text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300"
+                  >
+                    {s.name}
+                  </span>
+                ))}
+              </div>
+            </div>
+            <div>
+              <h2 className="mb-2 text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+                취급 브랜드
+              </h2>
+              <div className="flex flex-wrap gap-1.5">
+                {company.brands.map((b) => (
+                  <span
+                    key={b.id}
+                    className="rounded-full bg-neutral-100 px-2 py-0.5 text-xs text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300"
+                  >
+                    {b.name}
+                  </span>
+                ))}
+              </div>
             </div>
           </div>
-          <div>
-            <h2 className="mb-2 text-sm font-semibold text-neutral-900 dark:text-neutral-100">
-              취급 브랜드
-            </h2>
-            <div className="flex flex-wrap gap-1.5">
-              {company.brands.map((b) => (
-                <span
-                  key={b.id}
-                  className="rounded-full bg-neutral-100 px-2 py-0.5 text-xs text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300"
-                >
-                  {b.name}
-                </span>
-              ))}
+
+          {company.priceItems.length > 0 && (
+            <div className="mt-6">
+              <h2 className="mb-2 text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+                가격표
+              </h2>
+              <ul className="divide-y divide-neutral-100 rounded-lg border border-neutral-100 text-sm dark:divide-neutral-800 dark:border-neutral-800">
+                {company.priceItems.map((p) => (
+                  <li key={p.id} className="flex justify-between px-4 py-2">
+                    <span>{p.label}</span>
+                    <span className="font-medium">{p.price.toLocaleString()}원</span>
+                  </li>
+                ))}
+              </ul>
             </div>
+          )}
+
+          <div className="mt-6 flex flex-wrap gap-2 text-xs">
+            <span
+              className={
+                company.onSiteVisit
+                  ? "rounded-full bg-emerald-50 px-2.5 py-1 font-medium text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300"
+                  : "rounded-full bg-neutral-100 px-2.5 py-1 text-neutral-500 dark:bg-neutral-800"
+              }
+            >
+              {company.onSiteVisit ? "출장 가능" : "출장 불가"}
+            </span>
+            <span
+              className={
+                company.courierDrop
+                  ? "rounded-full bg-emerald-50 px-2.5 py-1 font-medium text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300"
+                  : "rounded-full bg-neutral-100 px-2.5 py-1 text-neutral-500 dark:bg-neutral-800"
+              }
+            >
+              {company.courierDrop ? "택배 가능" : "택배 불가"}
+            </span>
           </div>
+
+          {(company.businessHours || company.closedDays) && (
+            <div className="mt-4 space-y-0.5 text-sm text-neutral-500">
+              {company.businessHours && <p>영업시간: {company.businessHours}</p>}
+              {company.closedDays && <p>휴무일: {company.closedDays}</p>}
+            </div>
+          )}
         </section>
-
-        {company.priceItems.length > 0 && (
-          <section className="mt-8">
-            <h2 className="mb-2 text-sm font-semibold text-neutral-900 dark:text-neutral-100">
-              가격표
-            </h2>
-            <ul className="divide-y divide-neutral-200 rounded-lg border border-neutral-200 text-sm dark:divide-neutral-800 dark:border-neutral-800">
-              {company.priceItems.map((p) => (
-                <li key={p.id} className="flex justify-between px-4 py-2">
-                  <span>{p.label}</span>
-                  <span className="font-medium">{p.price.toLocaleString()}원</span>
-                </li>
-              ))}
-            </ul>
-          </section>
-        )}
-
-        <p className="mt-4 text-sm text-neutral-500">
-          {company.onSiteVisit ? "출장 가능" : "출장 불가"} · {company.courierDrop ? "택배 가능" : "택배 불가"}
-        </p>
-
-        {(company.businessHours || company.closedDays) && (
-          <div className="mt-2 text-sm text-neutral-500">
-            {company.businessHours && <p>영업시간: {company.businessHours}</p>}
-            {company.closedDays && <p>휴무일: {company.closedDays}</p>}
-          </div>
-        )}
 
         <section className="mt-10 grid gap-6 sm:grid-cols-2">
           <div>
@@ -258,7 +320,7 @@ export default async function CompanyDetailPage({
               return (
                 <div
                   key={r.id}
-                  className="rounded-lg border border-neutral-200 p-4 text-sm dark:border-neutral-800"
+                  className="rounded-xl border border-neutral-200 bg-white p-4 text-sm shadow-sm dark:border-neutral-800 dark:bg-neutral-900"
                 >
                   <div className="flex items-center justify-between">
                     <span className="font-medium text-neutral-900 dark:text-neutral-100">

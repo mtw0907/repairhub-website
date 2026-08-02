@@ -15,6 +15,9 @@ type CompanySummary = {
   courierDrop: boolean;
   avgRating: number | null;
   reviewCount: number;
+  logoUrl?: string | null;
+  isPremium?: boolean;
+  isFeatured?: boolean;
 };
 
 export function CompanyResults({ companies }: { companies: CompanySummary[] }) {
@@ -36,19 +39,41 @@ export function CompanyResults({ companies }: { companies: CompanySummary[] }) {
         {companies.map((c) => (
           <div
             key={c.id}
-            className="rounded-lg border border-neutral-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-900"
+            className="group rounded-xl border border-neutral-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md dark:border-neutral-800 dark:bg-neutral-900"
           >
-            <div className="flex items-start justify-between gap-2">
-              <div>
-                <Link
-                  href={`/companies/${c.id}`}
-                  className="text-base font-semibold text-neutral-900 hover:underline dark:text-neutral-100"
-                >
-                  {c.name}
-                </Link>
-                <p className="mt-0.5 text-xs text-neutral-500">{c.region ?? c.address}</p>
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex items-start gap-3">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full bg-neutral-100 text-sm font-semibold text-neutral-400 dark:bg-neutral-800">
+                  {c.logoUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={c.logoUrl} alt={c.name} className="h-full w-full object-cover" />
+                  ) : (
+                    c.name.slice(0, 1)
+                  )}
+                </div>
+                <div>
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    <Link
+                      href={`/companies/${c.id}`}
+                      className="text-base font-semibold text-neutral-900 group-hover:text-brand dark:text-neutral-100"
+                    >
+                      {c.name}
+                    </Link>
+                    {c.isFeatured && (
+                      <span className="rounded-full bg-brand/10 px-2 py-0.5 text-[10px] font-medium text-brand">
+                        추천
+                      </span>
+                    )}
+                    {c.isPremium && (
+                      <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-medium text-amber-700 dark:bg-amber-950 dark:text-amber-300">
+                        프리미엄
+                      </span>
+                    )}
+                  </div>
+                  <p className="mt-0.5 text-xs text-neutral-500">{c.region ?? c.address}</p>
+                </div>
               </div>
-              <label className="flex items-center gap-1.5 text-xs text-neutral-500">
+              <label className="flex shrink-0 items-center gap-1.5 text-xs text-neutral-500">
                 <input
                   type="checkbox"
                   checked={selected.includes(c.id)}
@@ -59,7 +84,7 @@ export function CompanyResults({ companies }: { companies: CompanySummary[] }) {
             </div>
 
             {c.introduction && (
-              <p className="mt-2 line-clamp-2 text-sm text-neutral-600 dark:text-neutral-400">
+              <p className="mt-3 line-clamp-2 text-sm text-neutral-600 dark:text-neutral-400">
                 {c.introduction}
               </p>
             )}
@@ -75,8 +100,8 @@ export function CompanyResults({ companies }: { companies: CompanySummary[] }) {
               ))}
             </div>
 
-            <div className="mt-3 flex items-center justify-between text-xs text-neutral-500">
-              <span>
+            <div className="mt-4 flex items-center justify-between border-t border-neutral-100 pt-3 text-xs text-neutral-500 dark:border-neutral-800">
+              <span className={c.avgRating ? "font-medium text-amber-600 dark:text-amber-400" : ""}>
                 {c.avgRating ? `★ ${c.avgRating.toFixed(1)} (${c.reviewCount})` : "후기 없음"}
               </span>
               <span>

@@ -17,6 +17,8 @@ type CompanyInfo = {
   closedDays: string;
   onSiteVisit: boolean;
   courierDrop: boolean;
+  logoUrl: string;
+  photos: string[];
 };
 
 export function CompanyInfoForm({ initial }: { initial: CompanyInfo }) {
@@ -25,9 +27,53 @@ export function CompanyInfoForm({ initial }: { initial: CompanyInfo }) {
   const [message, setMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [generatingSeo, setGeneratingSeo] = useState(false);
+  const [uploadingLogo, setUploadingLogo] = useState(false);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
 
   function set<K extends keyof CompanyInfo>(key: K, value: CompanyInfo[K]) {
     setForm((prev) => ({ ...prev, [key]: value }));
+  }
+
+  async function uploadFile(file: File): Promise<string | null> {
+    const formData = new FormData();
+    formData.append("file", file);
+    const res = await fetch("/api/upload", { method: "POST", body: formData });
+    if (!res.ok) {
+      const data = await res.json().catch(() => null);
+      setMessage(data?.error ?? "이미지 업로드 중 오류가 발생했습니다.");
+      return null;
+    }
+    const data = await res.json();
+    return data.url as string;
+  }
+
+  async function handleLogoChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingLogo(true);
+    setMessage(null);
+    const url = await uploadFile(file);
+    setUploadingLogo(false);
+    if (url) set("logoUrl", url);
+    e.target.value = "";
+  }
+
+  async function handlePhotoChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingPhoto(true);
+    setMessage(null);
+    const url = await uploadFile(file);
+    setUploadingPhoto(false);
+    if (url) set("photos", [...form.photos, url]);
+    e.target.value = "";
+  }
+
+  function removePhoto(url: string) {
+    set(
+      "photos",
+      form.photos.filter((p) => p !== url),
+    );
   }
 
   async function handleGenerateSeo() {
@@ -65,7 +111,25 @@ export function CompanyInfoForm({ initial }: { initial: CompanyInfo }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-xl space-y-4">
+    <form onSubmit={handleSubmit} className="max-w-xl space-y-6">
+      <div className="flex items-center gap-4">
+        <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-full border border-neutral-200 bg-neutral-50 dark:border-neutral-800 dark:bg-neutral-900">
+          {form.logoUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={form.logoUrl} alt="업체 로고" className="h-full w-full object-cover" />
+          ) : (
+            <span className="text-xs text-neutral-400">로고 없음</span>
+          )}
+        </div>
+        <div>
+          <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">
+            로고
+          </label>
+          <input type="file" accept="image/*" onChange={handleLogoChange} disabled={uploadingLogo} />
+          {uploadingLogo && <p className="mt-1 text-xs text-neutral-400">업로드 중...</p>}
+        </div>
+      </div>
+
       <div className="grid gap-4 sm:grid-cols-2">
         <Field label="업체명">
           <input
@@ -126,6 +190,38 @@ export function CompanyInfoForm({ initial }: { initial: CompanyInfo }) {
           className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
         />
       </Field>
+
+      <div>
+        <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">
+          업체 사진
+        </label>
+        <div className="flex flex-wrap gap-2">
+          {form.photos.map((url) => (
+            <div key={url} className="group relative h-20 w-20">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={url} alt="업체 사진" className="h-full w-full rounded-md object-cover" />
+              <button
+                type="button"
+                onClick={() => removePhoto(url)}
+                className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-neutral-900 text-xs text-white opacity-0 group-hover:opacity-100 dark:bg-white dark:text-neutral-900"
+                aria-label="사진 삭제"
+              >
+                ×
+              </button>
+            </div>
+          ))}
+          <label className="flex h-20 w-20 cursor-pointer items-center justify-center rounded-md border border-dashed border-neutral-300 text-xs text-neutral-400 hover:bg-neutral-50 dark:border-neutral-700 dark:hover:bg-neutral-900">
+            {uploadingPhoto ? "업로드 중..." : "+ 추가"}
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handlePhotoChange}
+              disabled={uploadingPhoto}
+              className="hidden"
+            />
+          </label>
+        </div>
+      </div>
 
       <div>
         <div className="mb-1 flex items-center justify-between">

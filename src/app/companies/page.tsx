@@ -48,6 +48,9 @@ export default async function CompaniesPage({
       courierDrop: c.courierDrop,
       avgRating,
       reviewCount,
+      logoUrl: c.logoUrl,
+      isPremium: c.isPremium,
+      isFeatured: c.isFeatured,
     };
   });
 
@@ -55,28 +58,28 @@ export default async function CompaniesPage({
     <div className="flex flex-1 flex-col">
       <SiteHeader />
       <main className="mx-auto w-full max-w-5xl flex-1 px-6 py-8">
-        <h1 className="mb-6 text-xl font-semibold text-neutral-900 dark:text-neutral-100">
+        <h1 className="mb-6 text-2xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100">
           수리업체 검색
         </h1>
 
-        <form className="mb-6 flex flex-wrap gap-2">
+        <form className="mb-8 flex flex-wrap gap-2 rounded-xl border border-neutral-200 bg-white p-2 shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
           <input
             type="text"
             name="keyword"
             defaultValue={keyword}
             placeholder="업체명, 브랜드, 서비스로 검색"
-            className="flex-1 min-w-[200px] rounded-md border border-neutral-300 px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+            className="flex-1 min-w-[200px] rounded-lg border-0 bg-transparent px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand/40"
           />
           <input
             type="text"
             name="region"
             defaultValue={region}
             placeholder="지역 (예: 서울특별시)"
-            className="w-48 rounded-md border border-neutral-300 px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+            className="w-48 rounded-lg border-0 bg-transparent px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand/40"
           />
           <button
             type="submit"
-            className="rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white hover:bg-neutral-700 dark:bg-white dark:text-neutral-900"
+            className="rounded-lg bg-neutral-900 px-5 py-2.5 text-sm font-medium text-white hover:bg-neutral-700 dark:bg-white dark:text-neutral-900"
           >
             검색
           </button>

@@ -41,6 +41,9 @@ export async function getSeoLandingData(type: SeoLandingType, keyword: string) {
       courierDrop: c.courierDrop,
       avgRating,
       reviewCount,
+      logoUrl: c.logoUrl,
+      isPremium: c.isPremium,
+      isFeatured: c.isFeatured,
     };
   });
 

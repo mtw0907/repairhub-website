@@ -43,6 +43,8 @@ export default async function PartnerCompanyPage() {
               closedDays: company.closedDays ?? "",
               onSiteVisit: company.onSiteVisit,
               courierDrop: company.courierDrop,
+              logoUrl: company.logoUrl ?? "",
+              photos: company.photos ? JSON.parse(company.photos) : [],
             }}
           />
         </div>
