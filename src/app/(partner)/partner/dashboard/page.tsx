@@ -1,3 +1,4 @@
+import { LayoutDashboard, Store, Camera, ClipboardList, Sparkles } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { DashboardShell } from "@/components/DashboardShell";
@@ -24,6 +25,7 @@ export default async function PartnerDashboardPage() {
       sections={[
         {
           title: "대시보드",
+          icon: LayoutDashboard,
           items: [
             { label: `누적 조회수: ${company?.viewCount ?? 0}`, href: "/partner/dashboard/stats" },
             {
@@ -41,6 +43,7 @@ export default async function PartnerDashboardPage() {
         },
         {
           title: "업체 · 서비스 관리",
+          icon: Store,
           items: [
             {
               label: "업체정보 · 영업시간 · 휴무일 · 출장/택배 수정",
@@ -55,10 +58,12 @@ export default async function PartnerDashboardPage() {
         },
         {
           title: "작업사례",
+          icon: Camera,
           items: [{ label: "작업사례 등록 · 목록", href: "/partner/dashboard/work-cases" }],
         },
         {
           title: "예약 · 문의 · 후기 관리",
+          icon: ClipboardList,
           items: [
             { label: "예약 승인 · 변경 · 취소 · 완료", href: "/partner/dashboard/reservations" },
             { label: "견적 답변", href: "/partner/dashboard/estimates" },
@@ -68,6 +73,7 @@ export default async function PartnerDashboardPage() {
         },
         {
           title: "AI",
+          icon: Sparkles,
           items: [
             { label: "AI 블로그 작성", href: "/partner/dashboard/ai/blog" },
             { label: "AI 광고 문구", href: "/partner/dashboard/ai/ad-copy" },

@@ -1,3 +1,11 @@
+import {
+  LayoutDashboard,
+  Users,
+  ClipboardList,
+  Megaphone,
+  Search,
+  BarChart3,
+} from "lucide-react";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { DashboardShell } from "@/components/DashboardShell";
@@ -25,6 +33,7 @@ export default async function AdminDashboardPage() {
       sections={[
         {
           title: "대시보드",
+          icon: LayoutDashboard,
           items: [
             { label: `오늘 가입: ${todaySignups}명`, href: "/admin/dashboard/users" },
             { label: `오늘 예약: ${todayReservations}건`, href: "/admin/dashboard/reservations" },
@@ -42,6 +51,7 @@ export default async function AdminDashboardPage() {
         },
         {
           title: "회원 · 업체 관리",
+          icon: Users,
           items: [
             { label: "회원 검색 · 정지 · 삭제", href: "/admin/dashboard/users" },
             { label: "업체 조회 · 승인 · 프리미엄/추천 지정 · 삭제", href: "/admin/dashboard/companies" },
@@ -50,6 +60,7 @@ export default async function AdminDashboardPage() {
         },
         {
           title: "예약 · 견적 · 후기 · 신고",
+          icon: ClipboardList,
           items: [
             { label: "예약 조회 · 변경 · 노쇼 관리", href: "/admin/dashboard/reservations" },
             { label: "견적 조회 · 업체 응답률", href: "/admin/dashboard/estimates" },
@@ -59,6 +70,7 @@ export default async function AdminDashboardPage() {
         },
         {
           title: "콘텐츠 · 광고 · 구독",
+          icon: Megaphone,
           items: [
             { label: "공지사항 · FAQ · 배너 · 이벤트", href: "/admin/dashboard/content" },
             "광고 등록 · 통계",
@@ -70,10 +82,12 @@ export default async function AdminDashboardPage() {
         },
         {
           title: "SEO",
+          icon: Search,
           items: [{ label: "AI 지역/브랜드/증상 페이지 생성", href: "/admin/dashboard/seo" }],
         },
         {
           title: "통계",
+          icon: BarChart3,
           items: [{ label: "전체 통계 보기", href: "/admin/dashboard/stats" }],
         },
       ]}

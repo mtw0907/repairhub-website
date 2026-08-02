@@ -1,3 +1,4 @@
+import { ShieldCheck, Settings, Server, LayoutDashboard } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { DashboardShell } from "@/components/DashboardShell";
@@ -17,6 +18,7 @@ export default async function SuperAdminDashboardPage() {
       sections={[
         {
           title: "관리자 · 권한 관리",
+          icon: ShieldCheck,
           items: [
             {
               label: `관리자 계정 생성 · 권한 변경 · 삭제 (현재 ${adminCount}명)`,
@@ -27,6 +29,7 @@ export default async function SuperAdminDashboardPage() {
         },
         {
           title: "시스템 설정",
+          icon: Settings,
           items: [
             {
               label: "API Key · AI · 결제 · SMTP · 환경변수 · 보안 설정",
@@ -36,6 +39,7 @@ export default async function SuperAdminDashboardPage() {
         },
         {
           title: "운영",
+          icon: Server,
           items: [
             { label: "DB 백업 · 복원", href: "/super-admin/dashboard/backup" },
             {
@@ -46,6 +50,7 @@ export default async function SuperAdminDashboardPage() {
         },
         {
           title: "일반 관리자 기능 전체",
+          icon: LayoutDashboard,
           items: [
             { label: "ADMIN 대시보드로 이동 (회원·업체·예약·통계 등)", href: "/admin/dashboard" },
           ],
