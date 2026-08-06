@@ -87,6 +87,7 @@ export default async function AdminDashboardPage() {
             { label: "회원 검색 · 정지 · 삭제", href: "/admin/dashboard/users" },
             { label: "업체 조회 · 승인 · 프리미엄/추천 지정 · 삭제", href: "/admin/dashboard/companies" },
             { label: "업체 직접 등록", href: "/admin/dashboard/companies/new" },
+            { label: "내 계정 (비밀번호 변경)", href: "/admin/dashboard/profile" },
           ],
         },
         {

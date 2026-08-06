@@ -25,6 +25,7 @@ export default async function SuperAdminDashboardPage() {
               href: "/super-admin/dashboard/admins",
             },
             { label: "관리자 활동 로그 확인", href: "/super-admin/dashboard/logs" },
+            { label: "내 계정 (비밀번호 변경)", href: "/super-admin/dashboard/profile" },
           ],
         },
         {

@@ -68,6 +68,7 @@ export default async function PartnerDashboardPage() {
               label: company?.isPremium ? "구독 관리 (Pro 이용 중)" : "구독 관리 (Pro 구독하기)",
               href: "/partner/dashboard/subscription",
             },
+            { label: "내 계정 (비밀번호 변경)", href: "/partner/dashboard/profile" },
           ],
         },
         {
