@@ -2,21 +2,26 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Heart } from "lucide-react";
 
 export function FavoriteButton({
   companyId,
   initialFavorited,
   isUser,
+  variant = "default",
 }: {
   companyId: string;
   initialFavorited: boolean;
   isUser: boolean;
+  variant?: "default" | "icon";
 }) {
   const router = useRouter();
   const [favorited, setFavorited] = useState(initialFavorited);
   const [loading, setLoading] = useState(false);
 
-  async function handleClick() {
+  async function handleClick(e: React.MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
     if (!isUser) {
       router.push("/login");
       return;
@@ -32,6 +37,23 @@ export function FavoriteButton({
       setFavorited(data.favorited);
     }
     setLoading(false);
+  }
+
+  if (variant === "icon") {
+    return (
+      <button
+        onClick={handleClick}
+        disabled={loading}
+        aria-label={favorited ? "찜 해제" : "찜하기"}
+        className={
+          favorited
+            ? "flex h-9 w-9 items-center justify-center rounded-full bg-white/95 text-accent shadow-sm ring-1 ring-black/5 transition-transform hover:scale-110 disabled:opacity-50 dark:bg-neutral-900/95"
+            : "flex h-9 w-9 items-center justify-center rounded-full bg-white/85 text-neutral-500 shadow-sm ring-1 ring-black/5 backdrop-blur transition-transform hover:scale-110 hover:text-accent disabled:opacity-50 dark:bg-neutral-900/85 dark:text-neutral-300"
+        }
+      >
+        <Heart className="h-4.5 w-4.5" fill={favorited ? "currentColor" : "none"} />
+      </button>
+    );
   }
 
   return (

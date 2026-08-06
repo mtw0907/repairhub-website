@@ -29,6 +29,7 @@ export async function getSeoLandingData(type: SeoLandingType, keyword: string) {
     const reviewCount = c.reviews.length;
     const avgRating =
       reviewCount > 0 ? c.reviews.reduce((sum, r) => sum + r.rating, 0) / reviewCount : null;
+    const photos: string[] = c.photos ? JSON.parse(c.photos) : [];
     return {
       id: c.id,
       name: c.name,
@@ -42,8 +43,10 @@ export async function getSeoLandingData(type: SeoLandingType, keyword: string) {
       avgRating,
       reviewCount,
       logoUrl: c.logoUrl,
+      photoUrl: photos[0] ?? null,
       isPremium: c.isPremium,
       isFeatured: c.isFeatured,
+      status: c.status,
     };
   });
 

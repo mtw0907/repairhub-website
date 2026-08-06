@@ -47,7 +47,10 @@ export function AiTextTool({
 
   return (
     <div className="space-y-4">
-      <form onSubmit={handleSubmit} className="space-y-3">
+      <form
+        onSubmit={handleSubmit}
+        className="space-y-3 rounded-2xl border border-neutral-200/70 bg-white p-4 shadow-sm dark:border-neutral-800 dark:bg-neutral-900 sm:p-5"
+      >
         {fields.map((f) =>
           f.type === "text" ? (
             <input
@@ -56,7 +59,7 @@ export function AiTextTool({
               value={values[f.key]}
               onChange={(e) => setValues((v) => ({ ...v, [f.key]: e.target.value }))}
               placeholder={f.placeholder ?? f.label}
-              className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+              className="w-full rounded-xl border border-neutral-200 bg-surface-muted px-3 py-2.5 text-sm outline-none transition-colors focus:border-primary/40 focus:ring-2 focus:ring-primary/10 dark:border-neutral-700 dark:bg-neutral-800"
             />
           ) : (
             <textarea
@@ -66,27 +69,27 @@ export function AiTextTool({
               onChange={(e) => setValues((v) => ({ ...v, [f.key]: e.target.value }))}
               placeholder={f.placeholder ?? f.label}
               rows={4}
-              className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+              className="w-full rounded-xl border border-neutral-200 bg-surface-muted px-3 py-2.5 text-sm outline-none transition-colors focus:border-primary/40 focus:ring-2 focus:ring-primary/10 dark:border-neutral-700 dark:bg-neutral-800"
             />
           ),
         )}
         <button
           type="submit"
           disabled={loading}
-          className="rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white hover:bg-neutral-700 disabled:opacity-50 dark:bg-white dark:text-neutral-900"
+          className="rounded-xl border border-accent/40 bg-accent/10 px-5 py-2.5 text-sm font-semibold text-accent-foreground transition-colors hover:bg-accent/20 disabled:opacity-50 dark:text-accent"
         >
           {loading ? "생성 중..." : buttonLabel}
         </button>
       </form>
 
       {error && (
-        <p className="rounded-md border border-amber-300 bg-amber-50 p-3 text-sm text-amber-800 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-300">
+        <p className="rounded-xl border border-amber-300 bg-amber-50 p-3 text-sm text-amber-800 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-300">
           {error}
         </p>
       )}
 
       {result && (
-        <div className="whitespace-pre-line rounded-lg border border-neutral-200 bg-white p-4 text-sm dark:border-neutral-800 dark:bg-neutral-900">
+        <div className="whitespace-pre-line rounded-2xl border border-neutral-200/70 bg-white p-4 text-sm shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
           {result}
         </div>
       )}

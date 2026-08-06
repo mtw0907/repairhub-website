@@ -1,6 +1,5 @@
-import Link from "next/link";
 import { prisma } from "@/lib/prisma";
-import { SignOutButton } from "@/components/SignOutButton";
+import { StaffPageHeader } from "@/components/StaffPageHeader";
 
 export default async function AdminEstimatesPage() {
   const [estimates, companies] = await Promise.all([
@@ -34,26 +33,21 @@ export default async function AdminEstimatesPage() {
     .sort((a, b) => (a.rate ?? 0) - (b.rate ?? 0));
 
   return (
-    <div className="min-h-full bg-neutral-50 dark:bg-neutral-950">
-      <header className="flex items-center justify-between border-b border-neutral-200 bg-white px-6 py-4 dark:border-neutral-800 dark:bg-neutral-900">
-        <Link href="/admin/dashboard" className="text-sm text-neutral-500 hover:underline">
-          ← 대시보드로
-        </Link>
-        <SignOutButton />
-      </header>
-      <main className="mx-auto max-w-2xl px-6 py-8">
-        <h1 className="mb-6 text-lg font-semibold text-neutral-900 dark:text-neutral-100">
+    <div className="min-h-full bg-surface-muted">
+      <StaffPageHeader backHref="/admin/dashboard" />
+      <main className="mx-auto max-w-2xl px-4 py-8 sm:px-6 sm:py-10">
+        <h1 className="mb-6 text-2xl font-extrabold tracking-tight text-primary dark:text-neutral-100">
           견적 관리
         </h1>
 
-        <h2 className="mb-2 text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+        <h2 className="mb-2.5 text-sm font-bold text-neutral-900 dark:text-neutral-100">
           업체별 응답률
         </h2>
-        <ul className="mb-8 divide-y divide-neutral-200 rounded-lg border border-neutral-200 text-sm dark:divide-neutral-800 dark:border-neutral-800">
+        <ul className="mb-8 divide-y divide-neutral-100 rounded-2xl border border-neutral-200/70 bg-white text-sm shadow-sm dark:divide-neutral-800 dark:border-neutral-800 dark:bg-neutral-900">
           {responseRates.map((c) => (
-            <li key={c.id} className="flex justify-between px-4 py-2">
+            <li key={c.id} className="flex justify-between px-4 py-2.5">
               <span>{c.name}</span>
-              <span className="font-medium">
+              <span className="font-semibold text-primary">
                 {c.answered}/{c.total} ({c.rate!.toFixed(0)}%)
               </span>
             </li>
@@ -63,28 +57,36 @@ export default async function AdminEstimatesPage() {
           )}
         </ul>
 
-        <h2 className="mb-2 text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+        <h2 className="mb-2.5 text-sm font-bold text-neutral-900 dark:text-neutral-100">
           전체 견적 요청
         </h2>
-        <div className="space-y-2">
+        <div className="space-y-2.5">
           {estimates.map((e) => (
             <div
               key={e.id}
-              className="rounded-lg border border-neutral-200 bg-white p-3 text-sm dark:border-neutral-800 dark:bg-neutral-900"
+              className="rounded-xl border border-neutral-200/70 bg-white p-4 text-sm shadow-sm transition-shadow hover:shadow-md dark:border-neutral-800 dark:bg-neutral-900"
             >
               <div className="flex items-center justify-between">
-                <span className="font-medium">
+                <span className="font-semibold text-neutral-900 dark:text-neutral-100">
                   {e.company.name} · {e.user.name}
                 </span>
-                <span className="rounded-full bg-neutral-100 px-2 py-0.5 text-xs text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300">
+                <span
+                  className={
+                    e.status === "REQUESTED"
+                      ? "rounded-full bg-amber-100 px-2.5 py-1 text-xs font-semibold text-amber-700 dark:bg-amber-950 dark:text-amber-300"
+                      : "rounded-full bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary"
+                  }
+                >
                   {e.status === "REQUESTED" ? "답변 대기" : "답변 완료"}
                 </span>
               </div>
-              <p className="mt-1 text-neutral-600 dark:text-neutral-400">{e.request}</p>
+              <p className="mt-1.5 text-neutral-600 dark:text-neutral-400">{e.request}</p>
             </div>
           ))}
           {estimates.length === 0 && (
-            <p className="text-sm text-neutral-500">견적 요청 내역이 없습니다.</p>
+            <p className="rounded-2xl border border-dashed border-neutral-300 py-12 text-center text-sm text-neutral-500 dark:border-neutral-700">
+              견적 요청 내역이 없습니다.
+            </p>
           )}
         </div>
       </main>

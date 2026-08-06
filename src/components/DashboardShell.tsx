@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ChevronRight, type LucideIcon } from "lucide-react";
 import { SignOutButton } from "@/components/SignOutButton";
+import { NotificationBell } from "@/components/notifications/NotificationBell";
 
 type Item = string | { label: string; href: string };
 
@@ -8,44 +9,50 @@ export function DashboardShell({
   roleLabel,
   userName,
   sections,
+  children,
 }: {
   roleLabel: string;
   userName: string;
   sections: { title: string; icon: LucideIcon; items: Item[] }[];
+  children?: React.ReactNode;
 }) {
   return (
-    <div className="min-h-full bg-neutral-50 dark:bg-neutral-950">
-      <header className="border-b border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-900">
+    <div className="min-h-full bg-surface-muted">
+      <header className="border-b border-neutral-200/80 bg-white/90 backdrop-blur-md dark:border-neutral-800/80 dark:bg-neutral-950/90">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-5">
           <div className="flex items-center gap-3">
             <Link
               href="/"
-              className="hidden h-9 w-9 items-center justify-center rounded-lg bg-brand text-base font-bold text-brand-foreground sm:flex"
+              className="hidden h-9 w-9 items-center justify-center rounded-lg bg-primary text-base font-bold text-primary-foreground sm:flex"
             >
               R
             </Link>
             <div>
-              <p className="text-sm font-medium text-brand">{roleLabel}</p>
+              <p className="text-sm font-semibold text-accent">{roleLabel}</p>
               <h1 className="text-xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100">
                 안녕하세요, {userName}님
               </h1>
             </div>
           </div>
-          <SignOutButton />
+          <div className="flex items-center gap-1.5">
+            <NotificationBell />
+            <SignOutButton />
+          </div>
         </div>
       </header>
 
       <main className="mx-auto max-w-5xl px-6 py-10">
+        {children}
         <div className="grid gap-6 sm:grid-cols-2">
           {sections.map((section) => {
             const Icon = section.icon;
             return (
               <div
                 key={section.title}
-                className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-neutral-800 dark:bg-neutral-900"
+                className="rounded-2xl border border-neutral-200/70 bg-white p-6 shadow-sm transition-shadow hover:shadow-md dark:border-neutral-800 dark:bg-neutral-900"
               >
                 <div className="mb-4 flex items-center gap-3">
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-brand/10 text-brand">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary dark:text-neutral-200">
                     <Icon className="h-5 w-5" strokeWidth={2} />
                   </span>
                   <h2 className="text-base font-bold text-neutral-900 dark:text-neutral-100">
@@ -61,10 +68,10 @@ export function DashboardShell({
                         {href ? (
                           <Link
                             href={href}
-                            className="group flex items-center gap-2 rounded-xl px-3 py-3 text-[15px] font-medium text-neutral-700 transition-colors hover:bg-brand/5 hover:text-neutral-900 dark:text-neutral-300 dark:hover:bg-brand/10 dark:hover:text-neutral-100"
+                            className="group flex items-center gap-2 rounded-xl px-3 py-3 text-[15px] font-medium text-neutral-700 transition-colors hover:bg-primary/5 hover:text-neutral-900 dark:text-neutral-300 dark:hover:bg-primary/10 dark:hover:text-neutral-100"
                           >
                             <span className="flex-1 leading-snug">{label}</span>
-                            <ChevronRight className="h-4 w-4 shrink-0 text-neutral-300 transition-transform group-hover:translate-x-0.5 group-hover:text-brand dark:text-neutral-600" />
+                            <ChevronRight className="h-4 w-4 shrink-0 text-neutral-300 transition-transform group-hover:translate-x-0.5 group-hover:text-accent dark:text-neutral-600" />
                           </Link>
                         ) : (
                           <div className="flex items-center gap-2 rounded-xl px-3 py-3 text-[15px] text-neutral-400 dark:text-neutral-600">

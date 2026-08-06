@@ -12,6 +12,8 @@ type AdminCompany = {
   status: string;
   isPremium: boolean;
   isFeatured: boolean;
+  certificateUrl?: string | null;
+  aiVerificationResult?: string | null;
 };
 
 const STATUS_LABEL: Record<string, string> = {
@@ -21,10 +23,32 @@ const STATUS_LABEL: Record<string, string> = {
   UNVERIFIED: "미인증",
 };
 
+type AiCertResult =
+  | {
+      ok: true;
+      looksLikeCertificate?: boolean;
+      nameMatch?: boolean;
+      bizRegNoMatch?: boolean;
+      ownerNameMatch?: boolean;
+      confidence?: string;
+      notes?: string;
+    }
+  | { ok: false; reason?: string };
+
+function parseAiResult(raw?: string | null): AiCertResult | null {
+  if (!raw) return null;
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
+
 export function AdminCompanyRow({ company }: { company: AdminCompany }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const ai = parseAiResult(company.aiVerificationResult);
 
   async function patch(body: Record<string, unknown>) {
     setLoading(true);
@@ -52,25 +76,31 @@ export function AdminCompanyRow({ company }: { company: AdminCompany }) {
   }
 
   return (
-    <div className="rounded-lg border border-neutral-200 bg-white p-3 text-sm dark:border-neutral-800 dark:bg-neutral-900">
+    <div className="rounded-xl border border-neutral-200/70 bg-white p-4 text-sm shadow-sm transition-shadow hover:shadow-md dark:border-neutral-800 dark:bg-neutral-900">
       <div className="flex items-center justify-between gap-3">
         <div>
-          <Link href={`/companies/${company.id}`} className="font-medium hover:underline">
+          <Link href={`/companies/${company.id}`} className="font-semibold text-neutral-900 hover:text-primary hover:underline dark:text-neutral-100">
             {company.name}
           </Link>
           <p className="text-xs text-neutral-500">{company.region}</p>
         </div>
-        <span className="rounded-full bg-neutral-100 px-2 py-0.5 text-xs text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300">
+        <span
+          className={
+            company.status === "APPROVED"
+              ? "rounded-full bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary"
+              : "rounded-full bg-neutral-100 px-2.5 py-1 text-xs font-semibold text-neutral-500 dark:bg-neutral-800"
+          }
+        >
           {STATUS_LABEL[company.status] ?? company.status}
         </span>
       </div>
 
-      <div className="mt-2 flex flex-wrap items-center gap-2">
+      <div className="mt-3 flex flex-wrap items-center gap-2">
         {(company.status === "PENDING" || company.status === "UNVERIFIED") && (
           <button
             onClick={() => patch({ status: "APPROVED" })}
             disabled={loading}
-            className="rounded-md bg-neutral-900 px-2 py-1 text-xs font-medium text-white hover:bg-neutral-700 disabled:opacity-50 dark:bg-white dark:text-neutral-900"
+            className="rounded-lg bg-primary px-2.5 py-1.5 text-xs font-semibold text-primary-foreground transition-transform hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
           >
             승인
           </button>
@@ -79,7 +109,7 @@ export function AdminCompanyRow({ company }: { company: AdminCompany }) {
           <button
             onClick={() => patch({ status: "SUSPENDED" })}
             disabled={loading}
-            className="rounded-md border border-neutral-300 px-2 py-1 text-xs hover:bg-neutral-100 disabled:opacity-50 dark:border-neutral-700 dark:hover:bg-neutral-800"
+            className="rounded-lg border border-neutral-300 px-2.5 py-1.5 text-xs font-medium transition-colors hover:bg-neutral-100 disabled:opacity-50 dark:border-neutral-700 dark:hover:bg-neutral-800"
           >
             정지
           </button>
@@ -87,7 +117,7 @@ export function AdminCompanyRow({ company }: { company: AdminCompany }) {
           <button
             onClick={() => patch({ status: "APPROVED" })}
             disabled={loading}
-            className="rounded-md border border-neutral-300 px-2 py-1 text-xs hover:bg-neutral-100 disabled:opacity-50 dark:border-neutral-700 dark:hover:bg-neutral-800"
+            className="rounded-lg border border-neutral-300 px-2.5 py-1.5 text-xs font-medium transition-colors hover:bg-neutral-100 disabled:opacity-50 dark:border-neutral-700 dark:hover:bg-neutral-800"
           >
             정지 해제
           </button>
@@ -97,8 +127,8 @@ export function AdminCompanyRow({ company }: { company: AdminCompany }) {
           disabled={loading}
           className={
             company.isPremium
-              ? "rounded-md border border-amber-400 bg-amber-50 px-2 py-1 text-xs text-amber-700 disabled:opacity-50 dark:border-amber-600 dark:bg-amber-950 dark:text-amber-300"
-              : "rounded-md border border-neutral-300 px-2 py-1 text-xs hover:bg-neutral-100 disabled:opacity-50 dark:border-neutral-700 dark:hover:bg-neutral-800"
+              ? "rounded-lg border border-accent/50 bg-accent/10 px-2.5 py-1.5 text-xs font-medium text-accent-foreground disabled:opacity-50 dark:text-accent"
+              : "rounded-lg border border-neutral-300 px-2.5 py-1.5 text-xs font-medium transition-colors hover:bg-neutral-100 disabled:opacity-50 dark:border-neutral-700 dark:hover:bg-neutral-800"
           }
         >
           {company.isPremium ? "프리미엄 해제" : "프리미엄 지정"}
@@ -108,8 +138,8 @@ export function AdminCompanyRow({ company }: { company: AdminCompany }) {
           disabled={loading}
           className={
             company.isFeatured
-              ? "rounded-md border border-blue-400 bg-blue-50 px-2 py-1 text-xs text-blue-700 disabled:opacity-50 dark:border-blue-600 dark:bg-blue-950 dark:text-blue-300"
-              : "rounded-md border border-neutral-300 px-2 py-1 text-xs hover:bg-neutral-100 disabled:opacity-50 dark:border-neutral-700 dark:hover:bg-neutral-800"
+              ? "rounded-lg border border-primary/40 bg-primary/10 px-2.5 py-1.5 text-xs font-medium text-primary disabled:opacity-50"
+              : "rounded-lg border border-neutral-300 px-2.5 py-1.5 text-xs font-medium transition-colors hover:bg-neutral-100 disabled:opacity-50 dark:border-neutral-700 dark:hover:bg-neutral-800"
           }
         >
           {company.isFeatured ? "추천 해제" : "추천 업체 지정"}
@@ -117,12 +147,45 @@ export function AdminCompanyRow({ company }: { company: AdminCompany }) {
         <button
           onClick={handleDelete}
           disabled={loading}
-          className="rounded-md border border-red-300 px-2 py-1 text-xs font-medium text-red-600 hover:bg-red-50 disabled:opacity-50 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-950"
+          className="rounded-lg border border-red-300 px-2.5 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50 disabled:opacity-50 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-950"
         >
           삭제
         </button>
       </div>
       {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
+
+      {(company.certificateUrl || ai) && (
+        <div className="mt-3 flex flex-wrap items-start gap-3 rounded-xl bg-surface-muted p-3 dark:bg-neutral-800">
+          {company.certificateUrl && (
+            <a href={company.certificateUrl} target="_blank" rel="noreferrer" className="shrink-0">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={company.certificateUrl}
+                alt="사업자등록증"
+                className="h-16 w-16 rounded-lg border border-neutral-200 object-cover dark:border-neutral-700"
+              />
+            </a>
+          )}
+          {ai && (
+            <div className="min-w-0 flex-1 text-xs text-neutral-600 dark:text-neutral-300">
+              <p className="font-bold text-neutral-900 dark:text-neutral-100">AI 1차 검토 (참고용)</p>
+              {ai.ok ? (
+                <>
+                  <p>
+                    증명서 형식: {ai.looksLikeCertificate ? "인식됨" : "미인식"} · 상호명 일치:{" "}
+                    {ai.nameMatch ? "예" : "아니오"} · 사업자번호 일치: {ai.bizRegNoMatch ? "예" : "아니오"} · 대표자명
+                    일치: {ai.ownerNameMatch ? "예" : "아니오"}
+                  </p>
+                  {ai.confidence && <p>신뢰도: {ai.confidence}</p>}
+                  {ai.notes && <p className="mt-0.5 whitespace-pre-line">{ai.notes}</p>}
+                </>
+              ) : (
+                <p>AI 검증 불가{ai.reason ? ` (${ai.reason})` : ""} — 이미지·기재사항을 직접 확인해주세요.</p>
+              )}
+            </div>
+          )}
+        </div>
+      )}
 
       <AiInlineAction
         endpoint="/api/ai/admin/audit-company"

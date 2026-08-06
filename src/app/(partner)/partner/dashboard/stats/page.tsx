@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { SignOutButton } from "@/components/SignOutButton";
+import { StaffPageHeader } from "@/components/StaffPageHeader";
 
 export default async function PartnerStatsPage() {
   const session = await auth();
@@ -49,19 +49,22 @@ export default async function PartnerStatsPage() {
   };
 
   return (
-    <div className="min-h-full bg-neutral-50 dark:bg-neutral-950">
-      <header className="flex items-center justify-between border-b border-neutral-200 bg-white px-6 py-4 dark:border-neutral-800 dark:bg-neutral-900">
-        <Link href="/partner/dashboard" className="text-sm text-neutral-500 hover:underline">
-          ← 대시보드로
-        </Link>
-        <SignOutButton />
-      </header>
-      <main className="mx-auto max-w-2xl px-6 py-8">
-        <h1 className="mb-6 text-lg font-semibold text-neutral-900 dark:text-neutral-100">
-          통계
-        </h1>
+    <div className="min-h-full bg-surface-muted">
+      <StaffPageHeader backHref="/partner/dashboard" />
+      <main className="mx-auto max-w-2xl px-4 py-8 sm:px-6 sm:py-10">
+        <div className="mb-6 flex items-center justify-between">
+          <h1 className="text-2xl font-extrabold tracking-tight text-primary dark:text-neutral-100">
+            통계
+          </h1>
+          <Link
+            href="/partner/dashboard/revenue"
+            className="text-xs font-medium text-neutral-500 underline underline-offset-2 hover:text-primary"
+          >
+            매출 관리
+          </Link>
+        </div>
 
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid gap-3.5 sm:grid-cols-2">
           <StatCard label="누적 조회수" value={company.viewCount.toLocaleString()} />
           <StatCard label="총 예약 수" value={totalReservations.toLocaleString()} />
           <StatCard
@@ -72,6 +75,7 @@ export default async function PartnerStatsPage() {
           <StatCard
             label="후기 평균 평점"
             value={avgRating ? `★ ${avgRating.toFixed(1)} (${reviewCount})` : "후기 없음"}
+            accent
           />
           <StatCard
             label="예약 전환율 (승인+완료 / 전체)"
@@ -80,14 +84,14 @@ export default async function PartnerStatsPage() {
         </div>
 
         <div className="mt-8">
-          <h2 className="mb-3 text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+          <h2 className="mb-3 text-sm font-bold text-neutral-900 dark:text-neutral-100">
             예약 상태별 현황
           </h2>
-          <ul className="divide-y divide-neutral-200 rounded-lg border border-neutral-200 text-sm dark:divide-neutral-800 dark:border-neutral-800">
+          <ul className="divide-y divide-neutral-100 rounded-2xl border border-neutral-200/70 bg-white text-sm shadow-sm dark:divide-neutral-800 dark:border-neutral-800 dark:bg-neutral-900">
             {reservationsByStatus.map((r) => (
-              <li key={r.status} className="flex justify-between px-4 py-2">
+              <li key={r.status} className="flex justify-between px-4 py-2.5">
                 <span>{statusLabel[r.status] ?? r.status}</span>
-                <span className="font-medium">{r._count.status}건</span>
+                <span className="font-semibold text-primary">{r._count.status}건</span>
               </li>
             ))}
             {reservationsByStatus.length === 0 && (
@@ -100,11 +104,13 @@ export default async function PartnerStatsPage() {
   );
 }
 
-function StatCard({ label, value }: { label: string; value: string }) {
+function StatCard({ label, value, accent }: { label: string; value: string; accent?: boolean }) {
   return (
-    <div className="rounded-lg border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-900">
-      <p className="text-xs text-neutral-500">{label}</p>
-      <p className="mt-1 text-lg font-semibold text-neutral-900 dark:text-neutral-100">{value}</p>
+    <div className="rounded-2xl border border-neutral-200/70 bg-white p-4 shadow-sm transition-shadow hover:shadow-md dark:border-neutral-800 dark:bg-neutral-900">
+      <p className="text-xs font-medium text-neutral-500">{label}</p>
+      <p className={accent ? "mt-1 text-xl font-extrabold text-accent-foreground dark:text-accent" : "mt-1 text-xl font-extrabold text-neutral-900 dark:text-neutral-100"}>
+        {value}
+      </p>
     </div>
   );
 }

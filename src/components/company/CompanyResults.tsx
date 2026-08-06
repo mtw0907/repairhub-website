@@ -2,32 +2,25 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { ArrowRight, Scale, X } from "lucide-react";
+import { CompanyCard, type CompanySummary } from "@/components/company/CompanyCard";
 
-type CompanySummary = {
-  id: string;
-  name: string;
-  region: string | null;
-  address: string | null;
-  introduction: string | null;
-  services: string[];
-  brands: string[];
-  onSiteVisit: boolean;
-  courierDrop: boolean;
-  avgRating: number | null;
-  reviewCount: number;
-  logoUrl?: string | null;
-  isPremium?: boolean;
-  isFeatured?: boolean;
-};
-
-export function CompanyResults({ companies }: { companies: CompanySummary[] }) {
+export function CompanyResults({
+  companies,
+  favoritedIds,
+  isUser,
+}: {
+  companies: CompanySummary[];
+  favoritedIds: string[];
+  isUser: boolean;
+}) {
   const [selected, setSelected] = useState<string[]>([]);
 
   function toggle(id: string) {
     setSelected((prev) =>
       prev.includes(id)
         ? prev.filter((x) => x !== id)
-        : prev.length >= 4
+        : prev.length >= 3
           ? prev
           : [...prev, id],
     );
@@ -35,100 +28,67 @@ export function CompanyResults({ companies }: { companies: CompanySummary[] }) {
 
   return (
     <div className="relative pb-16">
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {companies.map((c) => (
-          <div
+          <CompanyCard
             key={c.id}
-            className="group rounded-xl border border-neutral-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md dark:border-neutral-800 dark:bg-neutral-900"
-          >
-            <div className="flex items-start justify-between gap-3">
-              <div className="flex items-start gap-3">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full bg-neutral-100 text-sm font-semibold text-neutral-400 dark:bg-neutral-800">
-                  {c.logoUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={c.logoUrl} alt={c.name} className="h-full w-full object-cover" />
-                  ) : (
-                    c.name.slice(0, 1)
-                  )}
-                </div>
-                <div>
-                  <div className="flex flex-wrap items-center gap-1.5">
-                    <Link
-                      href={`/companies/${c.id}`}
-                      className="text-base font-semibold text-neutral-900 group-hover:text-brand dark:text-neutral-100"
-                    >
-                      {c.name}
-                    </Link>
-                    {c.isFeatured && (
-                      <span className="rounded-full bg-brand/10 px-2 py-0.5 text-[10px] font-medium text-brand">
-                        추천
-                      </span>
-                    )}
-                    {c.isPremium && (
-                      <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-medium text-amber-700 dark:bg-amber-950 dark:text-amber-300">
-                        프리미엄
-                      </span>
-                    )}
-                  </div>
-                  <p className="mt-0.5 text-xs text-neutral-500">{c.region ?? c.address}</p>
-                </div>
-              </div>
-              <label className="flex shrink-0 items-center gap-1.5 text-xs text-neutral-500">
+            company={c}
+            isUser={isUser}
+            favorited={favoritedIds.includes(c.id)}
+            compareSlot={
+              <label
+                onClick={(e) => e.stopPropagation()}
+                className="flex items-center gap-1.5 rounded-full bg-white/90 px-2.5 py-1 text-[11px] font-medium text-neutral-600 shadow-sm ring-1 ring-black/5 dark:bg-neutral-900/90 dark:text-neutral-300"
+              >
                 <input
                   type="checkbox"
                   checked={selected.includes(c.id)}
-                  onChange={() => toggle(c.id)}
+                  onChange={(e) => {
+                    e.stopPropagation();
+                    toggle(c.id);
+                  }}
+                  onClick={(e) => e.stopPropagation()}
                 />
                 비교
               </label>
-            </div>
-
-            {c.introduction && (
-              <p className="mt-3 line-clamp-2 text-sm text-neutral-600 dark:text-neutral-400">
-                {c.introduction}
-              </p>
-            )}
-
-            <div className="mt-3 flex flex-wrap gap-1.5">
-              {c.services.slice(0, 4).map((s) => (
-                <span
-                  key={s}
-                  className="rounded-full bg-neutral-100 px-2 py-0.5 text-xs text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300"
-                >
-                  {s}
-                </span>
-              ))}
-            </div>
-
-            <div className="mt-4 flex items-center justify-between border-t border-neutral-100 pt-3 text-xs text-neutral-500 dark:border-neutral-800">
-              <span className={c.avgRating ? "font-medium text-amber-600 dark:text-amber-400" : ""}>
-                {c.avgRating ? `★ ${c.avgRating.toFixed(1)} (${c.reviewCount})` : "후기 없음"}
-              </span>
-              <span>
-                {c.onSiteVisit ? "출장 가능" : ""} {c.courierDrop ? "택배 가능" : ""}
-              </span>
-            </div>
-          </div>
+            }
+          />
         ))}
 
         {companies.length === 0 && (
-          <p className="col-span-2 py-12 text-center text-sm text-neutral-500">
+          <p className="col-span-full py-16 text-center text-sm text-neutral-500">
             검색 결과가 없습니다.
           </p>
         )}
       </div>
 
       {selected.length >= 2 && (
-        <div className="fixed inset-x-0 bottom-0 flex justify-center pb-4">
-          <div className="flex items-center gap-3 rounded-full border border-neutral-200 bg-white px-5 py-3 shadow-lg dark:border-neutral-700 dark:bg-neutral-900">
-            <span className="text-sm text-neutral-600 dark:text-neutral-300">
-              {selected.length}개 선택됨
-            </span>
+        <div className="fixed inset-x-0 bottom-0 z-30 flex justify-center px-4 pb-6 sm:pb-8">
+          <div className="compare-bar-enter flex w-full max-w-xl items-center justify-between gap-4 rounded-2xl border border-neutral-200 bg-white/95 py-3 pl-5 pr-3 shadow-2xl ring-1 ring-black/5 backdrop-blur-md dark:border-neutral-700 dark:bg-neutral-900/95 sm:py-4">
+            <div className="flex items-center gap-2.5">
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                <Scale className="h-4.5 w-4.5" />
+              </span>
+              <div>
+                <p className="text-sm font-bold text-neutral-900 dark:text-neutral-100">
+                  {selected.length}개 업체 선택됨
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setSelected([])}
+                  className="flex items-center gap-0.5 text-xs text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300"
+                >
+                  <X className="h-3 w-3" />
+                  선택 해제
+                </button>
+              </div>
+            </div>
             <Link
               href={`/compare?ids=${selected.join(",")}`}
-              className="rounded-full bg-neutral-900 px-4 py-1.5 text-sm font-medium text-white hover:bg-neutral-700 dark:bg-white dark:text-neutral-900"
+              className="flex shrink-0 items-center gap-1.5 rounded-xl bg-accent px-5 py-3 text-sm font-bold text-accent-foreground shadow-md transition-transform hover:scale-105 sm:px-6 sm:text-base"
             >
               비교하기
+              <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
         </div>

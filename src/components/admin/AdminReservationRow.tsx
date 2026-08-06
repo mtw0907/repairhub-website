@@ -7,6 +7,8 @@ import { RESERVATION_STATUSES } from "@/lib/constants";
 const STATUS_LABEL: Record<string, string> = {
   REQUESTED: "요청됨",
   APPROVED: "승인됨",
+  CONFIRMED: "확정됨",
+  IN_PROGRESS: "수리중",
   CHANGED: "변경됨",
   CANCELED: "취소됨",
   COMPLETED: "완료됨",
@@ -39,9 +41,9 @@ export function AdminReservationRow({
   }
 
   return (
-    <div className="flex items-center justify-between gap-3 rounded-lg border border-neutral-200 bg-white p-3 text-sm dark:border-neutral-800 dark:bg-neutral-900">
+    <div className="flex items-center justify-between gap-3 rounded-xl border border-neutral-200/70 bg-white p-4 text-sm shadow-sm transition-shadow hover:shadow-md dark:border-neutral-800 dark:bg-neutral-900">
       <div>
-        <p className="font-medium text-neutral-900 dark:text-neutral-100">
+        <p className="font-semibold text-neutral-900 dark:text-neutral-100">
           {reservation.companyName} · {reservation.userName}
         </p>
         <p className="text-xs text-neutral-500">
@@ -54,7 +56,7 @@ export function AdminReservationRow({
         value={reservation.status}
         onChange={(e) => handleChange(e.target.value)}
         disabled={loading}
-        className="rounded-md border border-neutral-300 px-2 py-1 text-xs dark:border-neutral-700 dark:bg-neutral-900"
+        className="rounded-lg border border-neutral-200 bg-surface-muted px-2.5 py-1.5 text-xs outline-none focus:border-primary/40 focus:ring-2 focus:ring-primary/10 dark:border-neutral-700 dark:bg-neutral-800"
       >
         {RESERVATION_STATUSES.map((s) => (
           <option key={s} value={s}>

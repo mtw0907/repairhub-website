@@ -52,6 +52,45 @@ export async function runAiCompletion(params: {
   return text;
 }
 
+// Vision variant of runAiCompletion — sends an image (as a data URL, since
+// localhost-served upload URLs aren't reachable by OpenAI's servers) alongside
+// a text prompt. Shares the same client/model/usage-logging/error behavior.
+export async function runAiVisionCompletion(params: {
+  type: string;
+  system: string;
+  userText: string;
+  imageDataUrl: string;
+  userId?: string;
+  json?: boolean;
+}): Promise<string> {
+  const client = await getClient();
+  const model = await getModel();
+
+  const completion = await client.chat.completions.create({
+    model,
+    messages: [
+      { role: "system", content: params.system },
+      {
+        role: "user",
+        content: [
+          { type: "text", text: params.userText },
+          { type: "image_url", image_url: { url: params.imageDataUrl } },
+        ],
+      },
+    ],
+    ...(params.json ? { response_format: { type: "json_object" as const } } : {}),
+  });
+
+  const text = completion.choices[0]?.message?.content ?? "";
+  const tokens = completion.usage?.total_tokens ?? 0;
+
+  await prisma.aiUsageLog.create({
+    data: { userId: params.userId, type: params.type, tokens },
+  });
+
+  return text;
+}
+
 // Maps AiNotConfiguredError to a 503 ("not set up yet", not a real failure)
 // and falls back to the standard RBAC error mapping for everything else
 // (including raw OpenAI API errors, e.g. invalid key -> treated as 502).

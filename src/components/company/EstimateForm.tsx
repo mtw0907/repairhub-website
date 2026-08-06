@@ -44,14 +44,14 @@ export function EstimateForm({ companyId, isUser }: { companyId: string; isUser:
           onChange={(e) => setRequestText(e.target.value)}
           rows={3}
           placeholder="예: 통기타 넥이 휘어서 프렛 버징이 있습니다. 예상 비용이 궁금합니다."
-          className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+          className="w-full rounded-xl border border-neutral-200 bg-surface-muted px-3 py-2.5 text-sm outline-none transition-colors focus:border-primary/40 focus:ring-2 focus:ring-primary/10 dark:border-neutral-700 dark:bg-neutral-800"
         />
       </div>
       {message && <p className="text-sm text-neutral-600 dark:text-neutral-400">{message}</p>}
       <button
         type="submit"
         disabled={loading}
-        className="rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white hover:bg-neutral-700 disabled:opacity-50 dark:bg-white dark:text-neutral-900"
+        className="w-full rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm transition-transform hover:scale-[1.01] hover:bg-primary/90 disabled:opacity-50 disabled:hover:scale-100"
       >
         {loading ? "요청 중..." : "견적 요청하기"}
       </button>

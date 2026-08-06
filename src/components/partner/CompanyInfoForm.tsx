@@ -135,49 +135,49 @@ export function CompanyInfoForm({ initial }: { initial: CompanyInfo }) {
           <input
             value={form.name}
             onChange={(e) => set("name", e.target.value)}
-            className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+            className="w-full rounded-xl border border-neutral-200 bg-surface-muted px-3 py-2.5 text-sm outline-none transition-colors focus:border-primary/40 focus:ring-2 focus:ring-primary/10 dark:border-neutral-700 dark:bg-neutral-800"
           />
         </Field>
         <Field label="대표자">
           <input
             value={form.ownerName}
             onChange={(e) => set("ownerName", e.target.value)}
-            className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+            className="w-full rounded-xl border border-neutral-200 bg-surface-muted px-3 py-2.5 text-sm outline-none transition-colors focus:border-primary/40 focus:ring-2 focus:ring-primary/10 dark:border-neutral-700 dark:bg-neutral-800"
           />
         </Field>
         <Field label="사업자번호">
           <input
             value={form.bizRegNo}
             onChange={(e) => set("bizRegNo", e.target.value)}
-            className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+            className="w-full rounded-xl border border-neutral-200 bg-surface-muted px-3 py-2.5 text-sm outline-none transition-colors focus:border-primary/40 focus:ring-2 focus:ring-primary/10 dark:border-neutral-700 dark:bg-neutral-800"
           />
         </Field>
         <Field label="연락처">
           <input
             value={form.phone}
             onChange={(e) => set("phone", e.target.value)}
-            className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+            className="w-full rounded-xl border border-neutral-200 bg-surface-muted px-3 py-2.5 text-sm outline-none transition-colors focus:border-primary/40 focus:ring-2 focus:ring-primary/10 dark:border-neutral-700 dark:bg-neutral-800"
           />
         </Field>
         <Field label="주소">
           <input
             value={form.address}
             onChange={(e) => set("address", e.target.value)}
-            className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+            className="w-full rounded-xl border border-neutral-200 bg-surface-muted px-3 py-2.5 text-sm outline-none transition-colors focus:border-primary/40 focus:ring-2 focus:ring-primary/10 dark:border-neutral-700 dark:bg-neutral-800"
           />
         </Field>
         <Field label="지역 (검색용, 예: 서울특별시 마포구)">
           <input
             value={form.region}
             onChange={(e) => set("region", e.target.value)}
-            className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+            className="w-full rounded-xl border border-neutral-200 bg-surface-muted px-3 py-2.5 text-sm outline-none transition-colors focus:border-primary/40 focus:ring-2 focus:ring-primary/10 dark:border-neutral-700 dark:bg-neutral-800"
           />
         </Field>
         <Field label="홈페이지">
           <input
             value={form.homepage}
             onChange={(e) => set("homepage", e.target.value)}
-            className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+            className="w-full rounded-xl border border-neutral-200 bg-surface-muted px-3 py-2.5 text-sm outline-none transition-colors focus:border-primary/40 focus:ring-2 focus:ring-primary/10 dark:border-neutral-700 dark:bg-neutral-800"
           />
         </Field>
       </div>
@@ -187,7 +187,7 @@ export function CompanyInfoForm({ initial }: { initial: CompanyInfo }) {
           value={form.introduction}
           onChange={(e) => set("introduction", e.target.value)}
           rows={4}
-          className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+          className="w-full rounded-xl border border-neutral-200 bg-surface-muted px-3 py-2.5 text-sm outline-none transition-colors focus:border-primary/40 focus:ring-2 focus:ring-primary/10 dark:border-neutral-700 dark:bg-neutral-800"
         />
       </Field>
 
@@ -203,14 +203,14 @@ export function CompanyInfoForm({ initial }: { initial: CompanyInfo }) {
               <button
                 type="button"
                 onClick={() => removePhoto(url)}
-                className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-neutral-900 text-xs text-white opacity-0 group-hover:opacity-100 dark:bg-white dark:text-neutral-900"
+                className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs text-primary-foreground opacity-0 group-hover:opacity-100"
                 aria-label="사진 삭제"
               >
                 ×
               </button>
             </div>
           ))}
-          <label className="flex h-20 w-20 cursor-pointer items-center justify-center rounded-md border border-dashed border-neutral-300 text-xs text-neutral-400 hover:bg-neutral-50 dark:border-neutral-700 dark:hover:bg-neutral-900">
+          <label className="flex h-20 w-20 cursor-pointer items-center justify-center rounded-xl border border-dashed border-neutral-300 text-xs text-neutral-400 transition-colors hover:bg-surface-muted dark:border-neutral-700 dark:hover:bg-neutral-800">
             {uploadingPhoto ? "업로드 중..." : "+ 추가"}
             <input
               type="file"
@@ -232,7 +232,7 @@ export function CompanyInfoForm({ initial }: { initial: CompanyInfo }) {
             type="button"
             onClick={handleGenerateSeo}
             disabled={generatingSeo}
-            className="rounded-md border border-neutral-300 px-2 py-1 text-xs hover:bg-neutral-100 disabled:opacity-50 dark:border-neutral-700 dark:hover:bg-neutral-800"
+            className="rounded-lg border border-accent/40 bg-accent/10 px-2.5 py-1.5 text-xs font-medium text-accent-foreground transition-colors hover:bg-accent/20 disabled:opacity-50 dark:text-accent"
           >
             {generatingSeo ? "생성 중..." : "AI로 생성"}
           </button>
@@ -241,7 +241,7 @@ export function CompanyInfoForm({ initial }: { initial: CompanyInfo }) {
           value={form.seoDescription}
           onChange={(e) => set("seoDescription", e.target.value)}
           rows={2}
-          className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+          className="w-full rounded-xl border border-neutral-200 bg-surface-muted px-3 py-2.5 text-sm outline-none transition-colors focus:border-primary/40 focus:ring-2 focus:ring-primary/10 dark:border-neutral-700 dark:bg-neutral-800"
         />
       </div>
 
@@ -252,7 +252,7 @@ export function CompanyInfoForm({ initial }: { initial: CompanyInfo }) {
             onChange={(e) => set("businessHours", e.target.value)}
             rows={3}
             placeholder="예: 평일 10:00-19:00 / 토 10:00-15:00"
-            className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+            className="w-full rounded-xl border border-neutral-200 bg-surface-muted px-3 py-2.5 text-sm outline-none transition-colors focus:border-primary/40 focus:ring-2 focus:ring-primary/10 dark:border-neutral-700 dark:bg-neutral-800"
           />
         </Field>
         <Field label="휴무일 (쉼표로 구분)">
@@ -260,7 +260,7 @@ export function CompanyInfoForm({ initial }: { initial: CompanyInfo }) {
             value={form.closedDays}
             onChange={(e) => set("closedDays", e.target.value)}
             placeholder="예: 일요일, 공휴일"
-            className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+            className="w-full rounded-xl border border-neutral-200 bg-surface-muted px-3 py-2.5 text-sm outline-none transition-colors focus:border-primary/40 focus:ring-2 focus:ring-primary/10 dark:border-neutral-700 dark:bg-neutral-800"
           />
         </Field>
       </div>
@@ -289,7 +289,7 @@ export function CompanyInfoForm({ initial }: { initial: CompanyInfo }) {
       <button
         type="submit"
         disabled={loading}
-        className="rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white hover:bg-neutral-700 disabled:opacity-50 dark:bg-white dark:text-neutral-900"
+        className="rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm transition-transform hover:scale-[1.01] hover:bg-primary/90 disabled:opacity-50 disabled:hover:scale-100"
       >
         {loading ? "저장 중..." : "저장"}
       </button>

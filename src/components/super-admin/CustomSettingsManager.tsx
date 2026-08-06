@@ -41,7 +41,7 @@ export function CustomSettingsManager({
         {settings.map((s) => (
           <li
             key={s.key}
-            className="flex items-center justify-between rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm dark:border-neutral-800 dark:bg-neutral-900"
+            className="flex items-center justify-between rounded-xl border border-neutral-200/70 bg-white px-4 py-2.5 text-sm shadow-sm dark:border-neutral-800 dark:bg-neutral-900"
           >
             <span>
               <span className="font-mono text-xs text-neutral-500">{s.key}</span> = {s.value}
@@ -49,7 +49,7 @@ export function CustomSettingsManager({
             <button
               onClick={() => handleDelete(s.key)}
               disabled={loading}
-              className="text-xs text-red-600 hover:underline"
+              className="text-xs font-medium text-red-600 hover:underline"
             >
               삭제
             </button>
@@ -64,18 +64,18 @@ export function CustomSettingsManager({
           value={key}
           onChange={(e) => setKey(e.target.value)}
           placeholder="KEY"
-          className="w-1/3 rounded-md border border-neutral-300 px-3 py-1.5 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+          className="w-1/3 rounded-xl border border-neutral-200 bg-surface-muted px-3 py-2 text-sm outline-none focus:border-primary/40 focus:ring-2 focus:ring-primary/10 dark:border-neutral-700 dark:bg-neutral-800"
         />
         <input
           value={value}
           onChange={(e) => setValue(e.target.value)}
           placeholder="value"
-          className="flex-1 rounded-md border border-neutral-300 px-3 py-1.5 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+          className="flex-1 rounded-xl border border-neutral-200 bg-surface-muted px-3 py-2 text-sm outline-none focus:border-primary/40 focus:ring-2 focus:ring-primary/10 dark:border-neutral-700 dark:bg-neutral-800"
         />
         <button
           type="submit"
           disabled={loading}
-          className="rounded-md border border-neutral-300 px-3 py-1.5 text-sm hover:bg-neutral-100 disabled:opacity-50 dark:border-neutral-700 dark:hover:bg-neutral-800"
+          className="rounded-xl border border-neutral-300 px-4 py-2 text-sm font-medium transition-colors hover:bg-neutral-100 disabled:opacity-50 dark:border-neutral-700 dark:hover:bg-neutral-800"
         >
           추가
         </button>

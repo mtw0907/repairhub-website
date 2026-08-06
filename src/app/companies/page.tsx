@@ -1,6 +1,12 @@
 import { SiteHeader } from "@/components/SiteHeader";
-import { CompanyResults } from "@/components/company/CompanyResults";
+import { CompanySearchView } from "@/components/company/search/CompanySearchView";
+import type { CompanySummary } from "@/components/company/CompanyCard";
 import { prisma } from "@/lib/prisma";
+import { auth } from "@/lib/auth";
+import { getSetting } from "@/lib/systemSettings";
+import { getOpenStatus, getTodaySlots } from "@/lib/businessHours";
+import { haversineDistanceKm, DEFAULT_MAP_CENTER } from "@/lib/geo";
+import type { ReservationStatus } from "@/lib/constants";
 
 export default async function CompaniesPage({
   searchParams,
@@ -8,34 +14,92 @@ export default async function CompaniesPage({
   searchParams: Promise<{ keyword?: string; region?: string }>;
 }) {
   const { keyword, region } = await searchParams;
+  const session = await auth();
+  const isUser = session?.user?.role === "USER";
 
-  const companies = await prisma.company.findMany({
-    where: {
-      status: "APPROVED",
-      ...(keyword
-        ? {
-            OR: [
-              { name: { contains: keyword } },
-              { introduction: { contains: keyword } },
-              { services: { some: { name: { contains: keyword } } } },
-              { brands: { some: { name: { contains: keyword } } } },
-            ],
-          }
-        : {}),
-      ...(region ? { region: { contains: region } } : {}),
-    },
-    include: {
-      services: true,
-      brands: true,
-      reviews: { where: { status: "VISIBLE" }, select: { rating: true } },
-    },
-    orderBy: [{ isFeatured: "desc" }, { isPremium: "desc" }, { createdAt: "desc" }],
-  });
+  const now = new Date();
+  const startOfToday = new Date(now);
+  startOfToday.setHours(0, 0, 0, 0);
+  const endOfToday = new Date(startOfToday);
+  endOfToday.setDate(endOfToday.getDate() + 1);
 
-  const results = companies.map((c) => {
+  const [companies, favorites, activeReservations, kakaoMapKey] = await Promise.all([
+    prisma.company.findMany({
+      where: {
+        status: "APPROVED",
+        ...(keyword
+          ? {
+              OR: [
+                { name: { contains: keyword } },
+                { introduction: { contains: keyword } },
+                { services: { some: { name: { contains: keyword } } } },
+                { brands: { some: { name: { contains: keyword } } } },
+              ],
+            }
+          : {}),
+        ...(region ? { region: { contains: region } } : {}),
+      },
+      include: {
+        services: true,
+        brands: true,
+        reviews: { where: { status: "VISIBLE" }, select: { rating: true } },
+        priceItems: { select: { price: true } },
+        estimates: { select: { status: true } },
+        reservations: {
+          where: { scheduledAt: { gte: startOfToday, lt: endOfToday } },
+          select: { scheduledAt: true },
+        },
+      },
+      orderBy: [{ isFeatured: "desc" }, { isPremium: "desc" }, { createdAt: "desc" }],
+    }),
+    isUser
+      ? prisma.favorite.findMany({
+          where: { userId: session!.user.id },
+          select: { companyId: true },
+        })
+      : Promise.resolve([]),
+    isUser
+      ? prisma.reservation.findMany({
+          where: { userId: session!.user.id, status: { notIn: ["CANCELED", "COMPLETED", "NO_SHOW"] } },
+          select: { companyId: true, status: true },
+          orderBy: { createdAt: "desc" },
+        })
+      : Promise.resolve([]),
+    getSetting("KAKAO_MAP_JS_KEY"),
+  ]);
+
+  const favoritedIds = favorites.map((f) => f.companyId);
+
+  const reservationByCompany = new Map<string, ReservationStatus>();
+  for (const r of activeReservations) {
+    if (!reservationByCompany.has(r.companyId)) {
+      reservationByCompany.set(r.companyId, r.status as ReservationStatus);
+    }
+  }
+
+  const scored = companies.map((c) => {
     const reviewCount = c.reviews.length;
     const avgRating =
       reviewCount > 0 ? c.reviews.reduce((sum, r) => sum + r.rating, 0) / reviewCount : null;
+    const photos: string[] = c.photos ? JSON.parse(c.photos) : [];
+    const prices = c.priceItems.map((p) => p.price);
+    const priceRange = prices.length > 0 ? { min: Math.min(...prices), max: Math.max(...prices) } : null;
+
+    const openStatus = getOpenStatus(c.businessHours, c.closedDays, now);
+    const bookedTimes = c.reservations
+      .map((r) => (r.scheduledAt ? new Date(r.scheduledAt).toTimeString().slice(0, 5) : null))
+      .filter((t): t is string => t !== null);
+    const todaySlots = getTodaySlots(c.businessHours, c.closedDays, bookedTimes, now);
+
+    const estimateTotal = c.estimates.length;
+    const estimateAnswered = c.estimates.filter((e) => e.status === "ANSWERED").length;
+    const responseRate = estimateTotal > 0 ? estimateAnswered / estimateTotal : 0;
+
+    const distanceFromCenter =
+      c.latitude != null && c.longitude != null
+        ? haversineDistanceKm(DEFAULT_MAP_CENTER.lat, DEFAULT_MAP_CENTER.lng, c.latitude, c.longitude)
+        : null;
+
     return {
       id: c.id,
       name: c.name,
@@ -49,45 +113,57 @@ export default async function CompaniesPage({
       avgRating,
       reviewCount,
       logoUrl: c.logoUrl,
+      photoUrl: photos[0] ?? null,
       isPremium: c.isPremium,
       isFeatured: c.isFeatured,
+      status: c.status,
+      lat: c.latitude,
+      lng: c.longitude,
+      openStatus: openStatus.status === "UNKNOWN" ? null : openStatus,
+      todaySlots,
+      priceRange,
+      reservationStatus: reservationByCompany.get(c.id) ?? null,
+      responseRate,
+      distanceFromCenter,
     };
   });
 
+  const knownDistances = scored
+    .map((c) => c.distanceFromCenter)
+    .filter((d): d is number => d !== null);
+  const minDistance = knownDistances.length > 0 ? Math.min(...knownDistances) : null;
+
+  const results: CompanySummary[] = scored.map((c) => {
+    const reasons: string[] = [];
+    if (minDistance !== null && c.distanceFromCenter === minDistance) reasons.push("가장 가까운 업체");
+    if (c.avgRating != null && c.avgRating >= 4.5) reasons.push("평점이 높은 업체");
+    if (c.responseRate >= 0.7) reasons.push("응답속도가 빠른 업체");
+    if (keyword) {
+      const kw = keyword.toLowerCase();
+      if (c.brands.some((b) => b.toLowerCase().includes(kw))) {
+        reasons.push(`${keyword} 브랜드 전문`);
+      }
+    }
+
+    const { responseRate: _responseRate, distanceFromCenter: _distanceFromCenter, ...rest } = c;
+    return { ...rest, aiRecommendReasons: reasons.length > 0 ? reasons : null };
+  });
+
   return (
-    <div className="flex flex-1 flex-col">
+    <div className="flex flex-1 flex-col bg-surface-muted">
       <SiteHeader />
-      <main className="mx-auto w-full max-w-5xl flex-1 px-6 py-8">
-        <h1 className="mb-6 text-2xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100">
-          수리업체 검색
+      <main className="mx-auto w-full max-w-[1600px] flex-1 px-4 py-6 sm:px-6 sm:py-8">
+        <h1 className="mb-5 text-2xl font-extrabold tracking-tight text-primary dark:text-neutral-100 sm:text-3xl">
+          수리업체 찾기
         </h1>
 
-        <form className="mb-8 flex flex-wrap gap-2 rounded-xl border border-neutral-200 bg-white p-2 shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
-          <input
-            type="text"
-            name="keyword"
-            defaultValue={keyword}
-            placeholder="업체명, 브랜드, 서비스로 검색"
-            className="flex-1 min-w-[200px] rounded-lg border-0 bg-transparent px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand/40"
-          />
-          <input
-            type="text"
-            name="region"
-            defaultValue={region}
-            placeholder="지역 (예: 서울특별시)"
-            className="w-48 rounded-lg border-0 bg-transparent px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand/40"
-          />
-          <button
-            type="submit"
-            className="rounded-lg bg-neutral-900 px-5 py-2.5 text-sm font-medium text-white hover:bg-neutral-700 dark:bg-white dark:text-neutral-900"
-          >
-            검색
-          </button>
-        </form>
-
-        <p className="mb-4 text-sm text-neutral-500">총 {results.length}개 업체</p>
-
-        <CompanyResults companies={results} />
+        <CompanySearchView
+          companies={results}
+          favoritedIds={favoritedIds}
+          isUser={isUser}
+          kakaoMapKey={kakaoMapKey}
+          initialKeyword={keyword ?? ""}
+        />
       </main>
     </div>
   );

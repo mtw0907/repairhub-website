@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireRole, toErrorResponse, ForbiddenError } from "@/lib/rbac";
+import { notify } from "@/lib/notify";
 
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -20,6 +21,12 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
     const updated = await prisma.review.update({
       where: { id },
       data: { partnerReply },
+    });
+
+    await notify(review.userId, {
+      type: "REVIEW_REPLY",
+      title: "내 리뷰에 업체가 답글을 남겼습니다",
+      link: `/companies/${review.companyId}`,
     });
 
     return NextResponse.json(updated);

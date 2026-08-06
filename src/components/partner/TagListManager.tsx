@@ -45,14 +45,14 @@ export function TagListManager({
 
   return (
     <div>
-      <h3 className="mb-2 text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+      <h3 className="mb-2.5 text-sm font-bold text-neutral-900 dark:text-neutral-100">
         {title}
       </h3>
       <div className="mb-3 flex flex-wrap gap-1.5">
         {items.map((item) => (
           <span
             key={item.id}
-            className="flex items-center gap-1.5 rounded-full bg-neutral-100 px-2.5 py-1 text-xs text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300"
+            className="flex items-center gap-1.5 rounded-full bg-surface-muted px-2.5 py-1 text-xs text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300"
           >
             {item.name}
             <button
@@ -72,12 +72,12 @@ export function TagListManager({
           value={value}
           onChange={(e) => setValue(e.target.value)}
           placeholder={placeholder}
-          className="flex-1 rounded-md border border-neutral-300 px-3 py-1.5 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+          className="flex-1 rounded-xl border border-neutral-200 bg-surface-muted px-3 py-2 text-sm outline-none focus:border-primary/40 focus:ring-2 focus:ring-primary/10 dark:border-neutral-700 dark:bg-neutral-800"
         />
         <button
           type="submit"
           disabled={loading}
-          className="rounded-md border border-neutral-300 px-3 py-1.5 text-sm hover:bg-neutral-100 disabled:opacity-50 dark:border-neutral-700 dark:hover:bg-neutral-800"
+          className="rounded-xl border border-neutral-300 px-4 py-2 text-sm font-medium transition-colors hover:bg-neutral-100 disabled:opacity-50 dark:border-neutral-700 dark:hover:bg-neutral-800"
         >
           추가
         </button>

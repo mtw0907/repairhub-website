@@ -15,24 +15,36 @@ async function seedCompany(data: {
   introduction: string;
   onSiteVisit: boolean;
   courierDrop: boolean;
+  latitude: number;
+  longitude: number;
+  businessHours: Record<string, string>;
+  closedDays: string[];
   services: string[];
   brands: string[];
   prices: { label: string; price: number }[];
 }) {
+  const shared = {
+    name: data.name,
+    ownerName: data.ownerName,
+    address: data.address,
+    region: data.region,
+    phone: data.phone,
+    introduction: data.introduction,
+    onSiteVisit: data.onSiteVisit,
+    courierDrop: data.courierDrop,
+    latitude: data.latitude,
+    longitude: data.longitude,
+    businessHours: JSON.stringify(data.businessHours),
+    closedDays: JSON.stringify(data.closedDays),
+  };
+
   const company = await prisma.company.upsert({
     where: { id: data.id },
-    update: {},
+    update: shared,
     create: {
       id: data.id,
-      name: data.name,
-      ownerName: data.ownerName,
-      address: data.address,
-      region: data.region,
-      phone: data.phone,
-      introduction: data.introduction,
       status: "APPROVED",
-      onSiteVisit: data.onSiteVisit,
-      courierDrop: data.courierDrop,
+      ...shared,
     },
   });
 
@@ -92,6 +104,17 @@ async function main() {
     introduction: "기타/베이스/앰프 전문 수리업체입니다.",
     onSiteVisit: true,
     courierDrop: true,
+    latitude: 37.568,
+    longitude: 126.9014,
+    businessHours: {
+      mon: "10:00-19:00",
+      tue: "10:00-19:00",
+      wed: "10:00-19:00",
+      thu: "10:00-19:00",
+      fri: "10:00-19:00",
+      sat: "11:00-17:00",
+    },
+    closedDays: ["sun"],
     services: ["기타 수리", "베이스 수리", "앰프 수리", "프렛 작업"],
     brands: ["Fender", "Gibson", "Marshall"],
     prices: [
@@ -111,6 +134,17 @@ async function main() {
     introduction: "스피커/앰프/믹서 등 음향기기 전문 수리업체입니다.",
     onSiteVisit: true,
     courierDrop: true,
+    latitude: 37.5,
+    longitude: 127.0364,
+    businessHours: {
+      mon: "09:00-20:00",
+      tue: "09:00-20:00",
+      wed: "09:00-20:00",
+      thu: "09:00-20:00",
+      fri: "09:00-20:00",
+      sat: "09:00-20:00",
+    },
+    closedDays: ["sun"],
     services: ["스피커 수리", "믹서 수리", "앰프 수리"],
     brands: ["JBL", "Yamaha", "QSC"],
     prices: [
@@ -129,6 +163,17 @@ async function main() {
     introduction: "드럼/타악기 전문 수리 및 튜닝 업체입니다.",
     onSiteVisit: false,
     courierDrop: true,
+    latitude: 35.1691,
+    longitude: 129.1306,
+    businessHours: {
+      tue: "10:00-19:00",
+      wed: "10:00-19:00",
+      thu: "10:00-19:00",
+      fri: "10:00-19:00",
+      sat: "10:00-19:00",
+      sun: "10:00-19:00",
+    },
+    closedDays: ["mon"],
     services: ["드럼 수리", "헤드 교체", "튜닝"],
     brands: ["Pearl", "Tama", "Yamaha"],
     prices: [

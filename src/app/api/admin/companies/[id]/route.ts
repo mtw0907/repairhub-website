@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireRole, toErrorResponse } from "@/lib/rbac";
 import { COMPANY_STATUSES } from "@/lib/constants";
+import { notifyCompanyOwners } from "@/lib/notify";
 
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -22,6 +23,14 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
         ...(isFeatured !== undefined ? { isFeatured } : {}),
       },
     });
+
+    if (status === "APPROVED") {
+      await notifyCompanyOwners(id, {
+        type: "COMPANY_APPROVED",
+        title: "업체 가입이 승인됐습니다",
+        link: "/partner/dashboard",
+      });
+    }
 
     return NextResponse.json(updated);
   } catch (error) {

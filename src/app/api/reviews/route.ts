@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireRole, toErrorResponse } from "@/lib/rbac";
+import { notifyCompanyOwners } from "@/lib/notify";
 
 export async function POST(req: Request) {
   try {
@@ -25,6 +26,12 @@ export async function POST(req: Request) {
         content,
         photos: Array.isArray(photos) && photos.length > 0 ? JSON.stringify(photos) : null,
       },
+    });
+
+    await notifyCompanyOwners(companyId, {
+      type: "NEW_REVIEW",
+      title: "새 리뷰가 등록됐습니다",
+      link: "/partner/dashboard/reviews",
     });
 
     return NextResponse.json(review, { status: 201 });

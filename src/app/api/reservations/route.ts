@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireRole, toErrorResponse } from "@/lib/rbac";
+import { notifyCompanyOwners } from "@/lib/notify";
 
 export async function POST(req: Request) {
   try {
@@ -17,7 +18,14 @@ export async function POST(req: Request) {
         scheduledAt: scheduledAt ? new Date(scheduledAt) : null,
         memo: memo || null,
         status: "REQUESTED",
+        statusLogs: { create: { status: "REQUESTED" } },
       },
+    });
+
+    await notifyCompanyOwners(companyId, {
+      type: "NEW_RESERVATION",
+      title: "새 예약 요청이 도착했습니다",
+      link: "/partner/dashboard/reservations",
     });
 
     return NextResponse.json(reservation, { status: 201 });

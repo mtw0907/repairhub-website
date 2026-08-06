@@ -14,7 +14,7 @@ function FailContent() {
       <p className="text-sm text-amber-700 dark:text-amber-400">{message}</p>
       <Link
         href="/partner/dashboard/subscription"
-        className="mt-2 rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white hover:bg-neutral-700 dark:bg-white dark:text-neutral-900"
+        className="mt-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm transition-transform hover:scale-[1.02] hover:bg-primary/90"
       >
         구독 관리로 이동
       </Link>

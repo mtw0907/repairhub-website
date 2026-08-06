@@ -1,7 +1,6 @@
-import Link from "next/link";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { SignOutButton } from "@/components/SignOutButton";
+import { StaffPageHeader } from "@/components/StaffPageHeader";
 import { CompanyInfoForm } from "@/components/partner/CompanyInfoForm";
 import { TagListManager } from "@/components/partner/TagListManager";
 import { PriceItemManager } from "@/components/partner/PriceItemManager";
@@ -16,16 +15,11 @@ export default async function PartnerCompanyPage() {
   });
 
   return (
-    <div className="min-h-full bg-neutral-50 dark:bg-neutral-950">
-      <header className="flex items-center justify-between border-b border-neutral-200 bg-white px-6 py-4 dark:border-neutral-800 dark:bg-neutral-900">
-        <Link href="/partner/dashboard" className="text-sm text-neutral-500 hover:underline">
-          ← 대시보드로
-        </Link>
-        <SignOutButton />
-      </header>
-      <main className="mx-auto max-w-2xl space-y-10 px-6 py-8">
+    <div className="min-h-full bg-surface-muted">
+      <StaffPageHeader backHref="/partner/dashboard" />
+      <main className="mx-auto max-w-2xl space-y-10 px-4 py-8 sm:px-6 sm:py-10">
         <div>
-          <h1 className="mb-6 text-lg font-semibold text-neutral-900 dark:text-neutral-100">
+          <h1 className="mb-6 text-2xl font-extrabold tracking-tight text-primary dark:text-neutral-100">
             업체 정보 수정
           </h1>
           <CompanyInfoForm
@@ -50,7 +44,7 @@ export default async function PartnerCompanyPage() {
         </div>
 
         <div>
-          <h2 className="mb-4 text-lg font-semibold text-neutral-900 dark:text-neutral-100">
+          <h2 className="mb-4 text-xl font-bold text-neutral-900 dark:text-neutral-100">
             서비스 관리
           </h2>
           <div className="space-y-6">

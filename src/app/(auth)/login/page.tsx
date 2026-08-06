@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { signIn, getSession } from "next-auth/react";
 import { ROLE_DASHBOARD_PATH, type Role } from "@/lib/constants";
+import { OAuthButtons } from "@/components/auth/OAuthButtons";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -62,9 +63,14 @@ export default function LoginPage() {
             />
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">
-              비밀번호
-            </label>
+            <div className="mb-1 flex items-center justify-between">
+              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300">
+                비밀번호
+              </label>
+              <Link href="/forgot-password" className="text-xs text-neutral-500 underline underline-offset-2">
+                비밀번호를 잊으셨나요?
+              </Link>
+            </div>
             <input
               type="password"
               required
@@ -84,6 +90,8 @@ export default function LoginPage() {
             {loading ? "로그인 중..." : "로그인"}
           </button>
         </form>
+
+        <OAuthButtons />
 
         <p className="text-center text-sm text-neutral-500">
           계정이 없으신가요?{" "}

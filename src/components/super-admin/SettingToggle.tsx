@@ -34,9 +34,9 @@ export function SettingToggle({
   }
 
   return (
-    <div className="flex items-center justify-between rounded-lg border border-neutral-200 p-3 dark:border-neutral-800">
+    <div className="flex items-center justify-between rounded-2xl border border-neutral-200/70 bg-white p-4 shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
       <div>
-        <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">{label}</p>
+        <p className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">{label}</p>
         <p className="text-xs text-neutral-500">{description}</p>
       </div>
       <button
@@ -44,8 +44,8 @@ export function SettingToggle({
         disabled={loading}
         className={
           checked
-            ? "rounded-full bg-neutral-900 px-3 py-1 text-xs font-medium text-white disabled:opacity-50 dark:bg-white dark:text-neutral-900"
-            : "rounded-full border border-neutral-300 px-3 py-1 text-xs disabled:opacity-50 dark:border-neutral-700"
+            ? "rounded-full bg-primary px-3.5 py-1.5 text-xs font-semibold text-primary-foreground disabled:opacity-50"
+            : "rounded-full border border-neutral-300 px-3.5 py-1.5 text-xs font-medium text-neutral-500 disabled:opacity-50 dark:border-neutral-700"
         }
       >
         {checked ? "ON" : "OFF"}

@@ -77,7 +77,7 @@ export function WorkCaseForm() {
   }
 
   return (
-    <div className="space-y-3 rounded-lg border border-neutral-200 p-4 dark:border-neutral-800">
+    <div className="space-y-3 rounded-2xl border border-neutral-200/70 bg-white p-4 shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
       <div>
         <label className="mb-1 block text-xs font-medium text-neutral-500">
           작업 메모 (AI 초안 생성용, 선택)
@@ -88,13 +88,13 @@ export function WorkCaseForm() {
             onChange={(e) => setNotes(e.target.value)}
             rows={2}
             placeholder="예: 깁슨 레스폴, 넥 각도 문제로 리셋 작업, 3시간 소요"
-            className="flex-1 rounded-md border border-neutral-300 px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+            className="flex-1 rounded-xl border border-neutral-200 bg-surface-muted px-3 py-2.5 text-sm outline-none transition-colors focus:border-primary/40 focus:ring-2 focus:ring-primary/10 dark:border-neutral-700 dark:bg-neutral-800"
           />
           <button
             type="button"
             onClick={handleGenerate}
             disabled={generating || !notes.trim()}
-            className="whitespace-nowrap rounded-md border border-neutral-300 px-3 py-2 text-sm hover:bg-neutral-100 disabled:opacity-50 dark:border-neutral-700 dark:hover:bg-neutral-800"
+            className="whitespace-nowrap rounded-xl border border-accent/40 bg-accent/10 px-3 py-2.5 text-sm font-medium text-accent-foreground transition-colors hover:bg-accent/20 disabled:opacity-50 dark:text-accent"
           >
             {generating ? "생성 중..." : "AI로 제목/내용/SEO 생성"}
           </button>
@@ -107,7 +107,7 @@ export function WorkCaseForm() {
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="제목"
-          className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+          className="w-full rounded-xl border border-neutral-200 bg-surface-muted px-3 py-2.5 text-sm outline-none transition-colors focus:border-primary/40 focus:ring-2 focus:ring-primary/10 dark:border-neutral-700 dark:bg-neutral-800"
         />
         <textarea
           required
@@ -115,20 +115,20 @@ export function WorkCaseForm() {
           onChange={(e) => setContent(e.target.value)}
           rows={4}
           placeholder="작업 내용을 설명해주세요"
-          className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+          className="w-full rounded-xl border border-neutral-200 bg-surface-muted px-3 py-2.5 text-sm outline-none transition-colors focus:border-primary/40 focus:ring-2 focus:ring-primary/10 dark:border-neutral-700 dark:bg-neutral-800"
         />
         {seoDescription && (
-          <p className="rounded-md bg-neutral-50 p-2 text-xs text-neutral-500 dark:bg-neutral-800">
+          <p className="rounded-xl bg-surface-muted p-3 text-xs text-neutral-500 dark:bg-neutral-800">
             SEO 요약: {seoDescription}
           </p>
         )}
         <div>
-          <input type="file" accept="image/*" onChange={handleFileChange} disabled={uploading} />
+          <input type="file" accept="image/*" onChange={handleFileChange} disabled={uploading} className="text-sm" />
           {photos.length > 0 && (
             <div className="mt-2 flex flex-wrap gap-2">
               {photos.map((url) => (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img key={url} src={url} alt="작업사례 사진" className="h-16 w-16 rounded object-cover" />
+                <img key={url} src={url} alt="작업사례 사진" className="h-16 w-16 rounded-lg object-cover" />
               ))}
             </div>
           )}
@@ -137,7 +137,7 @@ export function WorkCaseForm() {
         <button
           type="submit"
           disabled={submitting || uploading}
-          className="rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white hover:bg-neutral-700 disabled:opacity-50 dark:bg-white dark:text-neutral-900"
+          className="rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm transition-transform hover:scale-[1.01] hover:bg-primary/90 disabled:opacity-50 disabled:hover:scale-100"
         >
           {submitting ? "등록 중..." : "작업사례 등록"}
         </button>

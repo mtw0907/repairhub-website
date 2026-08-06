@@ -4,7 +4,7 @@ import { useState } from "react";
 
 type Message = { role: "user" | "assistant"; content: string };
 
-export function AiChatWidget({ mode }: { mode?: "partner" }) {
+export function AiChatWidget({ mode, compact }: { mode?: "partner"; compact?: boolean }) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -35,15 +35,20 @@ export function AiChatWidget({ mode }: { mode?: "partner" }) {
   }
 
   return (
-    <div className="flex h-[500px] flex-col rounded-lg border border-neutral-200 dark:border-neutral-800">
+    <div
+      className={
+        (compact ? "flex h-[320px] flex-col" : "flex h-[500px] flex-col") +
+        " rounded-2xl border border-neutral-200/70 bg-white dark:border-neutral-800 dark:bg-neutral-900"
+      }
+    >
       <div className="flex-1 space-y-3 overflow-y-auto p-4">
         {messages.map((m, i) => (
           <div
             key={i}
             className={
               m.role === "user"
-                ? "ml-auto max-w-[80%] whitespace-pre-line rounded-lg bg-neutral-900 px-3 py-2 text-sm text-white dark:bg-white dark:text-neutral-900"
-                : "mr-auto max-w-[80%] whitespace-pre-line rounded-lg bg-neutral-100 px-3 py-2 text-sm text-neutral-800 dark:bg-neutral-800 dark:text-neutral-200"
+                ? "ml-auto max-w-[80%] whitespace-pre-line rounded-2xl bg-primary px-3.5 py-2 text-sm text-primary-foreground"
+                : "mr-auto max-w-[80%] whitespace-pre-line rounded-2xl bg-surface-muted px-3.5 py-2 text-sm text-neutral-800 dark:bg-neutral-800 dark:text-neutral-200"
             }
           >
             {m.content}
@@ -54,17 +59,17 @@ export function AiChatWidget({ mode }: { mode?: "partner" }) {
         )}
         {error && <p className="text-sm text-amber-700 dark:text-amber-400">{error}</p>}
       </div>
-      <form onSubmit={handleSubmit} className="flex gap-2 border-t border-neutral-200 p-3 dark:border-neutral-800">
+      <form onSubmit={handleSubmit} className="flex gap-2 border-t border-neutral-100 p-3 dark:border-neutral-800">
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="메시지를 입력하세요"
-          className="flex-1 rounded-md border border-neutral-300 px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+          className="flex-1 rounded-xl border border-neutral-200 bg-surface-muted px-3 py-2 text-sm outline-none transition-colors focus:border-primary/40 focus:ring-2 focus:ring-primary/10 dark:border-neutral-700 dark:bg-neutral-800"
         />
         <button
           type="submit"
           disabled={loading}
-          className="rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white hover:bg-neutral-700 disabled:opacity-50 dark:bg-white dark:text-neutral-900"
+          className="rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-sm transition-transform hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
         >
           {loading ? "..." : "전송"}
         </button>

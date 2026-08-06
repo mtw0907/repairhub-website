@@ -19,7 +19,7 @@ datasource db {
 model User {
   id        String   @id @default(cuid())
   email     String   @unique
-  password  String
+  password  String?
   name      String
   phone     String?
   role      String   @default("USER")
@@ -33,6 +33,7 @@ model User {
 
   reservations      Reservation[]
   estimates         Estimate[]
+  repairRequests    RepairRequest[]
   reviews           Review[]
   favorites         Favorite[]
   recentViews       RecentView[]
@@ -41,6 +42,7 @@ model User {
   adminActivityLogs AdminActivityLog[]
   aiUsageLogs       AiUsageLog[]
   payments          Payment[]
+  notifications     Notification[]
 
   @@index([role])
 }
@@ -62,6 +64,10 @@ model Company {
   photos        String? // JSON array of photo URLs
   businessHours String? // JSON: { mon: "10:00-19:00", ... }
   closedDays    String? // JSON array e.g. ["SUN"]
+  latitude      Float?
+  longitude     Float?
+  certificateUrl String? // 사업자등록증 이미지 URL (자기가입 시 제출)
+  aiVerificationResult String? // JSON: AI 1차 검토 결과 (참고용, 최종 승인은 관리자가 함) — {ok:true,...} | {ok:false,reason}
   status        String   @default("UNVERIFIED")
   isPremium     Boolean  @default(false)
   isFeatured    Boolean  @default(false)
@@ -84,6 +90,7 @@ model Company {
   ads           Ad[]
   subscriptions Subscription[]
   workCases     WorkCase[]
+  quotes        Quote[]
 
   @@index([status])
   @@index([region])
@@ -120,22 +127,43 @@ model PriceItem {
   @@index([companyId])
 }
 
-// status: REQUESTED | APPROVED | CHANGED | CANCELED | COMPLETED | NO_SHOW
+// status: REQUESTED | APPROVED | CONFIRMED | IN_PROGRESS | CHANGED | CANCELED | COMPLETED | NO_SHOW
 model Reservation {
-  id          String    @id @default(cuid())
-  userId      String
-  user        User      @relation(fields: [userId], references: [id])
-  companyId   String
-  company     Company   @relation(fields: [companyId], references: [id])
-  status      String    @default("REQUESTED")
-  scheduledAt DateTime?
-  memo        String? // 파트너 예약 메모
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id            String    @id @default(cuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id])
+  companyId     String
+  company       Company   @relation(fields: [companyId], references: [id])
+  status        String    @default("REQUESTED")
+  scheduledAt   DateTime?
+  memo          String? // 파트너 예약 메모
+  notifyEnabled Boolean   @default(true) // 예약 관련 인앱 알림 수신 여부
+  completedAmount Int? // COMPLETED 처리 시 파트너가 직접 입력하는 실 청구 금액 (매출 집계용, 결제 연동 아님)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  statusLogs ReservationStatusLog[]
+
+  // Set when this reservation originated from an AI repair-match quote.
+  quoteId         String? @unique
+  quote           Quote?  @relation(fields: [quoteId], references: [id])
+  repairRequestId String?
 
   @@index([userId])
   @@index([companyId])
   @@index([status])
+  @@index([repairRequestId])
+}
+
+// 예약 상태가 바뀔 때마다 기록되는 이력 (단계별 진행 화면에서 정확한 시각 표시용)
+model ReservationStatusLog {
+  id            String      @id @default(cuid())
+  reservationId String
+  reservation   Reservation @relation(fields: [reservationId], references: [id], onDelete: Cascade)
+  status        String
+  createdAt     DateTime    @default(now())
+
+  @@index([reservationId])
 }
 
 // status: REQUESTED | ANSWERED | CLOSED
@@ -152,6 +180,59 @@ model Estimate {
   updatedAt DateTime @updatedAt
 
   @@index([userId])
+  @@index([companyId])
+}
+
+// AI 수리 견적 매칭 시스템: 증상 입력 → AI 분석 → 지역 기반 업체 매칭 → 견적 비교 → 예약.
+// status: SUBMITTED | ANALYZED | MATCHING | QUOTED | RESERVED | CLOSED
+model RepairRequest {
+  id        String @id @default(cuid())
+  userId    String
+  user      User   @relation(fields: [userId], references: [id])
+  category  String // INSTRUMENT | AUDIO_EQUIPMENT
+  instrument String // 기타/베이스/피아노/바이올린/드럼/관악기/앰프/스피커/믹서/마이크/오디오인터페이스
+  brand     String?
+  symptom   String
+  photos    String? // JSON array of photo URLs
+  videos    String? // JSON array of video URLs
+  aiResult  String? // JSON: {causes:[{rank,label,description}], priceMin, priceMax, specialties:string[]}
+
+  // 업체 매칭 설정 (Step 4) — regionScope: DONG | GU | SI
+  regionScope String?
+  regionValue String?
+  filters     String? // JSON: {onSiteOnly, sameDayOnly, brandSpecialist, instrumentSpecialist, highRatedOnly}
+
+  matchedCompanyIds String? // JSON array of Company.id selected by the matching algorithm (max 5)
+  status            String  @default("SUBMITTED")
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  quotes Quote[]
+
+  @@index([userId])
+  @@index([status])
+}
+
+// status: PENDING | ACCEPTED | DECLINED
+model Quote {
+  id              String        @id @default(cuid())
+  repairRequestId String
+  repairRequest   RepairRequest @relation(fields: [repairRequestId], references: [id])
+  companyId       String
+  company         Company       @relation(fields: [companyId], references: [id])
+  price           Int
+  duration        String // 자유 기재, 예: "2~3일"
+  availableDate   DateTime?
+  onSiteAvailable Boolean       @default(false)
+  message         String?
+  status          String        @default("PENDING")
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  reservation Reservation?
+
+  @@unique([repairRequestId, companyId])
+  @@index([repairRequestId])
   @@index([companyId])
 }
 
@@ -336,9 +417,11 @@ model Payment {
   @@index([userId])
 }
 
-// type: DIAGNOSIS | RECOMMENDATION | COST_ESTIMATE | CHATBOT | BLOG | AD_COPY |
+// type: DIAGNOSIS(레거시) | RECOMMENDATION(레거시) | COST_ESTIMATE(레거시) | CHATBOT | BLOG | AD_COPY |
 //       WORK_CASE | REVIEW_REPLY | FAQ | CUSTOMER_CHAT | SEO | MODERATION |
-//       REPORT_CLASSIFY | OPS_REPORT | INQUIRY_CLASSIFY
+//       REPORT_CLASSIFY | OPS_REPORT | INQUIRY_CLASSIFY | REPAIR_MATCH_ANALYSIS
+// DIAGNOSIS/RECOMMENDATION/COST_ESTIMATE는 AI 수리 견적 매칭 시스템으로 대체되어
+// 더 이상 새로 생성되지 않지만, 과거 로그 데이터 보존을 위해 값 자체는 유지한다.
 model AiUsageLog {
   id        String   @id @default(cuid())
   userId    String?
@@ -368,6 +451,25 @@ model SystemSetting {
   updatedAt DateTime @updatedAt
 }
 
+// type: RESERVATION_STATUS | NEW_QUOTE | REVIEW_REPLY | INQUIRY_ANSWERED |
+//       NEW_RESERVATION | RESERVATION_CHANGED | NEW_REVIEW | NEW_INQUIRY |
+//       REPAIR_REQUEST_MATCHED | COMPANY_APPROVED | PARTNER_SIGNUP |
+//       REPORT_FILED | ADMIN_ACCOUNT_CHANGED | DB_BACKUP_EVENT
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String
+  title     String
+  body      String?
+  link      String? // in-app path to navigate to when clicked
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([userId, read])
+  @@index([userId, createdAt])
+}
+
 // type: REGION | BRAND | SYMPTOM
 // AI가 생성한 SEO 랜딩페이지 콘텐츠. 실제 업체 목록은 keyword로 즉시 조회하며,
 // 여기서는 소개글(introText)만 캐싱한다.
@@ -382,4 +484,18 @@ model SeoPage {
 
   @@unique([type, keyword])
   @@index([type])
+}
+
+// 회원가입 이메일 인증번호(OTP). purpose: REGISTER_USER | REGISTER_PARTNER
+model VerificationCode {
+  id        String   @id @default(cuid())
+  email     String
+  code      String
+  purpose   String
+  verified  Boolean  @default(false)
+  attempts  Int      @default(0)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([email, purpose])
 }

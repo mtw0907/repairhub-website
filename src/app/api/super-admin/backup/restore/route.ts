@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { requireRole, toErrorResponse } from "@/lib/rbac";
 import { logAdminActivity } from "@/lib/adminLog";
 import { BACKUP_DIR, DB_PATH, isValidBackupFilename } from "@/lib/backups";
+import { notifyRole } from "@/lib/notify";
 
 export async function POST(req: Request) {
   try {
@@ -20,6 +21,11 @@ export async function POST(req: Request) {
     await copyFile(path.join(BACKUP_DIR, filename), DB_PATH);
 
     await logAdminActivity(actor.id, "DB_RESTORE", filename);
+    await notifyRole(
+      "SUPER_ADMIN",
+      { type: "DB_BACKUP_EVENT", title: `DB 복원 실행됨: ${filename}`, link: "/super-admin/dashboard/backup" },
+      actor.id,
+    );
 
     return NextResponse.json({ ok: true });
   } catch (error) {

@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { requireRole, toErrorResponse } from "@/lib/rbac";
 import { logAdminActivity } from "@/lib/adminLog";
+import { notifyRole } from "@/lib/notify";
 
 export async function POST(req: Request) {
   try {
@@ -30,6 +31,11 @@ export async function POST(req: Request) {
     });
 
     await logAdminActivity(actor.id, "ADMIN_CREATE", `${admin.email} (${role})`);
+    await notifyRole(
+      "SUPER_ADMIN",
+      { type: "ADMIN_ACCOUNT_CHANGED", title: `새 관리자 계정 생성: ${admin.email} (${role})`, link: "/super-admin/dashboard/admins" },
+      actor.id,
+    );
 
     return NextResponse.json(
       { id: admin.id, email: admin.email, role: admin.role },

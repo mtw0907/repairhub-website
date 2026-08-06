@@ -1,6 +1,5 @@
-import Link from "next/link";
 import { prisma } from "@/lib/prisma";
-import { SignOutButton } from "@/components/SignOutButton";
+import { StaffPageHeader } from "@/components/StaffPageHeader";
 import { AdminReportRow } from "@/components/admin/AdminReportRow";
 
 export default async function AdminReportsPage() {
@@ -14,18 +13,13 @@ export default async function AdminReportsPage() {
   });
 
   return (
-    <div className="min-h-full bg-neutral-50 dark:bg-neutral-950">
-      <header className="flex items-center justify-between border-b border-neutral-200 bg-white px-6 py-4 dark:border-neutral-800 dark:bg-neutral-900">
-        <Link href="/admin/dashboard" className="text-sm text-neutral-500 hover:underline">
-          ← 대시보드로
-        </Link>
-        <SignOutButton />
-      </header>
-      <main className="mx-auto max-w-2xl px-6 py-8">
-        <h1 className="mb-6 text-lg font-semibold text-neutral-900 dark:text-neutral-100">
+    <div className="min-h-full bg-surface-muted">
+      <StaffPageHeader backHref="/admin/dashboard" />
+      <main className="mx-auto max-w-2xl px-4 py-8 sm:px-6 sm:py-10">
+        <h1 className="mb-6 text-2xl font-extrabold tracking-tight text-primary dark:text-neutral-100">
           신고 관리
         </h1>
-        <div className="space-y-3">
+        <div className="space-y-2.5">
           {reports.map((r) => (
             <AdminReportRow
               key={r.id}
@@ -46,7 +40,9 @@ export default async function AdminReportsPage() {
             />
           ))}
           {reports.length === 0 && (
-            <p className="text-sm text-neutral-500">접수된 신고가 없습니다.</p>
+            <p className="rounded-2xl border border-dashed border-neutral-300 py-12 text-center text-sm text-neutral-500 dark:border-neutral-700">
+              접수된 신고가 없습니다.
+            </p>
           )}
         </div>
       </main>

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireRole, toErrorResponse } from "@/lib/rbac";
 import { logAdminActivity } from "@/lib/adminLog";
+import { notifyRole } from "@/lib/notify";
 
 async function countActiveSuperAdmins() {
   return prisma.user.count({ where: { role: "SUPER_ADMIN", status: "ACTIVE" } });
@@ -48,6 +49,15 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
 
     if (role !== undefined && role !== target.role) {
       await logAdminActivity(actor.id, "ROLE_CHANGE", `${target.email}: ${target.role} -> ${role}`);
+      await notifyRole(
+        "SUPER_ADMIN",
+        {
+          type: "ADMIN_ACCOUNT_CHANGED",
+          title: `${target.email} 역할 변경: ${target.role} → ${role}`,
+          link: "/super-admin/dashboard/admins",
+        },
+        actor.id,
+      );
     }
     if (status !== undefined && status !== target.status) {
       await logAdminActivity(actor.id, "ADMIN_STATUS_CHANGE", `${target.email}: ${status}`);

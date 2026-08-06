@@ -36,14 +36,14 @@ export function NewAdminForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="space-y-2 rounded-lg border border-neutral-200 p-3 dark:border-neutral-800"
+      className="space-y-2.5 rounded-2xl border border-neutral-200/70 bg-white p-4 shadow-sm dark:border-neutral-800 dark:bg-neutral-900"
     >
       <input
         required
         value={name}
         onChange={(e) => setName(e.target.value)}
         placeholder="이름"
-        className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+        className="w-full rounded-xl border border-neutral-200 bg-surface-muted px-3 py-2.5 text-sm outline-none transition-colors focus:border-primary/40 focus:ring-2 focus:ring-primary/10 dark:border-neutral-700 dark:bg-neutral-800"
       />
       <input
         required
@@ -51,7 +51,7 @@ export function NewAdminForm() {
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         placeholder="이메일"
-        className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+        className="w-full rounded-xl border border-neutral-200 bg-surface-muted px-3 py-2.5 text-sm outline-none transition-colors focus:border-primary/40 focus:ring-2 focus:ring-primary/10 dark:border-neutral-700 dark:bg-neutral-800"
       />
       <input
         required
@@ -60,12 +60,12 @@ export function NewAdminForm() {
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         placeholder="비밀번호 (8자 이상)"
-        className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+        className="w-full rounded-xl border border-neutral-200 bg-surface-muted px-3 py-2.5 text-sm outline-none transition-colors focus:border-primary/40 focus:ring-2 focus:ring-primary/10 dark:border-neutral-700 dark:bg-neutral-800"
       />
       <select
         value={role}
         onChange={(e) => setRole(e.target.value)}
-        className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+        className="w-full rounded-xl border border-neutral-200 bg-surface-muted px-3 py-2.5 text-sm outline-none transition-colors focus:border-primary/40 focus:ring-2 focus:ring-primary/10 dark:border-neutral-700 dark:bg-neutral-800"
       >
         <option value="ADMIN">ADMIN</option>
         <option value="SUPER_ADMIN">SUPER_ADMIN</option>
@@ -74,7 +74,7 @@ export function NewAdminForm() {
       <button
         type="submit"
         disabled={loading}
-        className="rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white hover:bg-neutral-700 disabled:opacity-50 dark:bg-white dark:text-neutral-900"
+        className="rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm transition-transform hover:scale-[1.01] hover:bg-primary/90 disabled:opacity-50 disabled:hover:scale-100"
       >
         {loading ? "생성 중..." : "관리자 계정 생성"}
       </button>

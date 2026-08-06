@@ -34,12 +34,12 @@ export function AiInlineAction({
   }
 
   return (
-    <div className="mt-2">
+    <div className="mt-3">
       <button
         type="button"
         onClick={handleClick}
         disabled={loading}
-        className="rounded-md border border-neutral-300 px-2 py-1 text-xs hover:bg-neutral-100 disabled:opacity-50 dark:border-neutral-700 dark:hover:bg-neutral-800"
+        className="rounded-lg border border-accent/40 bg-accent/10 px-2.5 py-1.5 text-xs font-medium text-accent-foreground transition-colors hover:bg-accent/20 disabled:opacity-50 dark:text-accent"
       >
         {loading ? "분석 중..." : buttonLabel}
       </button>
@@ -47,7 +47,7 @@ export function AiInlineAction({
         <p className="mt-1 text-xs text-amber-700 dark:text-amber-400">{error}</p>
       )}
       {result && (
-        <div className="mt-2 whitespace-pre-line rounded-md bg-neutral-50 p-3 text-xs text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300">
+        <div className="mt-2 whitespace-pre-line rounded-xl bg-surface-muted p-3 text-xs text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300">
           {result}
         </div>
       )}

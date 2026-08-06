@@ -26,12 +26,12 @@ export function SeoPageRow({
   }
 
   return (
-    <div className="flex items-center justify-between rounded-lg border border-neutral-200 bg-white p-3 text-sm dark:border-neutral-800 dark:bg-neutral-900">
+    <div className="flex items-center justify-between rounded-xl border border-neutral-200/70 bg-white p-4 text-sm shadow-sm transition-shadow hover:shadow-md dark:border-neutral-800 dark:bg-neutral-900">
       <div>
-        <p className="font-medium text-neutral-900 dark:text-neutral-100">{page.title}</p>
+        <p className="font-semibold text-neutral-900 dark:text-neutral-100">{page.title}</p>
         <Link
           href={`${TYPE_PATH[page.type]}/${encodeURIComponent(page.keyword)}`}
-          className="text-xs text-neutral-500 underline"
+          className="text-xs text-primary underline underline-offset-2"
         >
           {TYPE_PATH[page.type]}/{page.keyword}
         </Link>
@@ -39,7 +39,7 @@ export function SeoPageRow({
       <button
         onClick={handleDelete}
         disabled={loading}
-        className="text-xs text-red-600 hover:underline"
+        className="text-xs font-medium text-red-600 hover:underline"
       >
         삭제
       </button>

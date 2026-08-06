@@ -1,6 +1,5 @@
-import Link from "next/link";
 import { prisma } from "@/lib/prisma";
-import { SignOutButton } from "@/components/SignOutButton";
+import { StaffPageHeader } from "@/components/StaffPageHeader";
 import { AiInlineAction } from "@/components/ai/AiInlineAction";
 
 export default async function AdminStatsPage() {
@@ -39,18 +38,13 @@ export default async function AdminStatsPage() {
   });
 
   return (
-    <div className="min-h-full bg-neutral-50 dark:bg-neutral-950">
-      <header className="flex items-center justify-between border-b border-neutral-200 bg-white px-6 py-4 dark:border-neutral-800 dark:bg-neutral-900">
-        <Link href="/admin/dashboard" className="text-sm text-neutral-500 hover:underline">
-          ← 대시보드로
-        </Link>
-        <SignOutButton />
-      </header>
-      <main className="mx-auto max-w-2xl px-6 py-8">
-        <h1 className="mb-6 text-lg font-semibold text-neutral-900 dark:text-neutral-100">
+    <div className="min-h-full bg-surface-muted">
+      <StaffPageHeader backHref="/admin/dashboard" />
+      <main className="mx-auto max-w-2xl px-4 py-8 sm:px-6 sm:py-10">
+        <h1 className="mb-6 text-2xl font-extrabold tracking-tight text-primary dark:text-neutral-100">
           통계
         </h1>
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid gap-3.5 sm:grid-cols-2">
           <StatCard label="일반 사용자 수" value={userCount.toLocaleString()} />
           <StatCard label="업체(파트너) 수" value={partnerCount.toLocaleString()} />
           <StatCard label="등록된 업체 페이지 수" value={companyCount.toLocaleString()} />
@@ -62,33 +56,33 @@ export default async function AdminStatsPage() {
             label="AI 사용 토큰 합계"
             value={(aiTokenSum._sum.tokens ?? 0).toLocaleString()}
           />
-          <StatCard label="누적 매출" value={`${(revenue._sum.amount ?? 0).toLocaleString()}원`} />
+          <StatCard label="누적 매출" value={`${(revenue._sum.amount ?? 0).toLocaleString()}원`} accent />
           <StatCard label="Pro 구독 중인 업체" value={activeSubscriptionCount.toLocaleString()} />
         </div>
 
         <div className="mt-8">
-          <h2 className="mb-2 text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+          <h2 className="mb-2.5 text-sm font-bold text-neutral-900 dark:text-neutral-100">
             업체 상태별 현황
           </h2>
-          <ul className="divide-y divide-neutral-200 rounded-lg border border-neutral-200 text-sm dark:divide-neutral-800 dark:border-neutral-800">
+          <ul className="divide-y divide-neutral-100 rounded-2xl border border-neutral-200/70 bg-white text-sm shadow-sm dark:divide-neutral-800 dark:border-neutral-800 dark:bg-neutral-900">
             {companiesByStatus.map((c) => (
-              <li key={c.status} className="flex justify-between px-4 py-2">
+              <li key={c.status} className="flex justify-between px-4 py-2.5">
                 <span>{c.status}</span>
-                <span className="font-medium">{c._count.status}개</span>
+                <span className="font-semibold text-primary">{c._count.status}개</span>
               </li>
             ))}
           </ul>
         </div>
 
         <div className="mt-8">
-          <h2 className="mb-2 text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+          <h2 className="mb-2.5 text-sm font-bold text-neutral-900 dark:text-neutral-100">
             AI 기능별 사용 현황
           </h2>
-          <ul className="divide-y divide-neutral-200 rounded-lg border border-neutral-200 text-sm dark:divide-neutral-800 dark:border-neutral-800">
+          <ul className="divide-y divide-neutral-100 rounded-2xl border border-neutral-200/70 bg-white text-sm shadow-sm dark:divide-neutral-800 dark:border-neutral-800 dark:bg-neutral-900">
             {aiUsageByType.map((a) => (
-              <li key={a.type} className="flex justify-between px-4 py-2">
+              <li key={a.type} className="flex justify-between px-4 py-2.5">
                 <span>{a.type}</span>
-                <span className="font-medium">{a._count.type}회</span>
+                <span className="font-semibold text-primary">{a._count.type}회</span>
               </li>
             ))}
             {aiUsageByType.length === 0 && (
@@ -98,7 +92,7 @@ export default async function AdminStatsPage() {
         </div>
 
         <div className="mt-8">
-          <h2 className="mb-2 text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+          <h2 className="mb-2.5 text-sm font-bold text-neutral-900 dark:text-neutral-100">
             AI 운영 리포트
           </h2>
           <AiInlineAction
@@ -116,11 +110,13 @@ export default async function AdminStatsPage() {
   );
 }
 
-function StatCard({ label, value }: { label: string; value: string }) {
+function StatCard({ label, value, accent }: { label: string; value: string; accent?: boolean }) {
   return (
-    <div className="rounded-lg border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-900">
-      <p className="text-xs text-neutral-500">{label}</p>
-      <p className="mt-1 text-lg font-semibold text-neutral-900 dark:text-neutral-100">{value}</p>
+    <div className="rounded-2xl border border-neutral-200/70 bg-white p-4 shadow-sm transition-shadow hover:shadow-md dark:border-neutral-800 dark:bg-neutral-900">
+      <p className="text-xs font-medium text-neutral-500">{label}</p>
+      <p className={accent ? "mt-1 text-xl font-extrabold text-accent-foreground dark:text-accent" : "mt-1 text-xl font-extrabold text-neutral-900 dark:text-neutral-100"}>
+        {value}
+      </p>
     </div>
   );
 }

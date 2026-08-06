@@ -1,6 +1,7 @@
 import Link from "next/link";
+import { Search, Plus } from "lucide-react";
 import { prisma } from "@/lib/prisma";
-import { SignOutButton } from "@/components/SignOutButton";
+import { StaffPageHeader } from "@/components/StaffPageHeader";
 import { AdminCompanyRow } from "@/components/admin/AdminCompanyRow";
 
 export default async function AdminCompaniesPage({
@@ -19,35 +20,34 @@ export default async function AdminCompaniesPage({
   });
 
   return (
-    <div className="min-h-full bg-neutral-50 dark:bg-neutral-950">
-      <header className="flex items-center justify-between border-b border-neutral-200 bg-white px-6 py-4 dark:border-neutral-800 dark:bg-neutral-900">
-        <Link href="/admin/dashboard" className="text-sm text-neutral-500 hover:underline">
-          ← 대시보드로
-        </Link>
-        <SignOutButton />
-      </header>
-      <main className="mx-auto max-w-2xl px-6 py-8">
-        <div className="mb-4 flex items-center justify-between">
-          <h1 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100">
+    <div className="min-h-full bg-surface-muted">
+      <StaffPageHeader backHref="/admin/dashboard" />
+      <main className="mx-auto max-w-2xl px-4 py-8 sm:px-6 sm:py-10">
+        <div className="mb-5 flex items-center justify-between gap-3">
+          <h1 className="text-2xl font-extrabold tracking-tight text-primary dark:text-neutral-100">
             업체 관리
           </h1>
           <Link
             href="/admin/dashboard/companies/new"
-            className="rounded-md bg-neutral-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-neutral-700 dark:bg-white dark:text-neutral-900"
+            className="flex items-center gap-1 rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-sm transition-transform hover:scale-105"
           >
-            + 업체 직접 등록
+            <Plus className="h-4 w-4" />
+            업체 직접 등록
           </Link>
         </div>
         <form className="mb-6">
-          <input
-            type="text"
-            name="keyword"
-            defaultValue={keyword}
-            placeholder="업체명 또는 지역으로 검색"
-            className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
-          />
+          <div className="flex items-center gap-2 rounded-xl border border-neutral-200 bg-white px-3.5 py-2.5 shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
+            <Search className="h-4 w-4 shrink-0 text-neutral-400" />
+            <input
+              type="text"
+              name="keyword"
+              defaultValue={keyword}
+              placeholder="업체명 또는 지역으로 검색"
+              className="w-full min-w-0 border-0 bg-transparent text-sm outline-none placeholder:text-neutral-400"
+            />
+          </div>
         </form>
-        <div className="space-y-2">
+        <div className="space-y-2.5">
           {companies.map((c) => (
             <AdminCompanyRow
               key={c.id}
@@ -58,11 +58,15 @@ export default async function AdminCompaniesPage({
                 status: c.status,
                 isPremium: c.isPremium,
                 isFeatured: c.isFeatured,
+                certificateUrl: c.certificateUrl,
+                aiVerificationResult: c.aiVerificationResult,
               }}
             />
           ))}
           {companies.length === 0 && (
-            <p className="text-sm text-neutral-500">검색 결과가 없습니다.</p>
+            <p className="rounded-2xl border border-dashed border-neutral-300 py-12 text-center text-sm text-neutral-500 dark:border-neutral-700">
+              검색 결과가 없습니다.
+            </p>
           )}
         </div>
       </main>

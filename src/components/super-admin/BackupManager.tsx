@@ -47,17 +47,17 @@ export function BackupManager({ backups }: { backups: Backup[] }) {
       <button
         onClick={handleBackupNow}
         disabled={loading}
-        className="mb-4 rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white hover:bg-neutral-700 disabled:opacity-50 dark:bg-white dark:text-neutral-900"
+        className="mb-4 rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm transition-transform hover:scale-[1.01] hover:bg-primary/90 disabled:opacity-50 disabled:hover:scale-100"
       >
         지금 백업하기
       </button>
       {message && <p className="mb-3 text-sm text-neutral-500">{message}</p>}
 
-      <ul className="space-y-2">
+      <ul className="space-y-2.5">
         {backups.map((b) => (
           <li
             key={b.filename}
-            className="flex items-center justify-between rounded-lg border border-neutral-200 bg-white p-3 text-sm dark:border-neutral-800 dark:bg-neutral-900"
+            className="flex items-center justify-between rounded-xl border border-neutral-200/70 bg-white p-4 text-sm shadow-sm transition-shadow hover:shadow-md dark:border-neutral-800 dark:bg-neutral-900"
           >
             <div>
               <p className="font-mono text-xs text-neutral-500">{b.filename}</p>
@@ -68,7 +68,7 @@ export function BackupManager({ backups }: { backups: Backup[] }) {
             <div className="flex items-center gap-2">
               <a
                 href={`/api/super-admin/backup/${b.filename}`}
-                className="rounded-md border border-neutral-300 px-2 py-1 text-xs hover:bg-neutral-100 dark:border-neutral-700 dark:hover:bg-neutral-800"
+                className="rounded-lg border border-neutral-300 px-2.5 py-1.5 text-xs font-medium transition-colors hover:bg-neutral-100 dark:border-neutral-700 dark:hover:bg-neutral-800"
               >
                 다운로드
               </a>
@@ -77,7 +77,7 @@ export function BackupManager({ backups }: { backups: Backup[] }) {
                   <button
                     onClick={() => handleRestore(b.filename)}
                     disabled={loading}
-                    className="rounded-md bg-red-600 px-2 py-1 text-xs font-medium text-white hover:bg-red-700 disabled:opacity-50"
+                    className="rounded-lg bg-red-600 px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-red-700 disabled:opacity-50"
                   >
                     복원 확정
                   </button>
@@ -92,7 +92,7 @@ export function BackupManager({ backups }: { backups: Backup[] }) {
                 <button
                   onClick={() => setConfirmingRestore(b.filename)}
                   disabled={loading}
-                  className="rounded-md border border-red-300 px-2 py-1 text-xs font-medium text-red-600 hover:bg-red-50 disabled:opacity-50 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-950"
+                  className="rounded-lg border border-red-300 px-2.5 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50 disabled:opacity-50 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-950"
                 >
                   이 시점으로 복원
                 </button>
@@ -101,7 +101,9 @@ export function BackupManager({ backups }: { backups: Backup[] }) {
           </li>
         ))}
         {backups.length === 0 && (
-          <p className="text-sm text-neutral-500">생성된 백업이 없습니다.</p>
+          <p className="rounded-2xl border border-dashed border-neutral-300 py-10 text-center text-sm text-neutral-500 dark:border-neutral-700">
+            생성된 백업이 없습니다.
+          </p>
         )}
       </ul>
     </div>

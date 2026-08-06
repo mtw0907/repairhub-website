@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireRole, toErrorResponse } from "@/lib/rbac";
+import { notifyRole } from "@/lib/notify";
 
 const VALID_TARGET_TYPES = ["USER", "COMPANY", "REVIEW", "PHOTO"];
 
@@ -24,6 +25,12 @@ export async function POST(req: Request) {
         reviewId: targetType === "REVIEW" ? (reviewId ?? targetId) : undefined,
         reporterId: user.id,
       },
+    });
+
+    await notifyRole("ADMIN", {
+      type: "REPORT_FILED",
+      title: "새 신고가 접수됐습니다",
+      link: "/admin/dashboard/reports",
     });
 
     return NextResponse.json(report, { status: 201 });

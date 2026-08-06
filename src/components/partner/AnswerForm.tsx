@@ -41,13 +41,13 @@ export function AnswerForm({
         onChange={(e) => setAnswer(e.target.value)}
         rows={2}
         placeholder="답변을 입력하세요"
-        className="w-full rounded-md border border-neutral-300 px-3 py-1.5 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+        className="w-full rounded-xl border border-neutral-200 bg-surface-muted px-3 py-2 text-sm outline-none focus:border-primary/40 focus:ring-2 focus:ring-primary/10 dark:border-neutral-700 dark:bg-neutral-800"
       />
       <div className="flex items-center gap-2">
         <button
           type="submit"
           disabled={loading}
-          className="rounded-md bg-neutral-900 px-3 py-1 text-xs font-medium text-white hover:bg-neutral-700 disabled:opacity-50 dark:bg-white dark:text-neutral-900"
+          className="rounded-lg bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground transition-transform hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
         >
           {loading ? "저장 중..." : existingAnswer ? "답변 수정" : "답변 등록"}
         </button>

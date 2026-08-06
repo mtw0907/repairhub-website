@@ -1,7 +1,7 @@
-import Link from "next/link";
+import { UserCircle } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { SignOutButton } from "@/components/SignOutButton";
+import { UserPageHeader } from "@/components/UserPageHeader";
 import { ProfileForm } from "@/components/ProfileForm";
 
 export default async function ProfilePage() {
@@ -9,19 +9,21 @@ export default async function ProfilePage() {
   const user = await prisma.user.findUniqueOrThrow({ where: { id: session!.user.id } });
 
   return (
-    <div className="min-h-full bg-neutral-50 dark:bg-neutral-950">
-      <header className="flex items-center justify-between border-b border-neutral-200 bg-white px-6 py-4 dark:border-neutral-800 dark:bg-neutral-900">
-        <Link href="/dashboard" className="text-sm text-neutral-500 hover:underline">
-          ← 대시보드로
-        </Link>
-        <SignOutButton />
-      </header>
-      <main className="mx-auto max-w-2xl px-6 py-8">
-        <h1 className="mb-6 text-lg font-semibold text-neutral-900 dark:text-neutral-100">
-          회원정보 수정
+    <div className="min-h-full bg-surface-muted">
+      <UserPageHeader />
+      <main className="mx-auto max-w-2xl px-4 py-8 sm:px-6 sm:py-10">
+        <h1 className="mb-6 flex items-center gap-2 text-2xl font-extrabold tracking-tight text-primary dark:text-neutral-100">
+          <UserCircle className="h-6 w-6 text-accent" />
+          마이페이지
         </h1>
-        <p className="mb-6 text-sm text-neutral-500">이메일: {user.email}</p>
-        <ProfileForm initialName={user.name} initialPhone={user.phone ?? ""} />
+        <div className="rounded-2xl border border-neutral-200/70 bg-white p-5 shadow-sm dark:border-neutral-800 dark:bg-neutral-900 sm:p-6">
+          <p className="mb-6 text-sm text-neutral-500">이메일: {user.email}</p>
+          <ProfileForm
+            initialName={user.name}
+            initialPhone={user.phone ?? ""}
+            hasPassword={!!user.password}
+          />
+        </div>
       </main>
     </div>
   );

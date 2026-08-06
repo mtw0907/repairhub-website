@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+import { BadgeCheck, MapPin, Phone, Star, Truck, Package, Clock } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -84,6 +85,8 @@ export default async function CompanyDetailPage({
   const reviewCount = company.reviews.length;
   const avgRating =
     reviewCount > 0 ? company.reviews.reduce((s, r) => s + r.rating, 0) / reviewCount : null;
+  const photos: string[] = company.photos ? JSON.parse(company.photos) : [];
+  const isVerified = company.status === "APPROVED";
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -109,7 +112,7 @@ export default async function CompanyDetailPage({
   };
 
   return (
-    <div className="flex flex-1 flex-col">
+    <div className="flex flex-1 flex-col bg-surface-muted">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: jsonLdScript(jsonLd) }}
@@ -118,10 +121,23 @@ export default async function CompanyDetailPage({
       <RecordCompanyView companyId={company.id} />
       {isUser && <RecordRecentView companyId={company.id} />}
 
-      <main className="mx-auto w-full max-w-3xl flex-1 px-6 py-8">
-        <div className="flex items-start justify-between gap-4">
+      {/* 대표 사진 배너 */}
+      <div className="relative h-48 w-full overflow-hidden bg-gradient-to-br from-primary to-primary/70 sm:h-64">
+        {(photos[0] || company.logoUrl) && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={photos[0] ?? company.logoUrl ?? undefined}
+            alt={company.name}
+            className="h-full w-full object-cover"
+          />
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
+      </div>
+
+      <main className="mx-auto w-full max-w-5xl flex-1 px-4 pb-16 sm:px-6">
+        <div className="-mt-14 flex flex-col gap-4 rounded-2xl border border-neutral-200/70 bg-white p-5 shadow-lg dark:border-neutral-800 dark:bg-neutral-900 sm:-mt-16 sm:flex-row sm:items-start sm:justify-between sm:p-6">
           <div className="flex items-start gap-4">
-            <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-neutral-100 text-xl font-semibold text-neutral-400 dark:bg-neutral-800">
+            <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-surface-muted text-xl font-bold text-primary/40 ring-4 ring-white dark:ring-neutral-900">
               {company.logoUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={company.logoUrl} alt={company.name} className="h-full w-full object-cover" />
@@ -131,26 +147,41 @@ export default async function CompanyDetailPage({
             </div>
             <div>
               <div className="flex flex-wrap items-center gap-2">
-                <h1 className="text-2xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100">
+                <h1 className="text-xl font-extrabold tracking-tight text-neutral-900 dark:text-neutral-100 sm:text-2xl">
                   {company.name}
                 </h1>
+                {isVerified && (
+                  <span className="flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-semibold text-primary">
+                    <BadgeCheck className="h-3.5 w-3.5 text-accent" />
+                    인증업체
+                  </span>
+                )}
                 {company.isFeatured && (
-                  <span className="rounded-full bg-brand/10 px-2 py-0.5 text-xs font-medium text-brand">
+                  <span className="rounded-full bg-primary px-2 py-0.5 text-xs font-medium text-primary-foreground">
                     추천
                   </span>
                 )}
                 {company.isPremium && (
-                  <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700 dark:bg-amber-950 dark:text-amber-300">
+                  <span className="rounded-full bg-accent px-2 py-0.5 text-xs font-medium text-accent-foreground">
                     프리미엄
                   </span>
                 )}
               </div>
-              <p className="mt-1 text-sm text-neutral-500">{company.address ?? company.region}</p>
-              <p className="mt-1 text-sm text-neutral-500">{company.phone}</p>
-              <p className="mt-2 text-sm">
+              <p className="mt-1.5 flex items-center gap-1 text-sm text-neutral-500">
+                <MapPin className="h-3.5 w-3.5 shrink-0" />
+                {company.address ?? company.region}
+              </p>
+              {company.phone && (
+                <p className="mt-0.5 flex items-center gap-1 text-sm text-neutral-500">
+                  <Phone className="h-3.5 w-3.5 shrink-0" />
+                  {company.phone}
+                </p>
+              )}
+              <p className="mt-2 flex items-center gap-1 text-sm">
                 {avgRating ? (
-                  <span className="font-medium text-amber-600 dark:text-amber-400">
-                    ★ {avgRating.toFixed(1)}{" "}
+                  <span className="flex items-center gap-1 font-semibold text-neutral-800 dark:text-neutral-100">
+                    <Star className="h-4 w-4 fill-accent text-accent" />
+                    {avgRating.toFixed(1)}
                     <span className="font-normal text-neutral-500">(후기 {reviewCount}개)</span>
                   </span>
                 ) : (
@@ -159,7 +190,7 @@ export default async function CompanyDetailPage({
               </p>
             </div>
           </div>
-          <div className="flex flex-col items-end gap-1.5">
+          <div className="flex shrink-0 items-center gap-2 sm:flex-col sm:items-end">
             <FavoriteButton
               companyId={company.id}
               initialFavorited={Boolean(favorite)}
@@ -170,36 +201,36 @@ export default async function CompanyDetailPage({
         </div>
 
         {company.introduction && (
-          <p className="mt-6 whitespace-pre-line text-sm text-neutral-700 dark:text-neutral-300">
+          <p className="mt-6 whitespace-pre-line text-sm leading-relaxed text-neutral-700 dark:text-neutral-300">
             {company.introduction}
           </p>
         )}
 
-        {company.photos && JSON.parse(company.photos).length > 0 && (
-          <div className="mt-4 flex gap-2 overflow-x-auto">
-            {(JSON.parse(company.photos) as string[]).map((url) => (
+        {photos.length > 0 && (
+          <div className="mt-4 flex gap-2 overflow-x-auto pb-1">
+            {photos.map((url) => (
               // eslint-disable-next-line @next/next/no-img-element
               <img
                 key={url}
                 src={url}
                 alt={`${company.name} 사진`}
-                className="h-28 w-28 shrink-0 rounded-lg object-cover"
+                className="h-28 w-28 shrink-0 rounded-xl object-cover transition-transform hover:scale-105"
               />
             ))}
           </div>
         )}
 
-        <section className="mt-8 rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
+        <section className="mt-8 rounded-2xl border border-neutral-200/70 bg-white p-5 shadow-sm dark:border-neutral-800 dark:bg-neutral-900 sm:p-6">
           <div className="grid gap-6 sm:grid-cols-2">
             <div>
-              <h2 className="mb-2 text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+              <h2 className="mb-2.5 text-sm font-bold text-neutral-900 dark:text-neutral-100">
                 수리 품목
               </h2>
               <div className="flex flex-wrap gap-1.5">
                 {company.services.map((s) => (
                   <span
                     key={s.id}
-                    className="rounded-full bg-neutral-100 px-2 py-0.5 text-xs text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300"
+                    className="rounded-full bg-surface-muted px-2.5 py-1 text-xs text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300"
                   >
                     {s.name}
                   </span>
@@ -207,14 +238,14 @@ export default async function CompanyDetailPage({
               </div>
             </div>
             <div>
-              <h2 className="mb-2 text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+              <h2 className="mb-2.5 text-sm font-bold text-neutral-900 dark:text-neutral-100">
                 취급 브랜드
               </h2>
               <div className="flex flex-wrap gap-1.5">
                 {company.brands.map((b) => (
                   <span
                     key={b.id}
-                    className="rounded-full bg-neutral-100 px-2 py-0.5 text-xs text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300"
+                    className="rounded-full bg-surface-muted px-2.5 py-1 text-xs text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300"
                   >
                     {b.name}
                   </span>
@@ -224,15 +255,18 @@ export default async function CompanyDetailPage({
           </div>
 
           {company.priceItems.length > 0 && (
-            <div className="mt-6">
-              <h2 className="mb-2 text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+            <div id="가격표" className="mt-6 scroll-mt-20">
+              <h2 className="mb-2.5 text-sm font-bold text-neutral-900 dark:text-neutral-100">
                 가격표
               </h2>
-              <ul className="divide-y divide-neutral-100 rounded-lg border border-neutral-100 text-sm dark:divide-neutral-800 dark:border-neutral-800">
+              <ul className="divide-y divide-neutral-100 rounded-xl border border-neutral-100 text-sm dark:divide-neutral-800 dark:border-neutral-800">
                 {company.priceItems.map((p) => (
-                  <li key={p.id} className="flex justify-between px-4 py-2">
+                  <li
+                    key={p.id}
+                    className="flex justify-between px-4 py-2.5 transition-colors hover:bg-surface-muted dark:hover:bg-neutral-800"
+                  >
                     <span>{p.label}</span>
-                    <span className="font-medium">{p.price.toLocaleString()}원</span>
+                    <span className="font-semibold text-primary">{p.price.toLocaleString()}원</span>
                   </li>
                 ))}
               </ul>
@@ -243,55 +277,62 @@ export default async function CompanyDetailPage({
             <span
               className={
                 company.onSiteVisit
-                  ? "rounded-full bg-emerald-50 px-2.5 py-1 font-medium text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300"
-                  : "rounded-full bg-neutral-100 px-2.5 py-1 text-neutral-500 dark:bg-neutral-800"
+                  ? "flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-1 font-medium text-primary"
+                  : "flex items-center gap-1 rounded-full bg-neutral-100 px-2.5 py-1 text-neutral-500 dark:bg-neutral-800"
               }
             >
+              <Truck className="h-3.5 w-3.5" />
               {company.onSiteVisit ? "출장 가능" : "출장 불가"}
             </span>
             <span
               className={
                 company.courierDrop
-                  ? "rounded-full bg-emerald-50 px-2.5 py-1 font-medium text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300"
-                  : "rounded-full bg-neutral-100 px-2.5 py-1 text-neutral-500 dark:bg-neutral-800"
+                  ? "flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-1 font-medium text-primary"
+                  : "flex items-center gap-1 rounded-full bg-neutral-100 px-2.5 py-1 text-neutral-500 dark:bg-neutral-800"
               }
             >
+              <Package className="h-3.5 w-3.5" />
               {company.courierDrop ? "택배 가능" : "택배 불가"}
             </span>
           </div>
 
           {(company.businessHours || company.closedDays) && (
-            <div className="mt-4 space-y-0.5 text-sm text-neutral-500">
-              {company.businessHours && <p>영업시간: {company.businessHours}</p>}
-              {company.closedDays && <p>휴무일: {company.closedDays}</p>}
+            <div className="mt-4 space-y-1 text-sm text-neutral-500">
+              {company.businessHours && (
+                <p className="flex items-center gap-1.5">
+                  <Clock className="h-3.5 w-3.5 shrink-0" />
+                  영업시간: {company.businessHours}
+                </p>
+              )}
+              {company.closedDays && <p className="pl-5">휴무일: {company.closedDays}</p>}
             </div>
           )}
         </section>
 
-        <section className="mt-10 grid gap-6 sm:grid-cols-2">
+        <section id="예약" className="mt-10 scroll-mt-20 grid gap-6 sm:grid-cols-2">
           <div>
-            <h2 className="mb-3 text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+            <h2 className="mb-3 text-base font-bold text-neutral-900 dark:text-neutral-100">
               예약 요청
             </h2>
             <ReservationForm companyId={company.id} isUser={isUser} />
           </div>
           <div>
-            <h2 className="mb-3 text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+            <h2 className="mb-3 text-base font-bold text-neutral-900 dark:text-neutral-100">
               견적 요청
             </h2>
             <EstimateForm companyId={company.id} isUser={isUser} />
           </div>
         </section>
 
-        <section className="mt-10">
-          <h2 className="mb-3 text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+        <section id="문의" className="mt-10 scroll-mt-20">
+          <h2 className="mb-3 text-base font-bold text-neutral-900 dark:text-neutral-100">
             문의하기
           </h2>
           <InquiryForm companyId={company.id} isUser={isUser} />
         </section>
 
         <section className="mt-10">
-          <h2 className="mb-3 text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+          <h2 className="mb-3 text-base font-bold text-neutral-900 dark:text-neutral-100">
             {ownReview ? "내 후기 수정" : "후기 작성"}
           </h2>
           <ReviewForm
@@ -311,40 +352,44 @@ export default async function CompanyDetailPage({
         </section>
 
         <section className="mt-10">
-          <h2 className="mb-3 text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+          <h2 className="mb-3 text-base font-bold text-neutral-900 dark:text-neutral-100">
             후기 ({reviewCount})
           </h2>
           <div className="space-y-4">
             {company.reviews.map((r) => {
-              const photos: string[] = r.photos ? JSON.parse(r.photos) : [];
+              const reviewPhotos: string[] = r.photos ? JSON.parse(r.photos) : [];
               return (
                 <div
                   key={r.id}
-                  className="rounded-xl border border-neutral-200 bg-white p-4 text-sm shadow-sm dark:border-neutral-800 dark:bg-neutral-900"
+                  className="rounded-2xl border border-neutral-200/70 bg-white p-4 text-sm shadow-sm transition-shadow hover:shadow-md dark:border-neutral-800 dark:bg-neutral-900"
                 >
                   <div className="flex items-center justify-between">
-                    <span className="font-medium text-neutral-900 dark:text-neutral-100">
+                    <span className="font-semibold text-neutral-900 dark:text-neutral-100">
                       {r.user.name}
                     </span>
                     <div className="flex items-center gap-2">
-                      <span className="text-amber-500">{"★".repeat(r.rating)}</span>
+                      <span className="flex items-center gap-0.5 text-accent">
+                        {Array.from({ length: 5 }).map((_, i) => (
+                          <Star key={i} className="h-3.5 w-3.5" fill={i < r.rating ? "currentColor" : "none"} />
+                        ))}
+                      </span>
                       <ReportButton targetType="REVIEW" targetId={r.id} isUser={isUser} />
                     </div>
                   </div>
                   <p className="mt-2 whitespace-pre-line text-neutral-700 dark:text-neutral-300">
                     {r.content}
                   </p>
-                  {photos.length > 0 && (
+                  {reviewPhotos.length > 0 && (
                     <div className="mt-2 flex flex-wrap gap-2">
-                      {photos.map((url) => (
+                      {reviewPhotos.map((url) => (
                         // eslint-disable-next-line @next/next/no-img-element
-                        <img key={url} src={url} alt="후기 사진" className="h-20 w-20 rounded object-cover" />
+                        <img key={url} src={url} alt="후기 사진" className="h-20 w-20 rounded-lg object-cover" />
                       ))}
                     </div>
                   )}
                   {r.partnerReply && (
-                    <div className="mt-3 rounded-md bg-neutral-50 p-3 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300">
-                      <p className="mb-1 text-xs font-semibold">업체 답글</p>
+                    <div className="mt-3 rounded-xl bg-surface-muted p-3 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300">
+                      <p className="mb-1 text-xs font-bold">업체 답글</p>
                       {r.partnerReply}
                     </div>
                   )}

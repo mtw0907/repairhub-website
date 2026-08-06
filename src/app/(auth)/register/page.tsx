@@ -4,11 +4,14 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
+import { OtpEmailField } from "@/components/auth/OtpEmailField";
+import { OAuthButtons } from "@/components/auth/OAuthButtons";
 
 export default function RegisterPage() {
   const router = useRouter();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [emailVerified, setEmailVerified] = useState(false);
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -52,10 +55,10 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="flex flex-1 items-center justify-center px-6 py-12">
-      <div className="w-full max-w-sm space-y-6">
+    <div className="flex flex-1 items-center justify-center bg-surface-muted px-6 py-12">
+      <div className="w-full max-w-sm space-y-6 rounded-2xl border border-neutral-200/70 bg-white p-6 shadow-sm dark:border-neutral-800 dark:bg-neutral-900 sm:p-8">
         <div className="text-center">
-          <h1 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100">
+          <h1 className="text-xl font-extrabold tracking-tight text-primary dark:text-neutral-100">
             RepairHub 회원가입
           </h1>
           <p className="mt-1 text-sm text-neutral-500">일반 사용자 계정을 만듭니다</p>
@@ -70,21 +73,18 @@ export default function RegisterPage() {
               required
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+              className="w-full rounded-xl border border-neutral-200 bg-surface-muted px-3 py-2.5 text-sm outline-none transition-colors focus:border-primary/40 focus:ring-2 focus:ring-primary/10 dark:border-neutral-700 dark:bg-neutral-800"
             />
           </div>
-          <div>
-            <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">
-              이메일
-            </label>
-            <input
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
-            />
-          </div>
+
+          <OtpEmailField
+            email={email}
+            onEmailChange={setEmail}
+            purpose="REGISTER_USER"
+            verified={emailVerified}
+            onVerifiedChange={setEmailVerified}
+          />
+
           <div>
             <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">
               전화번호 (선택)
@@ -92,7 +92,7 @@ export default function RegisterPage() {
             <input
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+              className="w-full rounded-xl border border-neutral-200 bg-surface-muted px-3 py-2.5 text-sm outline-none transition-colors focus:border-primary/40 focus:ring-2 focus:ring-primary/10 dark:border-neutral-700 dark:bg-neutral-800"
             />
           </div>
           <div>
@@ -105,7 +105,7 @@ export default function RegisterPage() {
               minLength={8}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+              className="w-full rounded-xl border border-neutral-200 bg-surface-muted px-3 py-2.5 text-sm outline-none transition-colors focus:border-primary/40 focus:ring-2 focus:ring-primary/10 dark:border-neutral-700 dark:bg-neutral-800"
             />
           </div>
 
@@ -113,19 +113,29 @@ export default function RegisterPage() {
 
           <button
             type="submit"
-            disabled={loading}
-            className="w-full rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white hover:bg-neutral-700 disabled:opacity-50 dark:bg-white dark:text-neutral-900"
+            disabled={loading || !emailVerified}
+            className="w-full rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm transition-transform hover:scale-[1.01] disabled:opacity-50 disabled:hover:scale-100"
           >
             {loading ? "가입 중..." : "회원가입"}
           </button>
         </form>
 
-        <p className="text-center text-sm text-neutral-500">
-          이미 계정이 있으신가요?{" "}
-          <Link href="/login" className="font-medium text-neutral-900 underline dark:text-neutral-100">
-            로그인
-          </Link>
-        </p>
+        <OAuthButtons />
+
+        <div className="space-y-2 text-center text-sm text-neutral-500">
+          <p>
+            이미 계정이 있으신가요?{" "}
+            <Link href="/login" className="font-medium text-primary underline underline-offset-2">
+              로그인
+            </Link>
+          </p>
+          <p>
+            업체(수리점) 사장님이신가요?{" "}
+            <Link href="/register/partner" className="font-medium text-primary underline underline-offset-2">
+              업체로 가입하기 →
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );

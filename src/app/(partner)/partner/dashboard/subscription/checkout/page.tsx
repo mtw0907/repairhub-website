@@ -73,17 +73,20 @@ export default function SubscriptionCheckoutPage() {
   }
 
   return (
-    <div className="min-h-full bg-neutral-50 dark:bg-neutral-950">
-      <header className="flex items-center justify-between border-b border-neutral-200 bg-white px-6 py-4 dark:border-neutral-800 dark:bg-neutral-900">
-        <Link href="/partner/dashboard/subscription" className="text-sm text-neutral-500 hover:underline">
+    <div className="min-h-full bg-surface-muted">
+      <header className="sticky top-0 z-30 flex items-center border-b border-neutral-200/80 bg-white/90 px-4 py-3.5 backdrop-blur-md dark:border-neutral-800/80 dark:bg-neutral-950/90 sm:px-6">
+        <Link
+          href="/partner/dashboard/subscription"
+          className="text-sm font-medium text-neutral-500 transition-colors hover:text-primary dark:text-neutral-400"
+        >
           ← 구독 관리로
         </Link>
       </header>
-      <main className="mx-auto max-w-md px-6 py-12 text-center">
-        <h1 className="mb-2 text-lg font-semibold text-neutral-900 dark:text-neutral-100">
+      <main className="mx-auto max-w-md px-4 py-12 text-center sm:px-6">
+        <h1 className="mb-2 text-xl font-extrabold tracking-tight text-primary dark:text-neutral-100">
           RepairHub Pro 구독
         </h1>
-        <p className="mb-1 text-2xl font-bold text-neutral-900 dark:text-neutral-100">
+        <p className="mb-1 text-3xl font-extrabold text-neutral-900 dark:text-neutral-100">
           월 {PRO_PLAN_PRICE.toLocaleString()}원
         </p>
         <p className="mb-8 text-sm text-neutral-500">
@@ -91,7 +94,7 @@ export default function SubscriptionCheckoutPage() {
         </p>
 
         {error && (
-          <p className="mb-4 rounded-md border border-amber-300 bg-amber-50 p-3 text-sm text-amber-800 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-300">
+          <p className="mb-4 rounded-xl border border-amber-300 bg-amber-50 p-3 text-sm text-amber-800 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-300">
             {error}
           </p>
         )}
@@ -99,7 +102,7 @@ export default function SubscriptionCheckoutPage() {
         <button
           onClick={handlePay}
           disabled={loading}
-          className="w-full rounded-md bg-neutral-900 px-4 py-3 text-sm font-medium text-white hover:bg-neutral-700 disabled:opacity-50 dark:bg-white dark:text-neutral-900"
+          className="w-full rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground shadow-sm transition-transform hover:scale-[1.01] hover:bg-primary/90 disabled:opacity-50 disabled:hover:scale-100"
         >
           {loading ? "결제 준비 중..." : "토스페이먼츠로 결제하기"}
         </button>

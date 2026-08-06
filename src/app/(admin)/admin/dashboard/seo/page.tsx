@@ -1,6 +1,5 @@
-import Link from "next/link";
 import { prisma } from "@/lib/prisma";
-import { SignOutButton } from "@/components/SignOutButton";
+import { StaffPageHeader } from "@/components/StaffPageHeader";
 import { SeoPageGenerator } from "@/components/admin/SeoPageGenerator";
 import { SeoPageRow } from "@/components/admin/SeoPageRow";
 
@@ -8,15 +7,10 @@ export default async function AdminSeoPage() {
   const pages = await prisma.seoPage.findMany({ orderBy: { updatedAt: "desc" } });
 
   return (
-    <div className="min-h-full bg-neutral-50 dark:bg-neutral-950">
-      <header className="flex items-center justify-between border-b border-neutral-200 bg-white px-6 py-4 dark:border-neutral-800 dark:bg-neutral-900">
-        <Link href="/admin/dashboard" className="text-sm text-neutral-500 hover:underline">
-          ← 대시보드로
-        </Link>
-        <SignOutButton />
-      </header>
-      <main className="mx-auto max-w-2xl px-6 py-8">
-        <h1 className="mb-2 text-lg font-semibold text-neutral-900 dark:text-neutral-100">
+    <div className="min-h-full bg-surface-muted">
+      <StaffPageHeader backHref="/admin/dashboard" />
+      <main className="mx-auto max-w-2xl px-4 py-8 sm:px-6 sm:py-10">
+        <h1 className="mb-2 text-2xl font-extrabold tracking-tight text-primary dark:text-neutral-100">
           AI SEO 페이지 생성
         </h1>
         <p className="mb-6 text-sm text-neutral-500">
@@ -25,10 +19,10 @@ export default async function AdminSeoPage() {
         </p>
         <SeoPageGenerator />
 
-        <h2 className="mb-2 mt-8 text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+        <h2 className="mb-2.5 mt-8 text-sm font-bold text-neutral-900 dark:text-neutral-100">
           생성된 페이지 ({pages.length})
         </h2>
-        <div className="space-y-2">
+        <div className="space-y-2.5">
           {pages.map((p) => (
             <SeoPageRow
               key={p.id}
@@ -36,7 +30,9 @@ export default async function AdminSeoPage() {
             />
           ))}
           {pages.length === 0 && (
-            <p className="text-sm text-neutral-500">생성된 페이지가 없습니다.</p>
+            <p className="rounded-2xl border border-dashed border-neutral-300 py-12 text-center text-sm text-neutral-500 dark:border-neutral-700">
+              생성된 페이지가 없습니다.
+            </p>
           )}
         </div>
       </main>

@@ -4,6 +4,7 @@ import path from "node:path";
 import { requireRole, toErrorResponse } from "@/lib/rbac";
 import { logAdminActivity } from "@/lib/adminLog";
 import { BACKUP_DIR, DB_PATH } from "@/lib/backups";
+import { notifyRole } from "@/lib/notify";
 
 export async function POST() {
   try {
@@ -15,6 +16,11 @@ export async function POST() {
     await copyFile(DB_PATH, path.join(BACKUP_DIR, filename));
 
     await logAdminActivity(actor.id, "DB_BACKUP", filename);
+    await notifyRole(
+      "SUPER_ADMIN",
+      { type: "DB_BACKUP_EVENT", title: `DB 백업 실행됨: ${filename}`, link: "/super-admin/dashboard/backup" },
+      actor.id,
+    );
 
     return NextResponse.json({ filename }, { status: 201 });
   } catch (error) {

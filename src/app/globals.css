@@ -3,15 +3,26 @@
 :root {
   --background: #ffffff;
   --foreground: #18181b;
-  --brand: #c2703d;
-  --brand-foreground: #ffffff;
+
+  /* Site-wide palette (숨고/오늘의집/카카오맵 스타일). Used everywhere —
+     user-facing pages and PARTNER/ADMIN/SUPER_ADMIN dashboards alike. */
+  --primary: #1e293b;
+  --primary-foreground: #ffffff;
+  --accent: #d4af37;
+  --accent-foreground: #1e293b;
+  --surface: #ffffff;
+  --surface-muted: #f8f9fb;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --color-brand: var(--brand);
-  --color-brand-foreground: var(--brand-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -20,7 +31,12 @@
   :root {
     --background: #0a0a0a;
     --foreground: #f4f4f5;
-    --brand: #e0925a;
+    --primary: #334155;
+    --primary-foreground: #f4f4f5;
+    --accent: #e0c368;
+    --accent-foreground: #1e293b;
+    --surface: #12141a;
+    --surface-muted: #171a21;
   }
 }
 
@@ -29,4 +45,19 @@ body {
   color: var(--foreground);
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+}
+
+@keyframes compare-bar-enter {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.compare-bar-enter {
+  animation: compare-bar-enter 0.25s ease-out;
 }

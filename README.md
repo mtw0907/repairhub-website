@@ -27,34 +27,40 @@ npm run dev
 
 `.env.example` 참고. 최소 필요 값:
 
-- `DATABASE_URL` — 로컬은 `file:./dev.db` (SQLite). 운영 배포 시 Postgres로 전환 필요 (아래 참고).
+- `DATABASE_URL` — Postgres 연결문자열. 로컬 개발도 운영과 동일하게 Postgres를 사용합니다
+  (Vercel 프로젝트 → Storage → Postgres 추가하면 발급됨). SQLite는 더 이상 사용하지 않습니다.
+- `BLOB_READ_WRITE_TOKEN` — 업체 사진·사업자등록증 업로드용 Vercel Blob 토큰
+  (Vercel 프로젝트 → Storage → Blob 추가하면 발급됨)
 - `AUTH_SECRET` — NextAuth 세션 서명 키. **운영 배포 전 반드시 새로 생성**: `openssl rand -base64 32`
 
-OpenAI API Key, 토스페이먼츠 Client/Secret Key, SMTP 설정 등은 코드/환경변수가 아니라
-**최고관리자 로그인 → 시스템 설정** 화면에서 등록합니다 (DB에 저장되며 즉시 반영, 재배포 불필요).
+OpenAI API Key, 토스페이먼츠 Client/Secret Key, SMTP 설정, Kakao Maps 키 등은 코드/환경변수가
+아니라 **최고관리자 로그인 → 시스템 설정** 화면에서 등록합니다 (DB에 저장되며 즉시 반영, 재배포 불필요).
 
-## 데이터베이스: SQLite → Postgres 전환
+## 데이터베이스 · 파일 스토리지
 
-로컬 개발은 SQLite로 구성되어 있습니다. 운영 배포 시:
+Postgres(Vercel Postgres 등)와 Vercel Blob을 사용합니다. `schema.prisma`의 Role/Status 등
+`String` 필드(주석에 허용값 명시)는 SQLite 시절 설계의 흔적으로, 원하면 Postgres `enum`
+타입으로 전환 가능하지만 필수는 아닙니다. 스키마 변경 후에는:
 
-1. `prisma/schema.prisma`의 `datasource db`에서 `provider = "sqlite"` → `"postgresql"`로 변경
-2. Role/Status 등 현재 `String` 필드로 되어 있는 값들(주석에 허용값이 명시되어 있음)은 그대로
-   문자열로 두거나, 원한다면 Postgres `enum` 타입으로 전환 가능 (SQLite는 enum 미지원이라
-   문자열로 설계했습니다)
-3. `DATABASE_URL`을 Postgres 연결 문자열로 변경 후 `npx prisma migrate deploy`
+```bash
+npx prisma migrate dev   # 로컬
+npx prisma migrate deploy  # 운영 배포 파이프라인
+```
 
 ## 배포 체크리스트 (Vercel 기준)
 
 1. **`AUTH_SECRET`을 새로 생성**하여 운영 환경변수에 설정 (로컬 `.env`의 개발용 값 재사용 금지)
-2. Postgres 데이터베이스 프로비저닝 후 `DATABASE_URL` 설정, `npx prisma migrate deploy` 실행
+2. Vercel 프로젝트에 Postgres·Blob 스토리지를 추가하고 `DATABASE_URL`, `BLOB_READ_WRITE_TOKEN`을
+   환경변수로 설정
 3. 배포 후 **최고관리자 계정으로 로그인 → 회원 관리에서 시드 계정 비밀번호 변경 또는 삭제**
    (개발용 시드 계정/비밀번호를 운영에 그대로 두지 않기)
-4. **최고관리자 → 시스템 설정**에서 OpenAI API Key, 토스페이먼츠 Client/Secret Key 등록
-5. `public/uploads` 디렉토리는 서버리스 환경에서 영속되지 않으므로, 운영 배포 시 S3 등 외부
-   오브젝트 스토리지로 `src/app/api/upload/route.ts`의 저장 로직을 교체 필요
-6. NextAuth v5는 배포 플랫폼에 따라 `AUTH_TRUST_HOST=true` 환경변수가 필요할 수 있음
+4. **최고관리자 → 시스템 설정**에서 OpenAI API Key, 토스페이먼츠 Client/Secret Key, Kakao Maps
+   키 등록
+5. NextAuth v5는 배포 플랫폼에 따라 `AUTH_TRUST_HOST=true` 환경변수가 필요할 수 있음
    (호스트 헤더 신뢰 관련 오류 발생 시 추가)
-7. `NEXT_PUBLIC_SITE_URL`을 실제 배포 도메인으로 설정 (sitemap.xml/robots.txt에 사용됨)
+6. `NEXT_PUBLIC_SITE_URL`을 실제 배포 도메인으로 설정 (sitemap.xml/robots.txt에 사용됨)
+7. Kakao Maps JavaScript 키를 쓴다면, Kakao Developers 콘솔의 플랫폼(Web) 설정에 실제
+   배포 도메인을 등록해야 지도가 표시됩니다 (localhost는 등록이 안 되므로 배포 후 진행)
 8. 로그인/회원가입 API에는 애플리케이션 레벨 로그인 시도 제한이 없습니다. 배포 플랫폼의
    요청 속도 제한(예: Vercel Firewall, Cloudflare Rate Limiting)을 반드시 적용하세요.
 9. `npm audit`에 표시되는 high severity 항목(postcss, sharp)은 Next.js 내부 옵션 의존성이며,

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireRole, toErrorResponse, ForbiddenError } from "@/lib/rbac";
+import { notifyCompanyOwners } from "@/lib/notify";
 
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -20,7 +21,13 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
 
     const updated = await prisma.reservation.update({
       where: { id },
-      data: { status: "CANCELED" },
+      data: { status: "CANCELED", statusLogs: { create: { status: "CANCELED" } } },
+    });
+
+    await notifyCompanyOwners(reservation.companyId, {
+      type: "RESERVATION_CHANGED",
+      title: "사용자가 예약을 취소했습니다",
+      link: "/partner/dashboard/reservations",
     });
 
     return NextResponse.json(updated);

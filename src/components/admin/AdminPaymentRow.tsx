@@ -40,36 +40,42 @@ export function AdminPaymentRow({
   }
 
   return (
-    <div className="rounded-lg border border-neutral-200 bg-white p-3 text-sm dark:border-neutral-800 dark:bg-neutral-900">
+    <div className="rounded-xl border border-neutral-200/70 bg-white p-4 text-sm shadow-sm transition-shadow hover:shadow-md dark:border-neutral-800 dark:bg-neutral-900">
       <div className="flex items-center justify-between">
-        <span className="font-medium">
+        <span className="font-semibold text-neutral-900 dark:text-neutral-100">
           {payment.companyName ?? "-"} · {payment.userName}
         </span>
-        <span className="rounded-full bg-neutral-100 px-2 py-0.5 text-xs text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300">
+        <span
+          className={
+            payment.status === "PAID"
+              ? "rounded-full bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary"
+              : "rounded-full bg-neutral-100 px-2.5 py-1 text-xs font-semibold text-neutral-500 dark:bg-neutral-800"
+          }
+        >
           {payment.status}
         </span>
       </div>
-      <p className="mt-1 text-neutral-600 dark:text-neutral-400">
-        {payment.orderName ?? "결제"} · {payment.amount.toLocaleString()}원 ·{" "}
+      <p className="mt-1.5 text-neutral-600 dark:text-neutral-400">
+        {payment.orderName ?? "결제"} · <span className="font-semibold text-neutral-800 dark:text-neutral-200">{payment.amount.toLocaleString()}원</span> ·{" "}
         {new Date(payment.createdAt).toLocaleDateString("ko-KR")}
       </p>
 
       {payment.status === "PAID" && (
-        <div className="mt-2">
+        <div className="mt-3">
           {confirming ? (
             <div className="flex items-center gap-2 text-xs">
               <span className="text-neutral-500">환불을 진행하시겠습니까?</span>
               <button
                 onClick={handleRefund}
                 disabled={loading}
-                className="rounded-md bg-red-600 px-2 py-1 font-medium text-white hover:bg-red-700 disabled:opacity-50"
+                className="rounded-lg bg-red-600 px-2.5 py-1.5 font-semibold text-white hover:bg-red-700 disabled:opacity-50"
               >
                 {loading ? "처리 중..." : "환불 확정"}
               </button>
               <button
                 onClick={() => setConfirming(false)}
                 disabled={loading}
-                className="rounded-md border border-neutral-300 px-2 py-1 dark:border-neutral-700"
+                className="rounded-lg border border-neutral-300 px-2.5 py-1.5 dark:border-neutral-700"
               >
                 취소
               </button>
@@ -77,7 +83,7 @@ export function AdminPaymentRow({
           ) : (
             <button
               onClick={() => setConfirming(true)}
-              className="rounded-md border border-red-300 px-2 py-1 text-xs font-medium text-red-600 hover:bg-red-50 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-950"
+              className="rounded-lg border border-red-300 px-2.5 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-950"
             >
               환불 처리
             </button>

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import {
   LayoutDashboard,
   Users,
@@ -5,10 +6,20 @@ import {
   Megaphone,
   Search,
   BarChart3,
+  Sparkles,
 } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { DashboardShell } from "@/components/DashboardShell";
+
+const REPAIR_REQUEST_STATUS_LABEL: Record<string, string> = {
+  SUBMITTED: "분석 중",
+  ANALYZED: "분석 완료",
+  MATCHING: "매칭 중",
+  QUOTED: "견적 도착",
+  RESERVED: "예약 완료",
+  CLOSED: "종료",
+};
 
 export default async function AdminDashboardPage() {
   const session = await auth();
@@ -16,15 +27,31 @@ export default async function AdminDashboardPage() {
   const todayStart = new Date();
   todayStart.setHours(0, 0, 0, 0);
 
-  const [todaySignups, todayReservations, pendingCompanies, pendingReports, aiUsageCount, revenue] =
-    await Promise.all([
-      prisma.user.count({ where: { createdAt: { gte: todayStart } } }),
-      prisma.reservation.count({ where: { createdAt: { gte: todayStart } } }),
-      prisma.company.count({ where: { status: { in: ["PENDING", "UNVERIFIED"] } } }),
-      prisma.report.count({ where: { status: "PENDING" } }),
-      prisma.aiUsageLog.count(),
-      prisma.payment.aggregate({ where: { status: "PAID" }, _sum: { amount: true } }),
-    ]);
+  const [
+    todaySignups,
+    todayReservations,
+    pendingCompanies,
+    pendingReports,
+    aiUsageCount,
+    revenue,
+    activeRepairRequestCount,
+    recentRepairRequests,
+  ] = await Promise.all([
+    prisma.user.count({ where: { createdAt: { gte: todayStart } } }),
+    prisma.reservation.count({ where: { createdAt: { gte: todayStart } } }),
+    prisma.company.count({ where: { status: { in: ["PENDING", "UNVERIFIED"] } } }),
+    prisma.report.count({ where: { status: "PENDING" } }),
+    prisma.aiUsageLog.count(),
+    prisma.payment.aggregate({ where: { status: "PAID" }, _sum: { amount: true } }),
+    prisma.repairRequest.count({
+      where: { status: { in: ["SUBMITTED", "ANALYZED", "MATCHING", "QUOTED"] } },
+    }),
+    prisma.repairRequest.findMany({
+      include: { user: { select: { name: true } }, quotes: { select: { id: true } } },
+      orderBy: { createdAt: "desc" },
+      take: 5,
+    }),
+  ]);
 
   return (
     <DashboardShell
@@ -47,6 +74,10 @@ export default async function AdminDashboardPage() {
               href: "/admin/dashboard/subscriptions",
             },
             { label: `AI 사용량: ${aiUsageCount}회`, href: "/admin/dashboard/stats" },
+            {
+              label: `진행 중인 AI 견적 요청: ${activeRepairRequestCount}건`,
+              href: "/admin/dashboard/repair-requests",
+            },
           ],
         },
         {
@@ -64,6 +95,7 @@ export default async function AdminDashboardPage() {
           items: [
             { label: "예약 조회 · 변경 · 노쇼 관리", href: "/admin/dashboard/reservations" },
             { label: "견적 조회 · 업체 응답률", href: "/admin/dashboard/estimates" },
+            { label: "AI 매칭 견적 요청 관리", href: "/admin/dashboard/repair-requests" },
             { label: "후기 숨김 · 삭제", href: "/admin/dashboard/reviews" },
             { label: "신고 처리", href: "/admin/dashboard/reports" },
           ],
@@ -91,6 +123,53 @@ export default async function AdminDashboardPage() {
           items: [{ label: "전체 통계 보기", href: "/admin/dashboard/stats" }],
         },
       ]}
-    />
+    >
+      {recentRepairRequests.length > 0 && (
+        <div className="mb-8 overflow-hidden rounded-2xl border border-neutral-200/70 bg-white shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-neutral-100 bg-gradient-to-r from-primary to-primary/85 px-5 py-4 dark:border-neutral-800 sm:px-6">
+            <div className="flex items-center gap-2.5">
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white/15 text-accent">
+                <Sparkles className="h-5 w-5" />
+              </span>
+              <div>
+                <h2 className="text-base font-bold text-white">AI 수리 견적 매칭 현황</h2>
+                <p className="text-xs text-white/70">진행 중인 요청 {activeRepairRequestCount}건</p>
+              </div>
+            </div>
+            <Link
+              href="/admin/dashboard/repair-requests"
+              className="rounded-full bg-white/10 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-white/20"
+            >
+              전체보기
+            </Link>
+          </div>
+          <div className="divide-y divide-neutral-100 dark:divide-neutral-800">
+            {recentRepairRequests.map((r) => (
+              <div
+                key={r.id}
+                className="flex flex-wrap items-center justify-between gap-3 px-5 py-3.5 sm:px-6"
+              >
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+                    {r.instrument}
+                    {r.brand ? ` · ${r.brand}` : ""}
+                    <span className="ml-1.5 font-normal text-neutral-400">{r.user.name}님</span>
+                  </p>
+                  <p className="line-clamp-1 text-xs text-neutral-500">{r.symptom}</p>
+                </div>
+                <div className="flex shrink-0 items-center gap-2 text-xs">
+                  <span className="rounded-full bg-surface-muted px-2.5 py-1 font-medium text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300">
+                    견적 {r.quotes.length}건
+                  </span>
+                  <span className="rounded-full bg-primary/10 px-2.5 py-1 font-semibold text-primary">
+                    {REPAIR_REQUEST_STATUS_LABEL[r.status] ?? r.status}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </DashboardShell>
   );
 }

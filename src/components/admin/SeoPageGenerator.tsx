@@ -39,12 +39,15 @@ export function SeoPageGenerator() {
   }
 
   return (
-    <form onSubmit={handleGenerate} className="space-y-3 rounded-lg border border-neutral-200 p-4 dark:border-neutral-800">
-      <div className="flex gap-2">
+    <form
+      onSubmit={handleGenerate}
+      className="space-y-3 rounded-2xl border border-neutral-200/70 bg-white p-4 shadow-sm dark:border-neutral-800 dark:bg-neutral-900"
+    >
+      <div className="flex flex-col gap-2 sm:flex-row">
         <select
           value={type}
           onChange={(e) => setType(e.target.value)}
-          className="rounded-md border border-neutral-300 px-2 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+          className="rounded-xl border border-neutral-200 bg-surface-muted px-3 py-2.5 text-sm outline-none focus:border-primary/40 focus:ring-2 focus:ring-primary/10 dark:border-neutral-700 dark:bg-neutral-800"
         >
           {Object.entries(TYPE_LABEL).map(([value, label]) => (
             <option key={value} value={value}>
@@ -57,24 +60,24 @@ export function SeoPageGenerator() {
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
           placeholder="예: 서울특별시 마포구 / Fender / 기타 넥 변형"
-          className="flex-1 rounded-md border border-neutral-300 px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+          className="flex-1 rounded-xl border border-neutral-200 bg-surface-muted px-3 py-2.5 text-sm outline-none focus:border-primary/40 focus:ring-2 focus:ring-primary/10 dark:border-neutral-700 dark:bg-neutral-800"
         />
         <button
           type="submit"
           disabled={loading}
-          className="whitespace-nowrap rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white hover:bg-neutral-700 disabled:opacity-50 dark:bg-white dark:text-neutral-900"
+          className="whitespace-nowrap rounded-xl border border-accent/40 bg-accent/10 px-4 py-2.5 text-sm font-semibold text-accent-foreground transition-colors hover:bg-accent/20 disabled:opacity-50 dark:text-accent"
         >
           {loading ? "생성 중..." : "AI로 페이지 생성"}
         </button>
       </div>
       {error && (
-        <p className="rounded-md border border-amber-300 bg-amber-50 p-3 text-sm text-amber-800 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-300">
+        <p className="rounded-xl border border-amber-300 bg-amber-50 p-3 text-sm text-amber-800 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-300">
           {error}
         </p>
       )}
       {result && (
-        <div className="rounded-md bg-neutral-50 p-3 text-sm dark:bg-neutral-800">
-          <p className="font-medium text-neutral-900 dark:text-neutral-100">{result.title}</p>
+        <div className="rounded-xl bg-surface-muted p-3 text-sm dark:bg-neutral-800">
+          <p className="font-semibold text-neutral-900 dark:text-neutral-100">{result.title}</p>
           <p className="mt-1 text-neutral-600 dark:text-neutral-400">{result.introText}</p>
         </div>
       )}

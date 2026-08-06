@@ -1,15 +1,9 @@
 import Link from "next/link";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { SignOutButton } from "@/components/SignOutButton";
+import { StaffPageHeader } from "@/components/StaffPageHeader";
 import { CancelSubscriptionButton } from "@/components/partner/CancelSubscriptionButton";
 import { PRO_PLAN_PRICE } from "@/lib/constants";
-
-const STATUS_LABEL: Record<string, string> = {
-  ACTIVE: "활성",
-  CANCELED: "취소됨",
-  EXPIRED: "만료됨",
-};
 
 export default async function PartnerSubscriptionPage() {
   const session = await auth();
@@ -28,25 +22,20 @@ export default async function PartnerSubscriptionPage() {
   const activeSubscription = subscriptions.find((s) => s.status === "ACTIVE");
 
   return (
-    <div className="min-h-full bg-neutral-50 dark:bg-neutral-950">
-      <header className="flex items-center justify-between border-b border-neutral-200 bg-white px-6 py-4 dark:border-neutral-800 dark:bg-neutral-900">
-        <Link href="/partner/dashboard" className="text-sm text-neutral-500 hover:underline">
-          ← 대시보드로
-        </Link>
-        <SignOutButton />
-      </header>
-      <main className="mx-auto max-w-2xl px-6 py-8">
-        <h1 className="mb-6 text-lg font-semibold text-neutral-900 dark:text-neutral-100">
+    <div className="min-h-full bg-surface-muted">
+      <StaffPageHeader backHref="/partner/dashboard" />
+      <main className="mx-auto max-w-2xl px-4 py-8 sm:px-6 sm:py-10">
+        <h1 className="mb-6 text-2xl font-extrabold tracking-tight text-primary dark:text-neutral-100">
           구독 관리
         </h1>
 
-        <div className="mb-8 rounded-lg border border-neutral-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-900">
+        <div className="mb-8 rounded-2xl border border-neutral-200/70 bg-white p-5 shadow-sm dark:border-neutral-800 dark:bg-neutral-900 sm:p-6">
           {activeSubscription ? (
             <>
               <p className="text-sm text-neutral-500">현재 플랜</p>
-              <p className="mt-1 text-lg font-semibold text-neutral-900 dark:text-neutral-100">
-                RepairHub Pro{" "}
-                <span className="ml-2 rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700 dark:bg-amber-950 dark:text-amber-300">
+              <p className="mt-1 flex items-center gap-2 text-lg font-bold text-neutral-900 dark:text-neutral-100">
+                RepairHub Pro
+                <span className="rounded-full bg-accent px-2.5 py-0.5 text-xs font-semibold text-accent-foreground">
                   프리미엄
                 </span>
               </p>
@@ -62,7 +51,7 @@ export default async function PartnerSubscriptionPage() {
           ) : (
             <>
               <p className="text-sm text-neutral-500">현재 플랜</p>
-              <p className="mt-1 text-lg font-semibold text-neutral-900 dark:text-neutral-100">
+              <p className="mt-1 text-lg font-bold text-neutral-900 dark:text-neutral-100">
                 무료 플랜
               </p>
               <p className="mt-2 text-sm text-neutral-500">
@@ -71,7 +60,7 @@ export default async function PartnerSubscriptionPage() {
               </p>
               <Link
                 href="/partner/dashboard/subscription/checkout"
-                className="mt-4 inline-block rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white hover:bg-neutral-700 dark:bg-white dark:text-neutral-900"
+                className="mt-4 inline-block rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm transition-transform hover:scale-[1.02] hover:bg-primary/90"
               >
                 Pro 구독 시작하기
               </Link>
@@ -79,19 +68,19 @@ export default async function PartnerSubscriptionPage() {
           )}
         </div>
 
-        <h2 className="mb-2 text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+        <h2 className="mb-2.5 text-sm font-bold text-neutral-900 dark:text-neutral-100">
           결제 내역
         </h2>
-        <ul className="divide-y divide-neutral-200 rounded-lg border border-neutral-200 text-sm dark:divide-neutral-800 dark:border-neutral-800">
+        <ul className="divide-y divide-neutral-100 rounded-2xl border border-neutral-200/70 bg-white text-sm shadow-sm dark:divide-neutral-800 dark:border-neutral-800 dark:bg-neutral-900">
           {payments.map((p) => (
-            <li key={p.id} className="flex items-center justify-between px-4 py-2">
+            <li key={p.id} className="flex items-center justify-between px-4 py-2.5">
               <span>
                 {p.orderName ?? "결제"} ·{" "}
                 {new Date(p.createdAt).toLocaleDateString("ko-KR")}
               </span>
               <span className="flex items-center gap-2">
-                <span className="font-medium">{p.amount.toLocaleString()}원</span>
-                <span className="rounded-full bg-neutral-100 px-2 py-0.5 text-xs text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300">
+                <span className="font-semibold text-neutral-800 dark:text-neutral-200">{p.amount.toLocaleString()}원</span>
+                <span className="rounded-full bg-surface-muted px-2.5 py-1 text-xs font-medium text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300">
                   {p.status}
                 </span>
               </span>
