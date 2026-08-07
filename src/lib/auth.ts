@@ -76,6 +76,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           name: user.name,
           role: user.role as Role,
           companyId: user.companyId,
+          termsAgreedAt: user.termsAgreedAt ? user.termsAgreedAt.toISOString() : null,
         };
       },
     }),
@@ -93,11 +94,20 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       }
       return true;
     },
-    async jwt({ token, user, account }) {
+    async jwt({ token, user, account, trigger }) {
+      // The /consent page calls update() after recording agreement, so the
+      // JWT (which the proxy gate reads without a DB round-trip) picks up
+      // the new termsAgreedAt without forcing a full re-login.
+      if (trigger === "update" && token.id) {
+        const dbUser = await prisma.user.findUnique({ where: { id: token.id as string } });
+        if (dbUser) token.termsAgreedAt = dbUser.termsAgreedAt ? dbUser.termsAgreedAt.toISOString() : null;
+        return token;
+      }
       // OAuth sign-in: no local User row is created by NextAuth itself
       // (there's no Adapter), so find-or-create it here by email, then
       // trust our own DB record for role/companyId instead of the
-      // provider's profile payload.
+      // provider's profile payload. New OAuth signups start with
+      // termsAgreedAt unset; the proxy gate routes them to /consent.
       if (account && account.provider !== "credentials" && user?.email) {
         const dbUser =
           (await prisma.user.findUnique({ where: { email: user.email } })) ??
@@ -107,12 +117,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         token.id = dbUser.id;
         token.role = dbUser.role as Role;
         token.companyId = dbUser.companyId;
+        token.termsAgreedAt = dbUser.termsAgreedAt ? dbUser.termsAgreedAt.toISOString() : null;
         return token;
       }
       if (user) {
         token.id = user.id;
         token.role = user.role;
         token.companyId = user.companyId;
+        token.termsAgreedAt = user.termsAgreedAt ?? null;
       }
       return token;
     },

@@ -15,6 +15,7 @@ export const authConfig: NextAuthConfig = {
         token.id = user.id;
         token.role = user.role;
         token.companyId = user.companyId;
+        token.termsAgreedAt = user.termsAgreedAt ?? null;
       }
       return token;
     },
@@ -23,6 +24,7 @@ export const authConfig: NextAuthConfig = {
         session.user.id = token.id as string;
         session.user.role = token.role as (typeof session.user)["role"];
         session.user.companyId = (token.companyId as string | null | undefined) ?? null;
+        session.user.termsAgreedAt = (token.termsAgreedAt as string | null | undefined) ?? null;
       }
       return session;
     },

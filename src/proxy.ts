@@ -18,6 +18,10 @@ const ROUTE_ROLE_MAP: { prefix: string; roles: Role[] }[] = [
   { prefix: "/super-admin", roles: ["SUPER_ADMIN"] },
 ];
 
+// Pages an authenticated-but-not-yet-agreed user must still be able to
+// reach: the consent page itself and the two documents it links to.
+const CONSENT_EXEMPT_PATHS = new Set(["/consent", "/terms", "/privacy"]);
+
 const MAINTENANCE_HTML = `<!doctype html>
 <html lang="ko"><head><meta charset="utf-8" />
 <title>점검 중 - RepairHub</title>
@@ -45,6 +49,14 @@ export default auth(async (req) => {
       status: 503,
       headers: { "Content-Type": "text/html; charset=utf-8" },
     });
+  }
+
+  // Credentials/register already collect consent up front, but OAuth
+  // signups skip that form entirely (see jwt() in auth.ts) — this gate
+  // catches those (and any pre-existing account from before the terms
+  // page existed) before they can use any authenticated page.
+  if (role && !CONSENT_EXEMPT_PATHS.has(pathname) && !req.auth?.user?.termsAgreedAt) {
+    return NextResponse.redirect(new URL("/consent", req.nextUrl.origin));
   }
 
   const match = ROUTE_ROLE_MAP.find((r) => pathname.startsWith(r.prefix));
