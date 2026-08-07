@@ -3,9 +3,15 @@ import { prisma } from "@/lib/prisma";
 import { sendOtpSchema } from "@/lib/validations/auth";
 import { issueOtp, OtpCooldownError } from "@/lib/otp";
 import { sendMail, toEmailErrorResponse } from "@/lib/email";
+import { checkRateLimit, getClientIp } from "@/lib/rateLimit";
 
 export async function POST(req: Request) {
   try {
+    const ip = getClientIp(req);
+    if (!(await checkRateLimit(`otp:ip:${ip}`, 10, 60 * 60 * 1000))) {
+      return NextResponse.json({ error: "잠시 후 다시 시도해주세요." }, { status: 429 });
+    }
+
     const body = await req.json();
     const parsed = sendOtpSchema.safeParse(body);
     if (!parsed.success) {

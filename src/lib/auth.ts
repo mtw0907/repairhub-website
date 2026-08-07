@@ -10,6 +10,7 @@ import { authConfig } from "@/lib/auth.config";
 import type { Role } from "@/lib/constants";
 import { logAdminActivity } from "@/lib/adminLog";
 import { getSetting } from "@/lib/systemSettings";
+import { checkRateLimit, getClientIp } from "@/lib/rateLimit";
 
 const ADMIN_ROLES = new Set(["ADMIN", "SUPER_ADMIN"]);
 
@@ -40,9 +41,19 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
-      authorize: async (credentials) => {
+      authorize: async (credentials, request) => {
         const parsed = loginSchema.safeParse(credentials);
         if (!parsed.success) return null;
+
+        // Brute-force guard: cap attempts per email and per IP within a
+        // rolling window. A blocked attempt fails the same way as a wrong
+        // password so it doesn't leak rate-limit state to an attacker.
+        const ip = getClientIp(request);
+        const [emailAllowed, ipAllowed] = await Promise.all([
+          checkRateLimit(`login:email:${parsed.data.email}`, 8, 10 * 60 * 1000),
+          checkRateLimit(`login:ip:${ip}`, 30, 10 * 60 * 1000),
+        ]);
+        if (!emailAllowed || !ipAllowed) return null;
 
         const user = await prisma.user.findUnique({
           where: { email: parsed.data.email },

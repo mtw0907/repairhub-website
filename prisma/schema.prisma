@@ -24,6 +24,7 @@ model User {
   phone     String?
   role      String   @default("USER")
   status    String   @default("ACTIVE")
+  termsAgreedAt DateTime? // 이용약관·개인정보처리방침 동의 시각 (가입 폼 경유 시에만 설정)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -498,4 +499,13 @@ model VerificationCode {
   createdAt DateTime @default(now())
 
   @@index([email, purpose])
+}
+
+// 고정 윈도우 방식 요청 횟수 제한 카운터. key 예: "login:email:a@b.com",
+// "login:ip:1.2.3.4", "register:ip:1.2.3.4". windowStart 이후 windowMs가
+// 지나면 다음 요청에서 count가 1로 리셋된다.
+model RateLimit {
+  key         String   @id
+  count       Int      @default(0)
+  windowStart DateTime @default(now())
 }

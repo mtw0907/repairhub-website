@@ -5,6 +5,8 @@ export const registerSchema = z.object({
   password: z.string().min(8, "비밀번호는 8자 이상이어야 합니다."),
   name: z.string().min(1, "이름을 입력해주세요."),
   phone: z.string().optional(),
+  agreeTerms: z.literal(true, "이용약관에 동의해주세요."),
+  agreePrivacy: z.literal(true, "개인정보 수집 및 이용에 동의해주세요."),
 });
 
 export type RegisterInput = z.infer<typeof registerSchema>;
@@ -46,6 +48,8 @@ export const registerPartnerSchema = z.object({
   address: z.string().min(1, "주소를 입력해주세요."),
   region: z.string().min(1, "지역을 입력해주세요."),
   certificateUrl: z.string().min(1, "사업자등록증을 업로드해주세요."),
+  agreeTerms: z.literal(true, "이용약관에 동의해주세요."),
+  agreePrivacy: z.literal(true, "개인정보 수집 및 이용에 동의해주세요."),
 });
 
 export type RegisterPartnerInput = z.infer<typeof registerPartnerSchema>;

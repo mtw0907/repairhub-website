@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { OtpEmailField } from "@/components/auth/OtpEmailField";
 
@@ -21,6 +22,9 @@ export function PartnerRegisterForm() {
 
   const [certificateUrl, setCertificateUrl] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+
+  const [agreeTerms, setAgreeTerms] = useState(false);
+  const [agreePrivacy, setAgreePrivacy] = useState(false);
 
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -68,6 +72,8 @@ export function PartnerRegisterForm() {
         address,
         region,
         certificateUrl,
+        agreeTerms,
+        agreePrivacy,
       }),
     });
 
@@ -180,11 +186,44 @@ export function PartnerRegisterForm() {
         </p>
       </div>
 
+      <div className="space-y-2 rounded-xl bg-surface-muted px-3 py-3 dark:bg-neutral-800">
+        <label className="flex items-center gap-2 text-sm text-neutral-700 dark:text-neutral-300">
+          <input
+            type="checkbox"
+            required
+            checked={agreeTerms}
+            onChange={(e) => setAgreeTerms(e.target.checked)}
+            className="h-4 w-4 rounded border-neutral-300 accent-primary"
+          />
+          <span>
+            <Link href="/terms" target="_blank" className="font-medium underline underline-offset-2">
+              이용약관
+            </Link>
+            에 동의합니다 (필수)
+          </span>
+        </label>
+        <label className="flex items-center gap-2 text-sm text-neutral-700 dark:text-neutral-300">
+          <input
+            type="checkbox"
+            required
+            checked={agreePrivacy}
+            onChange={(e) => setAgreePrivacy(e.target.checked)}
+            className="h-4 w-4 rounded border-neutral-300 accent-primary"
+          />
+          <span>
+            <Link href="/privacy" target="_blank" className="font-medium underline underline-offset-2">
+              개인정보 수집 및 이용
+            </Link>
+            에 동의합니다 (필수)
+          </span>
+        </label>
+      </div>
+
       {error && <p className="text-sm text-red-600">{error}</p>}
 
       <button
         type="submit"
-        disabled={loading || !emailVerified || !certificateUrl}
+        disabled={loading || !emailVerified || !certificateUrl || !agreeTerms || !agreePrivacy}
         className="w-full rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm transition-transform hover:scale-[1.01] disabled:opacity-50 disabled:hover:scale-100"
       >
         {loading ? "가입 신청 중..." : "업체 가입 신청하기"}

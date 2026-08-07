@@ -7,6 +7,7 @@ import { isEmailVerified, consumeVerification } from "@/lib/otp";
 import { runAiVisionCompletion } from "@/lib/ai";
 import { readUploadedFileAsDataUrl } from "@/lib/uploadStorage";
 import { notifyRole } from "@/lib/notify";
+import { checkRateLimit, getClientIp } from "@/lib/rateLimit";
 
 const VERIFICATION_SYSTEM_PROMPT = `당신은 사업자등록증 1차 검토 담당자입니다. 첨부된 이미지가 대한민국
 사업자등록증처럼 보이는지, 그리고 이미지에서 읽을 수 있는 상호명·사업자등록번호·대표자명이 아래 입력값과
@@ -19,6 +20,14 @@ export async function POST(req: Request) {
     return NextResponse.json(
       { error: "현재 신규 회원가입이 잠겨 있습니다. 나중에 다시 시도해주세요." },
       { status: 403 },
+    );
+  }
+
+  const ip = getClientIp(req);
+  if (!(await checkRateLimit(`register:ip:${ip}`, 5, 60 * 60 * 1000))) {
+    return NextResponse.json(
+      { error: "잠시 후 다시 시도해주세요." },
+      { status: 429 },
     );
   }
 
@@ -60,6 +69,7 @@ export async function POST(req: Request) {
         phone: data.phone,
         role: "PARTNER",
         companyId: company.id,
+        termsAgreedAt: new Date(),
       },
     });
     return { company, user };

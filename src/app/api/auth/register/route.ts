@@ -4,12 +4,21 @@ import { prisma } from "@/lib/prisma";
 import { registerSchema } from "@/lib/validations/auth";
 import { isRegistrationLocked } from "@/lib/systemSettings";
 import { isEmailVerified, consumeVerification } from "@/lib/otp";
+import { checkRateLimit, getClientIp } from "@/lib/rateLimit";
 
 export async function POST(req: Request) {
   if (await isRegistrationLocked()) {
     return NextResponse.json(
       { error: "현재 신규 회원가입이 잠겨 있습니다. 나중에 다시 시도해주세요." },
       { status: 403 },
+    );
+  }
+
+  const ip = getClientIp(req);
+  if (!(await checkRateLimit(`register:ip:${ip}`, 5, 60 * 60 * 1000))) {
+    return NextResponse.json(
+      { error: "잠시 후 다시 시도해주세요." },
+      { status: 429 },
     );
   }
 
@@ -38,6 +47,7 @@ export async function POST(req: Request) {
       name: parsed.data.name,
       phone: parsed.data.phone,
       role: "USER",
+      termsAgreedAt: new Date(),
     },
   });
 
