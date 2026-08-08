@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { BadgeCheck, MapPin, Phone, Star, Truck, Package, Clock } from "lucide-react";
+import { BadgeCheck, Guitar, MapPin, Phone, Star, Truck, Package, Clock } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -122,16 +122,22 @@ export default async function CompanyDetailPage({
       {isUser && <RecordRecentView companyId={company.id} />}
 
       {/* 대표 사진 배너 */}
-      <div className="relative h-48 w-full overflow-hidden bg-gradient-to-br from-primary to-primary/70 sm:h-64">
-        {(photos[0] || company.logoUrl) && (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={photos[0] ?? company.logoUrl ?? undefined}
-            alt={company.name}
-            className="h-full w-full object-cover"
-          />
+      <div className="relative h-48 w-full overflow-hidden sm:h-64">
+        {photos[0] || company.logoUrl ? (
+          <>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={photos[0] ?? company.logoUrl ?? undefined}
+              alt={company.name}
+              className="h-full w-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
+          </>
+        ) : (
+          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-primary/10 via-surface-muted to-accent/15">
+            <Guitar className="h-16 w-16 text-primary/20" />
+          </div>
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
       </div>
 
       <main className="mx-auto w-full max-w-5xl flex-1 px-4 pb-16 sm:px-6">
