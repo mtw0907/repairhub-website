@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ChevronLeft, ChevronRight, Store, Truck, Package } from "lucide-react";
-import { RESERVATION_METHOD_LABEL, type ReservationMethod } from "@/lib/constants";
+import { ChevronLeft, ChevronRight, Store, Truck, Package, Guitar, Speaker } from "lucide-react";
+import { RESERVATION_METHOD_LABEL, REPAIR_TARGETS, type ReservationMethod } from "@/lib/constants";
 import { AddressSearchField } from "@/components/AddressSearchField";
 
 const WEEKDAY_LABELS = ["일", "월", "화", "수", "목", "금", "토"];
@@ -13,6 +13,8 @@ const METHOD_ICON: Record<ReservationMethod, typeof Store> = {
   ONSITE: Truck,
   COURIER: Package,
 };
+
+type RepairCategory = "INSTRUMENT" | "AUDIO_EQUIPMENT";
 
 function startOfMonth(d: Date) {
   return new Date(d.getFullYear(), d.getMonth(), 1);
@@ -47,6 +49,12 @@ export function ReservationForm({
 
   const [method, setMethod] = useState<ReservationMethod>("VISIT");
   const needsSchedule = method !== "COURIER";
+
+  const [category, setCategory] = useState<RepairCategory | null>(null);
+  const [instrument, setInstrument] = useState("");
+  const [brand, setBrand] = useState("");
+  const [symptom, setSymptom] = useState("");
+  const repairInfoComplete = !!category && !!instrument && !!brand.trim() && !!symptom.trim();
 
   const [viewMonth, setViewMonth] = useState(startOfMonth(today));
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -84,6 +92,10 @@ export function ReservationForm({
       router.push("/login");
       return;
     }
+    if (!repairInfoComplete) {
+      setMessage("악기/음향기기 종류, 브랜드, 증상을 모두 입력해주세요.");
+      return;
+    }
     if (needsSchedule && (!selectedDate || !selectedTime)) {
       setMessage("날짜와 시간을 선택해주세요.");
       return;
@@ -111,6 +123,10 @@ export function ReservationForm({
         method,
         scheduledAt,
         visitAddress: method === "ONSITE" || method === "COURIER" ? visitAddress || null : null,
+        instrumentCategory: category,
+        instrument,
+        brand,
+        symptom,
         memo,
       }),
     });
@@ -123,6 +139,10 @@ export function ReservationForm({
       setAddressBase("");
       setAddressDetail("");
       setMemo("");
+      setCategory(null);
+      setInstrument("");
+      setBrand("");
+      setSymptom("");
     } else {
       const data = await res.json().catch(() => null);
       setMessage(data?.error ?? "예약 요청 중 오류가 발생했습니다.");
@@ -131,7 +151,85 @@ export function ReservationForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
-      {availableMethods.length > 1 && (
+      <div className="rounded-2xl border border-neutral-200/70 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-900">
+        <p className="mb-2 text-sm font-medium text-neutral-700 dark:text-neutral-300">수리 정보</p>
+        <div className="grid grid-cols-2 gap-2">
+          {(Object.entries(REPAIR_TARGETS) as [RepairCategory, (typeof REPAIR_TARGETS)[RepairCategory]][]).map(
+            ([key, group]) => {
+              const Icon = key === "INSTRUMENT" ? Guitar : Speaker;
+              return (
+                <button
+                  key={key}
+                  type="button"
+                  onClick={() => {
+                    setCategory(key);
+                    setInstrument("");
+                  }}
+                  className={
+                    category === key
+                      ? "flex items-center gap-2 rounded-xl border border-primary bg-primary/10 p-3 text-left transition-colors"
+                      : "flex items-center gap-2 rounded-xl border border-neutral-200 p-3 text-left transition-colors hover:border-primary/30 dark:border-neutral-700"
+                  }
+                >
+                  <Icon className="h-4.5 w-4.5 text-primary" />
+                  <span className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">{group.label}</span>
+                </button>
+              );
+            },
+          )}
+        </div>
+
+        {category && (
+          <div className="mt-3">
+            <p className="mb-1.5 text-xs font-medium text-neutral-500">세부 종류</p>
+            <div className="flex flex-wrap gap-2">
+              {REPAIR_TARGETS[category].items.map((item) => (
+                <button
+                  key={item}
+                  type="button"
+                  onClick={() => setInstrument(item)}
+                  className={
+                    instrument === item
+                      ? "rounded-full bg-primary px-3.5 py-1.5 text-sm font-semibold text-primary-foreground"
+                      : "rounded-full border border-neutral-300 px-3.5 py-1.5 text-sm text-neutral-600 transition-colors hover:border-primary/40 dark:border-neutral-700 dark:text-neutral-300"
+                  }
+                >
+                  {item}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <div className="mt-3">
+          <label className="mb-1 block text-xs font-medium text-neutral-500">브랜드</label>
+          <input
+            value={brand}
+            onChange={(e) => setBrand(e.target.value)}
+            placeholder="예: Fender, Gibson, Yamaha"
+            className="w-full rounded-xl border border-neutral-200 bg-surface-muted px-3 py-2.5 text-sm outline-none transition-colors focus:border-primary/40 focus:ring-2 focus:ring-primary/10 dark:border-neutral-700 dark:bg-neutral-800"
+          />
+        </div>
+
+        <div className="mt-3">
+          <label className="mb-1 block text-xs font-medium text-neutral-500">고장 증상</label>
+          <textarea
+            value={symptom}
+            onChange={(e) => setSymptom(e.target.value)}
+            rows={2}
+            placeholder="예: 기타 앰프 연결하면 지직거리는 소리가 납니다."
+            className="w-full rounded-xl border border-neutral-200 bg-surface-muted px-3 py-2.5 text-sm outline-none transition-colors focus:border-primary/40 focus:ring-2 focus:ring-primary/10 dark:border-neutral-700 dark:bg-neutral-800"
+          />
+        </div>
+      </div>
+
+      {!repairInfoComplete && (
+        <p className="rounded-xl bg-surface-muted px-3 py-2.5 text-sm text-neutral-500">
+          악기/음향기기 종류, 브랜드, 증상을 입력하면 예약 날짜를 선택할 수 있어요.
+        </p>
+      )}
+
+      {repairInfoComplete && availableMethods.length > 1 && (
         <div>
           <p className="mb-2 text-sm font-medium text-neutral-700 dark:text-neutral-300">예약 방법</p>
           <div className="grid grid-cols-3 gap-2">
@@ -158,7 +256,7 @@ export function ReservationForm({
         </div>
       )}
 
-      {needsSchedule && (
+      {repairInfoComplete && needsSchedule && (
         <>
           <div className="rounded-2xl border border-neutral-200/70 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-900">
             <div className="mb-3 flex items-center justify-between">
@@ -249,7 +347,7 @@ export function ReservationForm({
         </>
       )}
 
-      {method === "ONSITE" && (
+      {repairInfoComplete && method === "ONSITE" && (
         <div>
           <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">
             출장 받으실 주소
@@ -264,7 +362,7 @@ export function ReservationForm({
         </div>
       )}
 
-      {method === "COURIER" && (
+      {repairInfoComplete && method === "COURIER" && (
         <div className="space-y-3">
           <p className="rounded-xl bg-surface-muted px-3 py-2.5 text-sm text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300">
             택배 접수는 별도 방문 일정이 필요 없어요. 업체가 예약을 승인하면 발송 안내를 보내드립니다.
@@ -299,7 +397,7 @@ export function ReservationForm({
 
       <button
         type="submit"
-        disabled={loading}
+        disabled={loading || !repairInfoComplete}
         className="w-full rounded-xl bg-primary px-4 py-3 text-sm font-bold text-primary-foreground shadow-sm transition-transform hover:scale-[1.01] hover:bg-primary/90 disabled:opacity-50 disabled:hover:scale-100"
       >
         {loading ? "요청 중..." : "예약 요청하기"}

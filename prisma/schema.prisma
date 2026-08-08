@@ -138,6 +138,10 @@ model Reservation {
   status        String    @default("REQUESTED")
   method        String    @default("VISIT") // VISIT(방문) | ONSITE(출장) | COURIER(택배)
   visitAddress  String? // ONSITE 출장 요청 시 방문지 주소 (COURIER 반송 주소로도 재사용)
+  instrumentCategory String? // INSTRUMENT | AUDIO_EQUIPMENT
+  instrument    String? // 기타/베이스/피아노/... 또는 앰프/스피커/... (RepairRequest.instrument와 동일한 값 집합)
+  brand         String?
+  symptom       String?
   scheduledAt   DateTime?
   memo          String? // 파트너 예약 메모
   notifyEnabled Boolean   @default(true) // 예약 관련 인앱 알림 수신 여부

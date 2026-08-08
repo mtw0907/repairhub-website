@@ -27,6 +27,9 @@ type Reservation = {
   status: string;
   method: string;
   visitAddress: string | null;
+  instrument: string | null;
+  brand: string | null;
+  symptom: string | null;
   scheduledAt: string | null;
   memo: string | null;
   userName: string;
@@ -124,6 +127,14 @@ export function PartnerReservationRow({ reservation }: { reservation: Reservatio
               <MapPin className="h-3.5 w-3.5 shrink-0" />
               {reservation.visitAddress}
             </p>
+          )}
+          {(reservation.instrument || reservation.brand) && (
+            <p className="mt-1 text-sm font-medium text-neutral-700 dark:text-neutral-300">
+              {[reservation.instrument, reservation.brand].filter(Boolean).join(" · ")}
+            </p>
+          )}
+          {reservation.symptom && (
+            <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">{reservation.symptom}</p>
           )}
           {reservation.memo && (
             <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">{reservation.memo}</p>

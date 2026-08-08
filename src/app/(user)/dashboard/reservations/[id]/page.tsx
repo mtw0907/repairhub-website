@@ -5,6 +5,7 @@ import {
   Truck,
   Calendar,
   Wrench,
+  Tag,
   ClipboardCheck,
   Star,
   MapPin,
@@ -207,6 +208,28 @@ export default async function ReservationDetailPage({
                   </div>
                 );
               })()}
+              {(reservation.instrument || reservation.brand) && (
+                <div className="flex items-center justify-between gap-3">
+                  <dt className="flex items-center gap-1.5 text-primary/60">
+                    <Tag className="h-4 w-4 shrink-0" />
+                    수리 대상
+                  </dt>
+                  <dd className="text-right font-medium text-neutral-900 dark:text-neutral-100">
+                    {[reservation.instrument, reservation.brand].filter(Boolean).join(" · ")}
+                  </dd>
+                </div>
+              )}
+              {reservation.symptom && (
+                <div className="flex items-center justify-between gap-3">
+                  <dt className="flex items-center gap-1.5 text-primary/60">
+                    <Wrench className="h-4 w-4 shrink-0" />
+                    고장 증상
+                  </dt>
+                  <dd className="text-right font-medium text-neutral-900 dark:text-neutral-100">
+                    {reservation.symptom}
+                  </dd>
+                </div>
+              )}
               <div className="flex items-center justify-between gap-3">
                 <dt className="flex items-center gap-1.5 text-primary/60">
                   <Calendar className="h-4 w-4 shrink-0" />

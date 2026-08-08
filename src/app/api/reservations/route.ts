@@ -2,14 +2,27 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireRole, toErrorResponse } from "@/lib/rbac";
 import { notifyCompanyOwners } from "@/lib/notify";
-import { RESERVATION_METHODS, type ReservationMethod } from "@/lib/constants";
+import { RESERVATION_METHODS, REPAIR_TARGETS, type ReservationMethod } from "@/lib/constants";
 
 export async function POST(req: Request) {
   try {
     const user = await requireRole(["USER"]);
-    const { companyId, scheduledAt, memo, method, visitAddress } = await req.json();
+    const { companyId, scheduledAt, memo, method, visitAddress, instrumentCategory, instrument, brand, symptom } =
+      await req.json();
     if (!companyId) {
       return NextResponse.json({ error: "companyId가 필요합니다." }, { status: 400 });
+    }
+    if (
+      !instrumentCategory ||
+      !(instrumentCategory in REPAIR_TARGETS) ||
+      !instrument ||
+      !String(brand ?? "").trim() ||
+      !String(symptom ?? "").trim()
+    ) {
+      return NextResponse.json(
+        { error: "악기/음향기기 종류, 브랜드, 증상을 모두 입력해주세요." },
+        { status: 400 },
+      );
     }
 
     const resolvedMethod: ReservationMethod = RESERVATION_METHODS.includes(method)
@@ -39,6 +52,10 @@ export async function POST(req: Request) {
         companyId,
         method: resolvedMethod,
         visitAddress: visitAddress || null,
+        instrumentCategory,
+        instrument,
+        brand: String(brand).trim(),
+        symptom: String(symptom).trim(),
         scheduledAt: scheduledAt ? new Date(scheduledAt) : null,
         memo: memo || null,
         status: "REQUESTED",
