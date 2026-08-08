@@ -2,16 +2,17 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #18181b;
+  --foreground: #17151d;
 
-  /* 소리수리 브랜드 팔레트 (화이트 + 보라색). Used everywhere — user-facing
-     pages and PARTNER/ADMIN/SUPER_ADMIN dashboards alike. */
-  --primary: #6c3bff;
+  /* 소리수리 브랜드 팔레트. primary는 버튼·활성 메뉴 등 강조용 진보라,
+     accent는 로고/헤드라인의 '소리수리' 같은 포인트 표현용 밝은 보라 —
+     두 색 다 텍스트/버튼/아이콘에만 쓰고 큰 면적은 화이트/연회색 유지. */
+  --primary: #4f24c8;
   --primary-foreground: #ffffff;
-  --accent: #8b5cf6;
+  --accent: #6d3df5;
   --accent-foreground: #ffffff;
   --surface: #ffffff;
-  --surface-muted: #f8f7fc;
+  --surface-muted: #f7f6fc;
 }
 
 @theme inline {
@@ -25,13 +26,18 @@
   --color-surface-muted: var(--surface-muted);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  /* 사이트 전반에서 설명/보조 텍스트로 가장 많이 쓰이는 두 톤을 브랜드
+     텍스트 컬러(#5F5B68)에 맞춤 — 개별 파일을 다 고치지 않아도 일관 적용됨. */
+  --color-neutral-500: #5f5b68;
+  --color-neutral-600: #5f5b68;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #f4f4f5;
-    --primary: #9166ff;
+    --primary: #8b5cf6;
     --primary-foreground: #ffffff;
     --accent: #a78bfa;
     --accent-foreground: #1c1033;

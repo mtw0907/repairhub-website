@@ -152,13 +152,13 @@ export default async function LandingPage() {
             className="absolute inset-0 -z-20 bg-cover bg-center"
             style={{
               backgroundImage:
-                "url(/assets/hero-repair.jpg), linear-gradient(135deg, #1a1030 0%, #3b1f78 45%, #6c3bff 100%)",
+                "url(/assets/hero-repair.jpg), linear-gradient(135deg, #100e1c 0%, #17152b 55%, #221b3d 100%)",
             }}
           />
-          <div aria-hidden className="absolute inset-0 -z-10 bg-black/55" />
+          <div aria-hidden className="absolute inset-0 -z-10 bg-[#17152b]/60" />
           <div
             aria-hidden
-            className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_60%_50%_at_50%_-10%,color-mix(in_srgb,var(--accent)_35%,transparent),transparent)]"
+            className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_60%_50%_at_50%_-10%,color-mix(in_srgb,var(--accent)_18%,transparent),transparent)]"
           />
 
           <div className="relative mx-auto max-w-2xl text-center">

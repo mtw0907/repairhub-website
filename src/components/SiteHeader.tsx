@@ -16,10 +16,10 @@ export async function SiteHeader() {
     <header className="sticky top-0 z-40 border-b border-neutral-200/80 bg-white/90 backdrop-blur-md dark:border-neutral-800/80 dark:bg-neutral-950/90">
       <div className="relative mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-4 sm:px-6 sm:py-5">
         <Link href="/" className="flex shrink-0 items-center gap-2">
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-accent/10 text-accent">
             <Guitar className="h-5 w-5" />
           </span>
-          <span className="text-xl font-extrabold tracking-tight text-primary sm:text-2xl dark:text-neutral-100">
+          <span className="text-xl font-extrabold tracking-tight text-accent sm:text-2xl dark:text-neutral-100">
             소리수리
           </span>
         </Link>
