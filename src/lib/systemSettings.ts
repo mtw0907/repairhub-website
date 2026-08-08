@@ -15,6 +15,7 @@ export const KNOWN_SETTING_KEYS = [
   "SMTP_FROM",
   "REGISTRATION_LOCKED",
   "MAINTENANCE_MODE",
+  "LOGIN_OTP_ENABLED",
   "GOOGLE_CLIENT_ID",
   "GOOGLE_CLIENT_SECRET",
   "KAKAO_CLIENT_ID",
@@ -48,4 +49,8 @@ export async function isMaintenanceMode(): Promise<boolean> {
 
 export async function isRegistrationLocked(): Promise<boolean> {
   return (await getSetting("REGISTRATION_LOCKED")) === "true";
+}
+
+export async function isLoginOtpEnabled(): Promise<boolean> {
+  return (await getSetting("LOGIN_OTP_ENABLED")) === "true";
 }

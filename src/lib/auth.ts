@@ -9,8 +9,9 @@ import { loginSchema } from "@/lib/validations/auth";
 import { authConfig } from "@/lib/auth.config";
 import type { Role } from "@/lib/constants";
 import { logAdminActivity } from "@/lib/adminLog";
-import { getSetting } from "@/lib/systemSettings";
+import { getSetting, isLoginOtpEnabled } from "@/lib/systemSettings";
 import { checkRateLimit, getClientIp } from "@/lib/rateLimit";
+import { verifyOtp, consumeVerification } from "@/lib/otp";
 
 const ADMIN_ROLES = new Set(["ADMIN", "SUPER_ADMIN"]);
 
@@ -40,6 +41,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       credentials: {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
+        otp: { label: "OTP", type: "text" },
       },
       authorize: async (credentials, request) => {
         const parsed = loginSchema.safeParse(credentials);
@@ -69,6 +71,20 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         }
 
         if (!valid) return null;
+
+        // Login OTP is a toggleable, all-account second factor (see
+        // super-admin settings). The client always calls /api/auth/login-check
+        // first, which sends the code when this is on — but authorize() is
+        // the only path that actually issues a session, so it re-checks the
+        // toggle and the code itself rather than trusting the client's
+        // earlier /login-check response.
+        if (await isLoginOtpEnabled()) {
+          const otp = typeof credentials?.otp === "string" ? credentials.otp : "";
+          if (!otp) return null;
+          const result = await verifyOtp(user.email, "LOGIN", otp);
+          if (!result.ok) return null;
+          await consumeVerification(user.email, "LOGIN");
+        }
 
         return {
           id: user.id,

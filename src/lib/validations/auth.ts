@@ -18,7 +18,12 @@ export const loginSchema = z.object({
 
 export type LoginInput = z.infer<typeof loginSchema>;
 
-export const VERIFICATION_PURPOSES = ["REGISTER_USER", "REGISTER_PARTNER", "RESET_PASSWORD"] as const;
+export const VERIFICATION_PURPOSES = [
+  "REGISTER_USER",
+  "REGISTER_PARTNER",
+  "RESET_PASSWORD",
+  "LOGIN",
+] as const;
 export type VerificationPurpose = (typeof VERIFICATION_PURPOSES)[number];
 
 export const sendOtpSchema = z.object({

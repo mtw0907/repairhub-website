@@ -111,12 +111,20 @@ export default async function SuperAdminSettingsPage() {
           <h2 className="mb-3 text-sm font-bold text-neutral-900 dark:text-neutral-100">
             보안 설정
           </h2>
-          <SettingToggle
-            settingKey="REGISTRATION_LOCKED"
-            label="신규 회원가입 잠금"
-            description="켜면 /register를 통한 신규 가입이 차단됩니다."
-            initialValue={map.get("REGISTRATION_LOCKED") === "true"}
-          />
+          <div className="space-y-3">
+            <SettingToggle
+              settingKey="REGISTRATION_LOCKED"
+              label="신규 회원가입 잠금"
+              description="켜면 /register를 통한 신규 가입이 차단됩니다."
+              initialValue={map.get("REGISTRATION_LOCKED") === "true"}
+            />
+            <SettingToggle
+              settingKey="LOGIN_OTP_ENABLED"
+              label="로그인 이메일 인증번호"
+              description="켜면 모든 회원이 이메일+비밀번호 로그인 후 이메일로 받은 인증번호를 한 번 더 입력해야 합니다. SMTP 설정이 먼저 등록되어 있어야 합니다."
+              initialValue={map.get("LOGIN_OTP_ENABLED") === "true"}
+            />
+          </div>
         </section>
 
         <section>
