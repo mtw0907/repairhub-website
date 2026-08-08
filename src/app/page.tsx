@@ -11,17 +11,25 @@ import {
   Star,
   Wrench,
   ArrowRight,
+  ChevronRight,
   Sparkles,
   PenLine,
   Megaphone,
   HelpCircle,
   MessageCircle,
+  Store,
+  CalendarClock,
+  CalendarCheck,
+  Building2,
+  ShieldCheck,
 } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { CompanyCard, type CompanySummary } from "@/components/company/CompanyCard";
 import { AiChatWidget } from "@/components/ai/AiChatWidget";
+import { HomeMapPreview } from "@/components/home/HomeMapPreview";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
+import { getSetting } from "@/lib/systemSettings";
 import { INSTRUMENT_CATEGORIES } from "@/lib/constants";
 
 const PARTNER_AI_SHORTCUTS = [
@@ -29,6 +37,28 @@ const PARTNER_AI_SHORTCUTS = [
   { href: "/partner/dashboard/ai/ad-copy", label: "광고 문구", icon: Megaphone },
   { href: "/partner/dashboard/ai/faq", label: "FAQ 생성", icon: HelpCircle },
   { href: "/partner/dashboard/ai/customer-chat", label: "고객 상담", icon: MessageCircle },
+];
+
+const FEATURE_LINKS = [
+  { href: "/companies", title: "업체 찾기", desc: "내 주변 악기 수리업체를 쉽게 찾아보세요.", icon: Store },
+  {
+    href: "/dashboard/repair-requests/new",
+    title: "AI 견적 받기",
+    desc: "AI가 분석하고 여러 업체의 견적을 비교해보세요.",
+    icon: Sparkles,
+  },
+  {
+    href: "/dashboard/reservations",
+    title: "예약 현황",
+    desc: "예약한 수리 내역과 진행 상황을 확인하세요.",
+    icon: CalendarClock,
+  },
+  {
+    href: "#ai-assistant",
+    title: "수리 가이드",
+    desc: "고장 증상을 AI에게 물어보고 안내받으세요.",
+    icon: MessageCircle,
+  },
 ];
 
 const CATEGORY_ICONS: Record<string, typeof Guitar> = {
@@ -97,7 +127,7 @@ export default async function LandingPage() {
     reviews: { where: { status: "VISIBLE" as const }, select: { rating: true } },
   };
 
-  const [popularRaw, newRaw, workCases, reviews] = await Promise.all([
+  const [popularRaw, newRaw, workCases, reviews, kakaoMapKey, approvedCompanyCount] = await Promise.all([
     prisma.company.findMany({
       where: { status: "APPROVED" },
       include: companyInclude,
@@ -121,6 +151,8 @@ export default async function LandingPage() {
       orderBy: [{ rating: "desc" }, { createdAt: "desc" }],
       take: 4,
     }),
+    getSetting("KAKAO_MAP_JS_KEY"),
+    prisma.company.count({ where: { status: "APPROVED" } }),
   ]);
 
   const popular = popularRaw.map(toCompanySummary);
@@ -135,6 +167,21 @@ export default async function LandingPage() {
         })
       : [];
   const favoritedIds = new Set(favorites.map((f) => f.companyId));
+
+  const mapCompanies = Array.from(
+    new Map(
+      [...popularRaw, ...newRaw]
+        .filter((c) => c.latitude != null && c.longitude != null)
+        .map((c) => [c.id, { id: c.id, name: c.name, lat: c.latitude as number, lng: c.longitude as number }]),
+    ).values(),
+  ).slice(0, 8);
+
+  const STATS = [
+    { title: "실시간 예약", desc: "원하는 시간에 바로 예약", icon: CalendarCheck },
+    { title: "AI 견적 매칭", desc: "증상 분석부터 맞춤 견적까지", icon: Sparkles },
+    { title: `등록 업체 ${approvedCompanyCount}곳`, desc: "믿을 수 있는 검증된 업체", icon: Building2 },
+    { title: "안전한 거래", desc: "소리수리가 보증하는 안심 거래", icon: ShieldCheck },
+  ];
 
   return (
     <div className="flex flex-1 flex-col bg-surface-muted">
@@ -209,6 +256,30 @@ export default async function LandingPage() {
           </div>
         </section>
 
+        {/* 기능 바로가기 */}
+        <section className="mx-auto max-w-6xl px-4 pt-8 sm:px-6 sm:pt-10">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
+            {FEATURE_LINKS.map((f) => (
+              <Link
+                key={f.href}
+                href={f.href}
+                className="group flex items-center gap-3 rounded-2xl border border-neutral-200/70 bg-white p-4 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-md dark:border-neutral-800 dark:bg-neutral-900"
+              >
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                  <f.icon className="h-5 w-5" />
+                </span>
+                <span className="min-w-0">
+                  <span className="block text-sm font-bold text-neutral-900 dark:text-neutral-100">
+                    {f.title}
+                  </span>
+                  <span className="hidden truncate text-xs text-neutral-500 sm:block">{f.desc}</span>
+                </span>
+                <ChevronRight className="ml-auto hidden h-4 w-4 shrink-0 text-neutral-300 transition-transform group-hover:translate-x-0.5 group-hover:text-primary sm:block" />
+              </Link>
+            ))}
+          </div>
+        </section>
+
         {/* 악기 카테고리 */}
         <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
           <h2 className="mb-5 text-xl font-bold text-neutral-900 dark:text-neutral-100 sm:text-2xl">
@@ -236,7 +307,7 @@ export default async function LandingPage() {
         </section>
 
         {/* AI 상담 */}
-        <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
+        <section id="ai-assistant" className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
           <div className="overflow-hidden rounded-2xl border border-neutral-200/70 bg-white shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
             <div className="flex flex-wrap items-center justify-between gap-3 border-b border-neutral-100 bg-gradient-to-r from-primary to-primary/85 px-5 py-4 dark:border-neutral-800 sm:px-6">
               <div className="flex items-center gap-2.5">
@@ -313,33 +384,54 @@ export default async function LandingPage() {
           </div>
         </section>
 
-        {/* 인기 업체 (내 주변 인기업체 포함 — 위치 기반 데이터가 없어 평점/추천 기준으로 통합 제공) */}
+        {/* 인기 업체 + 내 주변 지도 (위치 기반 데이터가 없어 평점/추천 기준으로 통합 제공) */}
         <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
-          <div className="mb-5 flex items-end justify-between">
+          <div className="grid gap-8 lg:grid-cols-3">
+            <div className="lg:col-span-2">
+              <div className="mb-5 flex items-end justify-between">
+                <div>
+                  <h2 className="text-xl font-bold text-neutral-900 dark:text-neutral-100 sm:text-2xl">
+                    지금 인기 있는 업체
+                  </h2>
+                  <p className="mt-1 text-sm text-neutral-500">평점과 추천 지수가 높은 업체예요</p>
+                </div>
+                <Link
+                  href="/companies"
+                  className="flex shrink-0 items-center gap-1 text-sm font-medium text-primary hover:underline"
+                >
+                  전체보기 <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
+              </div>
+              {popular.length > 0 ? (
+                <div className="grid gap-5 sm:grid-cols-2">
+                  {popular.map((c) => (
+                    <CompanyCard key={c.id} company={c} isUser={isUser} favorited={favoritedIds.has(c.id)} />
+                  ))}
+                </div>
+              ) : (
+                <p className="rounded-2xl border border-dashed border-neutral-300 py-12 text-center text-sm text-neutral-500">
+                  아직 등록된 업체가 없습니다.
+                </p>
+              )}
+            </div>
+
             <div>
-              <h2 className="text-xl font-bold text-neutral-900 dark:text-neutral-100 sm:text-2xl">
-                지금 인기 있는 업체
-              </h2>
-              <p className="mt-1 text-sm text-neutral-500">평점과 추천 지수가 높은 업체예요</p>
+              <div className="mb-5 flex items-end justify-between">
+                <h2 className="text-xl font-bold text-neutral-900 dark:text-neutral-100 sm:text-2xl">
+                  내 주변 수리업체
+                </h2>
+                <Link
+                  href="/companies"
+                  className="flex shrink-0 items-center gap-1 text-sm font-medium text-primary hover:underline"
+                >
+                  지도 전체보기
+                </Link>
+              </div>
+              <div className="h-[340px] overflow-hidden rounded-2xl border border-neutral-200/70 shadow-sm dark:border-neutral-800 lg:h-[440px]">
+                <HomeMapPreview companies={mapCompanies} kakaoMapKey={kakaoMapKey} />
+              </div>
             </div>
-            <Link
-              href="/companies"
-              className="flex shrink-0 items-center gap-1 text-sm font-medium text-primary hover:underline"
-            >
-              전체보기 <ArrowRight className="h-3.5 w-3.5" />
-            </Link>
           </div>
-          {popular.length > 0 ? (
-            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {popular.map((c) => (
-                <CompanyCard key={c.id} company={c} isUser={isUser} favorited={favoritedIds.has(c.id)} />
-              ))}
-            </div>
-          ) : (
-            <p className="rounded-2xl border border-dashed border-neutral-300 py-12 text-center text-sm text-neutral-500">
-              아직 등록된 업체가 없습니다.
-            </p>
-          )}
         </section>
 
         {/* 신규 업체 */}
@@ -437,6 +529,23 @@ export default async function LandingPage() {
           </section>
         )}
       </main>
+
+      {/* 통계 바 */}
+      <section className="border-t border-neutral-200/70 bg-white px-4 py-10 dark:border-neutral-800 dark:bg-neutral-950 sm:px-6">
+        <div className="mx-auto grid max-w-6xl grid-cols-2 gap-6 sm:grid-cols-4">
+          {STATS.map((s) => (
+            <div key={s.title} className="flex items-start gap-3">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                <s.icon className="h-5 w-5" />
+              </span>
+              <div>
+                <p className="text-sm font-bold text-neutral-900 dark:text-neutral-100">{s.title}</p>
+                <p className="text-xs text-neutral-500">{s.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
 
       <footer className="border-t border-neutral-200 bg-white px-6 py-8 text-center text-xs text-neutral-400 dark:border-neutral-800 dark:bg-neutral-950">
         © {new Date().getFullYear()} 소리수리. 전국 음향기기 · 악기 수리업체 플랫폼.
