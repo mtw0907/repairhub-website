@@ -174,10 +174,15 @@ export default async function ReservationDetailPage({
             id="reservation-info"
             className="scroll-mt-6 rounded-2xl border border-neutral-200/70 bg-white p-5 shadow-sm dark:border-neutral-800 dark:bg-neutral-900 sm:p-6"
           >
-            <h2 className="mb-4 text-sm font-bold text-neutral-900 dark:text-neutral-100">예약 정보</h2>
+            <div className="mb-4 flex items-center gap-2">
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                <FileText className="h-4 w-4" />
+              </span>
+              <h2 className="text-sm font-bold text-neutral-900 dark:text-neutral-100">예약 정보</h2>
+            </div>
             <dl className="space-y-3 text-sm">
               <div className="flex items-center justify-between gap-3">
-                <dt className="flex items-center gap-1.5 text-neutral-500">
+                <dt className="flex items-center gap-1.5 text-primary/60">
                   <FileText className="h-4 w-4 shrink-0" />
                   업체명
                 </dt>
@@ -192,7 +197,7 @@ export default async function ReservationDetailPage({
                 const MethodIcon = METHOD_ICON[method] ?? Store;
                 return (
                   <div className="flex items-center justify-between gap-3">
-                    <dt className="flex items-center gap-1.5 text-neutral-500">
+                    <dt className="flex items-center gap-1.5 text-primary/60">
                       <MethodIcon className="h-4 w-4 shrink-0" />
                       예약 방법
                     </dt>
@@ -203,7 +208,7 @@ export default async function ReservationDetailPage({
                 );
               })()}
               <div className="flex items-center justify-between gap-3">
-                <dt className="flex items-center gap-1.5 text-neutral-500">
+                <dt className="flex items-center gap-1.5 text-primary/60">
                   <Calendar className="h-4 w-4 shrink-0" />
                   예약 날짜
                 </dt>
@@ -217,7 +222,7 @@ export default async function ReservationDetailPage({
               </div>
               {reservation.method === "ONSITE" && reservation.visitAddress ? (
                 <div className="flex items-center justify-between gap-3">
-                  <dt className="flex items-center gap-1.5 text-neutral-500">
+                  <dt className="flex items-center gap-1.5 text-primary/60">
                     <MapPin className="h-4 w-4 shrink-0" />
                     방문 받으실 주소
                   </dt>
@@ -228,7 +233,7 @@ export default async function ReservationDetailPage({
               ) : reservation.method === "COURIER" ? (
                 reservation.visitAddress && (
                   <div className="flex items-center justify-between gap-3">
-                    <dt className="flex items-center gap-1.5 text-neutral-500">
+                    <dt className="flex items-center gap-1.5 text-primary/60">
                       <MapPin className="h-4 w-4 shrink-0" />
                       반송 받으실 주소
                     </dt>
@@ -240,7 +245,7 @@ export default async function ReservationDetailPage({
               ) : (
                 (company.address || company.region) && (
                   <div className="flex items-center justify-between gap-3">
-                    <dt className="flex items-center gap-1.5 text-neutral-500">
+                    <dt className="flex items-center gap-1.5 text-primary/60">
                       <MapPin className="h-4 w-4 shrink-0" />
                       예약 장소
                     </dt>
@@ -260,7 +265,7 @@ export default async function ReservationDetailPage({
               )}
               {reservation.memo && (
                 <div className="flex items-center justify-between gap-3">
-                  <dt className="flex items-center gap-1.5 text-neutral-500">
+                  <dt className="flex items-center gap-1.5 text-primary/60">
                     <FileEdit className="h-4 w-4 shrink-0" />
                     예약 내용
                   </dt>
@@ -271,12 +276,12 @@ export default async function ReservationDetailPage({
               )}
               {reservation.quote && (
                 <div className="flex items-center justify-between gap-3">
-                  <dt className="flex items-center gap-1.5 text-neutral-500">
+                  <dt className="flex items-center gap-1.5 text-primary/60">
                     <Banknote className="h-4 w-4 shrink-0" />
                     견적 금액
                   </dt>
                   <dd className="flex items-center gap-2 text-right font-medium text-neutral-900 dark:text-neutral-100">
-                    <span>{reservation.quote.price.toLocaleString()}원</span>
+                    <span className="font-bold text-accent">{reservation.quote.price.toLocaleString()}원</span>
                     {reservation.repairRequestId && (
                       <Link
                         href={`/dashboard/repair-requests/${reservation.repairRequestId}`}
@@ -292,9 +297,14 @@ export default async function ReservationDetailPage({
           </div>
 
           <div className="rounded-2xl border border-neutral-200/70 bg-white p-5 shadow-sm dark:border-neutral-800 dark:bg-neutral-900 sm:p-6">
-            <h2 className="mb-4 text-sm font-bold text-neutral-900 dark:text-neutral-100">업체 정보</h2>
+            <div className="mb-4 flex items-center gap-2">
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-accent/10 text-accent">
+                <Store className="h-4 w-4" />
+              </span>
+              <h2 className="text-sm font-bold text-neutral-900 dark:text-neutral-100">업체 정보</h2>
+            </div>
             <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-surface-muted text-lg font-bold text-primary/40 dark:bg-neutral-800">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-primary/15 via-surface-muted to-accent/20 text-lg font-bold text-primary dark:from-neutral-800 dark:via-neutral-800 dark:to-neutral-800">
                 {company.logoUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={company.logoUrl} alt={company.name} className="h-full w-full object-cover" />
