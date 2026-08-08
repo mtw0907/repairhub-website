@@ -31,6 +31,7 @@ import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { getSetting } from "@/lib/systemSettings";
 import { INSTRUMENT_CATEGORIES } from "@/lib/constants";
+import { maskName } from "@/lib/format";
 
 const PARTNER_AI_SHORTCUTS = [
   { href: "/partner/dashboard/ai/blog", label: "블로그 작성", icon: PenLine },
@@ -112,10 +113,6 @@ function toCompanySummary(c: {
   };
 }
 
-function maskName(name: string) {
-  if (name.length <= 1) return `${name}*`;
-  return `${name[0]}${"*".repeat(name.length - 1)}`;
-}
 
 export default async function LandingPage() {
   const session = await auth();
