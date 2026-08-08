@@ -2,9 +2,16 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Store, Truck, Package } from "lucide-react";
+import { RESERVATION_METHOD_LABEL, type ReservationMethod } from "@/lib/constants";
 
 const WEEKDAY_LABELS = ["일", "월", "화", "수", "목", "금", "토"];
+
+const METHOD_ICON: Record<ReservationMethod, typeof Store> = {
+  VISIT: Store,
+  ONSITE: Truck,
+  COURIER: Package,
+};
 
 function startOfMonth(d: Date) {
   return new Date(d.getFullYear(), d.getMonth(), 1);
@@ -16,22 +23,42 @@ function toDateKey(d: Date) {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 }
 
-export function ReservationForm({ companyId, isUser }: { companyId: string; isUser: boolean }) {
+export function ReservationForm({
+  companyId,
+  isUser,
+  onSiteVisit,
+  courierDrop,
+}: {
+  companyId: string;
+  isUser: boolean;
+  onSiteVisit: boolean;
+  courierDrop: boolean;
+}) {
   const router = useRouter();
   const today = new Date();
   today.setHours(0, 0, 0, 0);
+
+  const availableMethods: ReservationMethod[] = [
+    "VISIT",
+    ...(onSiteVisit ? (["ONSITE"] as const) : []),
+    ...(courierDrop ? (["COURIER"] as const) : []),
+  ];
+
+  const [method, setMethod] = useState<ReservationMethod>("VISIT");
+  const needsSchedule = method !== "COURIER";
 
   const [viewMonth, setViewMonth] = useState(startOfMonth(today));
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [slots, setSlots] = useState<string[] | null>(null);
   const [loadingSlots, setLoadingSlots] = useState(false);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
+  const [visitAddress, setVisitAddress] = useState("");
   const [memo, setMemo] = useState("");
   const [message, setMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (!selectedDate) return;
+    if (!selectedDate || !needsSchedule) return;
     setLoadingSlots(true);
     setSelectedTime(null);
     fetch(`/api/companies/${companyId}/availability?date=${toDateKey(selectedDate)}`)
@@ -39,7 +66,7 @@ export function ReservationForm({ companyId, isUser }: { companyId: string; isUs
       .then((data) => setSlots(Array.isArray(data.slots) ? data.slots : []))
       .catch(() => setSlots([]))
       .finally(() => setLoadingSlots(false));
-  }, [selectedDate, companyId]);
+  }, [selectedDate, companyId, needsSchedule]);
 
   const firstWeekday = viewMonth.getDay();
   const daysInMonth = new Date(viewMonth.getFullYear(), viewMonth.getMonth() + 1, 0).getDate();
@@ -54,20 +81,35 @@ export function ReservationForm({ companyId, isUser }: { companyId: string; isUs
       router.push("/login");
       return;
     }
-    if (!selectedDate || !selectedTime) {
+    if (needsSchedule && (!selectedDate || !selectedTime)) {
       setMessage("날짜와 시간을 선택해주세요.");
+      return;
+    }
+    if (method === "ONSITE" && !visitAddress.trim()) {
+      setMessage("출장 받으실 주소를 입력해주세요.");
       return;
     }
     setLoading(true);
     setMessage(null);
-    const [h, m] = selectedTime.split(":").map(Number);
-    const scheduledAt = new Date(selectedDate);
-    scheduledAt.setHours(h, m, 0, 0);
+
+    let scheduledAt: string | null = null;
+    if (needsSchedule && selectedDate && selectedTime) {
+      const [h, m] = selectedTime.split(":").map(Number);
+      const d = new Date(selectedDate);
+      d.setHours(h, m, 0, 0);
+      scheduledAt = d.toISOString();
+    }
 
     const res = await fetch("/api/reservations", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ companyId, scheduledAt: scheduledAt.toISOString(), memo }),
+      body: JSON.stringify({
+        companyId,
+        method,
+        scheduledAt,
+        visitAddress: method === "ONSITE" || method === "COURIER" ? visitAddress || null : null,
+        memo,
+      }),
     });
     setLoading(false);
     if (res.ok) {
@@ -75,6 +117,7 @@ export function ReservationForm({ companyId, isUser }: { companyId: string; isUs
       setSelectedDate(null);
       setSelectedTime(null);
       setSlots(null);
+      setVisitAddress("");
       setMemo("");
     } else {
       const data = await res.json().catch(() => null);
@@ -84,90 +127,155 @@ export function ReservationForm({ companyId, isUser }: { companyId: string; isUs
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
-      <div className="rounded-2xl border border-neutral-200/70 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-900">
-        <div className="mb-3 flex items-center justify-between">
-          <button
-            type="button"
-            onClick={() => setViewMonth(new Date(viewMonth.getFullYear(), viewMonth.getMonth() - 1, 1))}
-            aria-label="이전 달"
-            className="flex h-8 w-8 items-center justify-center rounded-full text-primary/70 hover:bg-primary/10"
-          >
-            <ChevronLeft className="h-4 w-4" />
-          </button>
-          <p className="text-sm font-bold text-primary dark:text-neutral-100">
-            {viewMonth.getFullYear()}년 {viewMonth.getMonth() + 1}월
-          </p>
-          <button
-            type="button"
-            onClick={() => setViewMonth(new Date(viewMonth.getFullYear(), viewMonth.getMonth() + 1, 1))}
-            aria-label="다음 달"
-            className="flex h-8 w-8 items-center justify-center rounded-full text-primary/70 hover:bg-primary/10"
-          >
-            <ChevronRight className="h-4 w-4" />
-          </button>
-        </div>
-
-        <div className="grid grid-cols-7 gap-1 text-center text-xs">
-          {WEEKDAY_LABELS.map((w) => (
-            <div key={w} className="py-1 font-medium text-neutral-400">
-              {w}
-            </div>
-          ))}
-          {cells.map((date, i) => {
-            if (!date) return <div key={i} />;
-            const isPast = date < today;
-            const isSelected = selectedDate && isSameDay(date, selectedDate);
-            const isToday = isSameDay(date, today);
-            return (
-              <button
-                key={i}
-                type="button"
-                disabled={isPast}
-                onClick={() => setSelectedDate(date)}
-                className={
-                  isSelected
-                    ? "flex h-8 w-8 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground"
-                    : isPast
-                      ? "flex h-8 w-8 items-center justify-center rounded-full text-xs text-neutral-300 dark:text-neutral-700"
-                      : isToday
-                        ? "flex h-8 w-8 items-center justify-center rounded-full border border-primary/50 text-xs font-semibold text-primary"
-                        : "flex h-8 w-8 items-center justify-center rounded-full text-xs text-neutral-700 hover:bg-surface-muted dark:text-neutral-300"
-                }
-              >
-                {date.getDate()}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {selectedDate && (
+      {availableMethods.length > 1 && (
         <div>
-          <p className="mb-2 text-sm font-medium text-neutral-700 dark:text-neutral-300">시간 선택</p>
-          {loadingSlots ? (
-            <p className="text-sm text-neutral-400">불러오는 중...</p>
-          ) : slots && slots.length > 0 ? (
-            <div className="grid grid-cols-4 gap-2">
-              {slots.map((t) => (
+          <p className="mb-2 text-sm font-medium text-neutral-700 dark:text-neutral-300">예약 방법</p>
+          <div className="grid grid-cols-3 gap-2">
+            {availableMethods.map((m) => {
+              const Icon = METHOD_ICON[m];
+              const active = method === m;
+              return (
                 <button
-                  key={t}
+                  key={m}
                   type="button"
-                  onClick={() => setSelectedTime(t)}
+                  onClick={() => setMethod(m)}
                   className={
-                    selectedTime === t
-                      ? "rounded-xl bg-primary py-2 text-sm font-bold text-primary-foreground"
-                      : "rounded-xl border border-neutral-200 py-2 text-sm text-neutral-700 hover:border-primary/40 hover:text-primary dark:border-neutral-700 dark:text-neutral-300"
+                    active
+                      ? "flex flex-col items-center gap-1 rounded-xl border-2 border-primary bg-primary/10 py-3 text-sm font-bold text-primary"
+                      : "flex flex-col items-center gap-1 rounded-xl border border-neutral-200 py-3 text-sm text-neutral-600 hover:border-primary/40 dark:border-neutral-700 dark:text-neutral-300"
                   }
                 >
-                  {t}
+                  <Icon className="h-4.5 w-4.5" />
+                  {RESERVATION_METHOD_LABEL[m]}
                 </button>
-              ))}
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {needsSchedule && (
+        <>
+          <div className="rounded-2xl border border-neutral-200/70 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-900">
+            <div className="mb-3 flex items-center justify-between">
+              <button
+                type="button"
+                onClick={() => setViewMonth(new Date(viewMonth.getFullYear(), viewMonth.getMonth() - 1, 1))}
+                aria-label="이전 달"
+                className="flex h-8 w-8 items-center justify-center rounded-full text-primary/70 hover:bg-primary/10"
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </button>
+              <p className="text-sm font-bold text-primary dark:text-neutral-100">
+                {viewMonth.getFullYear()}년 {viewMonth.getMonth() + 1}월
+              </p>
+              <button
+                type="button"
+                onClick={() => setViewMonth(new Date(viewMonth.getFullYear(), viewMonth.getMonth() + 1, 1))}
+                aria-label="다음 달"
+                className="flex h-8 w-8 items-center justify-center rounded-full text-primary/70 hover:bg-primary/10"
+              >
+                <ChevronRight className="h-4 w-4" />
+              </button>
             </div>
-          ) : (
-            <p className="rounded-xl bg-surface-muted px-3 py-2.5 text-sm text-neutral-500">
-              선택하신 날짜에 예약 가능한 시간이 없습니다.
-            </p>
+
+            <div className="grid grid-cols-7 gap-1 text-center text-xs">
+              {WEEKDAY_LABELS.map((w) => (
+                <div key={w} className="py-1 font-medium text-neutral-400">
+                  {w}
+                </div>
+              ))}
+              {cells.map((date, i) => {
+                if (!date) return <div key={i} />;
+                const isPast = date < today;
+                const isSelected = selectedDate && isSameDay(date, selectedDate);
+                const isToday = isSameDay(date, today);
+                return (
+                  <button
+                    key={i}
+                    type="button"
+                    disabled={isPast}
+                    onClick={() => setSelectedDate(date)}
+                    className={
+                      isSelected
+                        ? "flex h-8 w-8 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground"
+                        : isPast
+                          ? "flex h-8 w-8 items-center justify-center rounded-full text-xs text-neutral-300 dark:text-neutral-700"
+                          : isToday
+                            ? "flex h-8 w-8 items-center justify-center rounded-full border border-primary/50 text-xs font-semibold text-primary"
+                            : "flex h-8 w-8 items-center justify-center rounded-full text-xs text-neutral-700 hover:bg-surface-muted dark:text-neutral-300"
+                    }
+                  >
+                    {date.getDate()}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {selectedDate && (
+            <div>
+              <p className="mb-2 text-sm font-medium text-neutral-700 dark:text-neutral-300">시간 선택</p>
+              {loadingSlots ? (
+                <p className="text-sm text-neutral-400">불러오는 중...</p>
+              ) : slots && slots.length > 0 ? (
+                <div className="grid grid-cols-4 gap-2">
+                  {slots.map((t) => (
+                    <button
+                      key={t}
+                      type="button"
+                      onClick={() => setSelectedTime(t)}
+                      className={
+                        selectedTime === t
+                          ? "rounded-xl bg-primary py-2 text-sm font-bold text-primary-foreground"
+                          : "rounded-xl border border-neutral-200 py-2 text-sm text-neutral-700 hover:border-primary/40 hover:text-primary dark:border-neutral-700 dark:text-neutral-300"
+                      }
+                    >
+                      {t}
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <p className="rounded-xl bg-surface-muted px-3 py-2.5 text-sm text-neutral-500">
+                  선택하신 날짜에 예약 가능한 시간이 없습니다.
+                </p>
+              )}
+            </div>
           )}
+        </>
+      )}
+
+      {method === "ONSITE" && (
+        <div>
+          <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">
+            출장 받으실 주소
+          </label>
+          <input
+            required
+            value={visitAddress}
+            onChange={(e) => setVisitAddress(e.target.value)}
+            placeholder="예: 서울특별시 마포구 월드컵로 1, 101동 101호"
+            className="w-full rounded-xl border border-neutral-200 bg-surface-muted px-3 py-2.5 text-sm outline-none transition-colors focus:border-primary/40 focus:ring-2 focus:ring-primary/10 dark:border-neutral-700 dark:bg-neutral-800"
+          />
+        </div>
+      )}
+
+      {method === "COURIER" && (
+        <div className="space-y-3">
+          <p className="rounded-xl bg-surface-muted px-3 py-2.5 text-sm text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300">
+            택배 접수는 별도 방문 일정이 필요 없어요. 업체가 예약을 승인하면 발송 안내를 보내드립니다.
+          </p>
+          <div>
+            <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">
+              수리 후 반송 받으실 주소 (선택)
+            </label>
+            <input
+              value={visitAddress}
+              onChange={(e) => setVisitAddress(e.target.value)}
+              placeholder="예: 서울특별시 마포구 월드컵로 1, 101동 101호"
+              className="w-full rounded-xl border border-neutral-200 bg-surface-muted px-3 py-2.5 text-sm outline-none transition-colors focus:border-primary/40 focus:ring-2 focus:ring-primary/10 dark:border-neutral-700 dark:bg-neutral-800"
+            />
+          </div>
         </div>
       )}
 

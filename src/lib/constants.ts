@@ -43,6 +43,16 @@ export const RESERVATION_STATUS_STYLE: Record<ReservationStatus, string> = {
   NO_SHOW: "bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-300",
 };
 
+// 예약 방법: 방문(고객이 업체로), 출장(업체가 고객에게), 택배(고객이 발송)
+export const RESERVATION_METHODS = ["VISIT", "ONSITE", "COURIER"] as const;
+export type ReservationMethod = (typeof RESERVATION_METHODS)[number];
+
+export const RESERVATION_METHOD_LABEL: Record<ReservationMethod, string> = {
+  VISIT: "방문",
+  ONSITE: "출장",
+  COURIER: "택배",
+};
+
 // Role hierarchy for RBAC checks: a higher role automatically satisfies
 // requirements written for any role at or below it in this list, EXCEPT
 // that ADMIN never inherits SUPER_ADMIN-only permissions (handled explicitly

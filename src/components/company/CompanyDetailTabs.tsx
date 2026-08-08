@@ -242,7 +242,12 @@ export function CompanyDetailTabs({
 
         {tab === "reservation" && (
           <div className="rounded-2xl border border-neutral-200/70 bg-white p-5 shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
-            <ReservationForm companyId={companyId} isUser={isUser} />
+            <ReservationForm
+              companyId={companyId}
+              isUser={isUser}
+              onSiteVisit={onSiteVisit}
+              courierDrop={courierDrop}
+            />
           </div>
         )}
 

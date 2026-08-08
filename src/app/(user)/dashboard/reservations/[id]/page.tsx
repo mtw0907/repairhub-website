@@ -15,12 +15,22 @@ import {
   Clock,
   CheckCircle2,
   Bell,
+  Store,
+  Package,
 } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { UserPageHeader } from "@/components/UserPageHeader";
 import { ReservationStepTracker, type StepInfo } from "@/components/reservation/ReservationStepTracker";
 import { NotifyToggle } from "@/components/reservation/NotifyToggle";
+import { RESERVATION_METHOD_LABEL, type ReservationMethod } from "@/lib/constants";
+import { formatBusinessHours } from "@/lib/businessHours";
+
+const METHOD_ICON: Record<ReservationMethod, typeof Store> = {
+  VISIT: Store,
+  ONSITE: Truck,
+  COURIER: Package,
+};
 
 const STEP_ORDER = ["REQUESTED", "APPROVED", "CONFIRMED", "IN_PROGRESS", "COMPLETED"] as const;
 const STEP_DEFS = [
@@ -112,6 +122,7 @@ export default async function ReservationDetailPage({
     reviewCount > 0 ? company.reviews.reduce((s, r) => s + r.rating, 0) / reviewCount : null;
 
   const mapQuery = encodeURIComponent(company.address ?? company.region ?? company.name);
+  const businessHoursText = formatBusinessHours(company.businessHours, company.closedDays);
   const mapUrl = `https://www.google.com/maps/search/?api=1&query=${mapQuery}`;
 
   const isTerminalNegative = reservation.status === "CANCELED" || reservation.status === "NO_SHOW";
@@ -176,6 +187,21 @@ export default async function ReservationDetailPage({
                   </Link>
                 </dd>
               </div>
+              {(() => {
+                const method = (reservation.method || "VISIT") as ReservationMethod;
+                const MethodIcon = METHOD_ICON[method] ?? Store;
+                return (
+                  <div className="flex items-center justify-between gap-3">
+                    <dt className="flex items-center gap-1.5 text-neutral-500">
+                      <MethodIcon className="h-4 w-4 shrink-0" />
+                      예약 방법
+                    </dt>
+                    <dd className="text-right font-medium text-neutral-900 dark:text-neutral-100">
+                      {RESERVATION_METHOD_LABEL[method] ?? method}
+                    </dd>
+                  </div>
+                );
+              })()}
               <div className="flex items-center justify-between gap-3">
                 <dt className="flex items-center gap-1.5 text-neutral-500">
                   <Calendar className="h-4 w-4 shrink-0" />
@@ -184,27 +210,53 @@ export default async function ReservationDetailPage({
                 <dd className="text-right font-medium text-neutral-900 dark:text-neutral-100">
                   {reservation.scheduledAt
                     ? new Date(reservation.scheduledAt).toLocaleString("ko-KR")
-                    : "희망 일시 미지정"}
+                    : reservation.method === "COURIER"
+                      ? "별도 방문 일정 없음"
+                      : "희망 일시 미지정"}
                 </dd>
               </div>
-              {(company.address || company.region) && (
+              {reservation.method === "ONSITE" && reservation.visitAddress ? (
                 <div className="flex items-center justify-between gap-3">
                   <dt className="flex items-center gap-1.5 text-neutral-500">
                     <MapPin className="h-4 w-4 shrink-0" />
-                    예약 장소
+                    방문 받으실 주소
                   </dt>
-                  <dd className="flex items-center gap-2 text-right font-medium text-neutral-900 dark:text-neutral-100">
-                    <span className="truncate">{company.address ?? company.region}</span>
-                    <a
-                      href={mapUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="shrink-0 rounded-lg border border-neutral-300 px-2 py-1 text-xs font-medium whitespace-nowrap transition-colors hover:bg-neutral-100 dark:border-neutral-700 dark:hover:bg-neutral-800"
-                    >
-                      지도 보기
-                    </a>
+                  <dd className="text-right font-medium text-neutral-900 dark:text-neutral-100">
+                    <span className="truncate">{reservation.visitAddress}</span>
                   </dd>
                 </div>
+              ) : reservation.method === "COURIER" ? (
+                reservation.visitAddress && (
+                  <div className="flex items-center justify-between gap-3">
+                    <dt className="flex items-center gap-1.5 text-neutral-500">
+                      <MapPin className="h-4 w-4 shrink-0" />
+                      반송 받으실 주소
+                    </dt>
+                    <dd className="text-right font-medium text-neutral-900 dark:text-neutral-100">
+                      <span className="truncate">{reservation.visitAddress}</span>
+                    </dd>
+                  </div>
+                )
+              ) : (
+                (company.address || company.region) && (
+                  <div className="flex items-center justify-between gap-3">
+                    <dt className="flex items-center gap-1.5 text-neutral-500">
+                      <MapPin className="h-4 w-4 shrink-0" />
+                      예약 장소
+                    </dt>
+                    <dd className="flex items-center gap-2 text-right font-medium text-neutral-900 dark:text-neutral-100">
+                      <span className="truncate">{company.address ?? company.region}</span>
+                      <a
+                        href={mapUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="shrink-0 rounded-lg border border-neutral-300 px-2 py-1 text-xs font-medium whitespace-nowrap transition-colors hover:bg-neutral-100 dark:border-neutral-700 dark:hover:bg-neutral-800"
+                      >
+                        지도 보기
+                      </a>
+                    </dd>
+                  </div>
+                )
               )}
               {reservation.memo && (
                 <div className="flex items-center justify-between gap-3">
@@ -290,12 +342,12 @@ export default async function ReservationDetailPage({
               )}
             </div>
 
-            {(company.businessHours || company.phone) && (
+            {(businessHoursText || company.phone) && (
               <div className="mt-4 space-y-1 rounded-xl bg-surface-muted p-3 text-xs text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300">
-                {company.businessHours && (
+                {businessHoursText && (
                   <p className="flex items-center gap-1.5">
                     <Clock className="h-3.5 w-3.5 shrink-0" />
-                    운영시간: {company.businessHours}
+                    영업시간: {businessHoursText}
                   </p>
                 )}
                 {company.phone && (

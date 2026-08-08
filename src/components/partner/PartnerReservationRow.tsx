@@ -2,7 +2,14 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import type { ReservationStatus } from "@/lib/constants";
+import { Store, Truck, Package, MapPin } from "lucide-react";
+import { RESERVATION_METHOD_LABEL, type ReservationStatus, type ReservationMethod } from "@/lib/constants";
+
+const METHOD_ICON: Record<ReservationMethod, typeof Store> = {
+  VISIT: Store,
+  ONSITE: Truck,
+  COURIER: Package,
+};
 
 const STATUS_LABEL: Record<ReservationStatus, string> = {
   REQUESTED: "요청됨",
@@ -18,6 +25,8 @@ const STATUS_LABEL: Record<ReservationStatus, string> = {
 type Reservation = {
   id: string;
   status: string;
+  method: string;
+  visitAddress: string | null;
   scheduledAt: string | null;
   memo: string | null;
   userName: string;
@@ -90,14 +99,32 @@ export function PartnerReservationRow({ reservation }: { reservation: Reservatio
     <div className="rounded-xl border border-neutral-200/70 bg-white p-4 shadow-sm transition-shadow hover:shadow-md dark:border-neutral-800 dark:bg-neutral-900">
       <div className="flex items-start justify-between gap-2">
         <div>
-          <p className="font-semibold text-neutral-900 dark:text-neutral-100">
-            {reservation.userName}
-          </p>
+          <div className="flex items-center gap-1.5">
+            <p className="font-semibold text-neutral-900 dark:text-neutral-100">
+              {reservation.userName}
+            </p>
+            {(() => {
+              const method = (reservation.method || "VISIT") as ReservationMethod;
+              const Icon = METHOD_ICON[method] ?? Store;
+              return (
+                <span className="flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[11px] font-semibold text-primary">
+                  <Icon className="h-3 w-3" />
+                  {RESERVATION_METHOD_LABEL[method] ?? method}
+                </span>
+              );
+            })()}
+          </div>
           <p className="mt-1 text-sm text-neutral-500">
             {reservation.scheduledAt
               ? new Date(reservation.scheduledAt).toLocaleString("ko-KR")
               : "희망 일시 미지정"}
           </p>
+          {reservation.visitAddress && (
+            <p className="mt-1 flex items-center gap-1 text-sm text-neutral-600 dark:text-neutral-400">
+              <MapPin className="h-3.5 w-3.5 shrink-0" />
+              {reservation.visitAddress}
+            </p>
+          )}
           {reservation.memo && (
             <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">{reservation.memo}</p>
           )}

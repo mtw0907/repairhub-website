@@ -27,6 +27,8 @@ export default async function PartnerReservationsPage() {
               reservation={{
                 id: r.id,
                 status: r.status,
+                method: r.method,
+                visitAddress: r.visitAddress,
                 scheduledAt: r.scheduledAt ? r.scheduledAt.toISOString() : null,
                 memo: r.memo,
                 userName: r.user.name,
