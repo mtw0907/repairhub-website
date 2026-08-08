@@ -62,7 +62,7 @@ export function FilterPanel({
           <button
             type="button"
             onClick={onClose}
-            className="flex h-8 w-8 items-center justify-center rounded-full text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800"
+            className="flex h-8 w-8 items-center justify-center rounded-full text-neutral-400 hover:border-primary/30 hover:bg-primary/8 hover:text-primary dark:hover:border-primary/30 dark:hover:bg-primary/15 dark:hover:text-accent"
           >
             <X className="h-4 w-4" />
           </button>

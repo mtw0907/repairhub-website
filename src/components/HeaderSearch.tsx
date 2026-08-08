@@ -23,7 +23,7 @@ export function HeaderSearch() {
         type="button"
         onClick={() => setOpen(true)}
         aria-label="검색"
-        className="flex h-9 w-9 items-center justify-center rounded-full text-neutral-500 transition-colors hover:bg-neutral-100 hover:text-primary dark:text-neutral-400 dark:hover:bg-neutral-900"
+        className="flex h-9 w-9 items-center justify-center rounded-full text-neutral-500 transition-colors hover:border-primary/30 hover:bg-primary/8 hover:text-primary dark:text-neutral-400 dark:hover:border-primary/30 dark:hover:bg-primary/15 dark:hover:text-accent"
       >
         <Search className="h-4.5 w-4.5" />
       </button>

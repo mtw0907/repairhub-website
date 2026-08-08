@@ -133,7 +133,7 @@ export default async function PartnerDashboardPage() {
               <Link
                 key={r.id}
                 href={`/partner/dashboard/repair-requests/${r.id}`}
-                className="flex items-center justify-between gap-3 px-5 py-3.5 transition-colors hover:bg-surface-muted dark:hover:bg-neutral-800 sm:px-6"
+                className="flex items-center justify-between gap-3 px-5 py-3.5 transition-colors hover:bg-primary/8 dark:hover:bg-primary/15 sm:px-6"
               >
                 <div className="min-w-0">
                   <p className="truncate text-sm font-semibold text-neutral-900 dark:text-neutral-100">

@@ -36,7 +36,7 @@ export function CancelReservationButton({ reservationId }: { reservationId: stri
         <button
           onClick={() => setConfirming(false)}
           disabled={loading}
-          className="rounded-md border border-neutral-300 px-2 py-1 text-neutral-600 hover:bg-neutral-100 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-800"
+          className="rounded-md border border-neutral-300 px-2 py-1 text-neutral-600 hover:border-primary/30 hover:bg-primary/8 hover:text-primary dark:border-neutral-700 dark:text-neutral-300 dark:hover:border-primary/30 dark:hover:bg-primary/15 dark:hover:text-accent"
         >
           아니오
         </button>

@@ -64,7 +64,7 @@ export function NotificationBell() {
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-label="알림"
-        className="relative flex h-9 w-9 items-center justify-center rounded-full text-neutral-500 transition-colors hover:bg-neutral-100 hover:text-primary dark:text-neutral-400 dark:hover:bg-neutral-900"
+        className="relative flex h-9 w-9 items-center justify-center rounded-full text-neutral-500 transition-colors hover:border-primary/30 hover:bg-primary/8 hover:text-primary dark:text-neutral-400 dark:hover:border-primary/30 dark:hover:bg-primary/15 dark:hover:text-accent"
       >
         <Bell className="h-4.5 w-4.5" />
         {unreadCount > 0 && (

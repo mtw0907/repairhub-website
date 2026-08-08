@@ -34,7 +34,7 @@ export function CompanyFloatingCard({
             <button
               type="button"
               onClick={onClose}
-              className="shrink-0 rounded-full p-0.5 text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800"
+              className="shrink-0 rounded-full p-0.5 text-neutral-400 hover:border-primary/30 hover:bg-primary/8 hover:text-primary dark:hover:border-primary/30 dark:hover:bg-primary/15 dark:hover:text-accent"
             >
               <X className="h-4 w-4" />
             </button>

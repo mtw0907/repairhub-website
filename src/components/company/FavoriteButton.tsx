@@ -63,7 +63,7 @@ export function FavoriteButton({
       className={
         favorited
           ? "rounded-md border border-amber-400 bg-amber-50 px-3 py-1.5 text-sm font-medium text-amber-700 disabled:opacity-50 dark:border-amber-500 dark:bg-amber-950 dark:text-amber-300"
-          : "rounded-md border border-neutral-300 px-3 py-1.5 text-sm font-medium text-neutral-700 hover:bg-neutral-100 disabled:opacity-50 dark:border-neutral-700 dark:text-neutral-200 dark:hover:bg-neutral-800"
+          : "rounded-md border border-neutral-300 px-3 py-1.5 text-sm font-medium text-neutral-700 hover:border-primary/30 hover:bg-primary/8 hover:text-primary disabled:opacity-50 dark:border-neutral-700 dark:text-neutral-200 dark:hover:border-primary/30 dark:hover:bg-primary/15 dark:hover:text-accent"
       }
     >
       {favorited ? "★ 즐겨찾기됨" : "☆ 즐겨찾기"}

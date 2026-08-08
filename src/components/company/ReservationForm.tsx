@@ -304,8 +304,8 @@ export function ReservationForm({
                         : isPast
                           ? "flex h-8 w-8 items-center justify-center rounded-full text-xs text-neutral-300 dark:text-neutral-700"
                           : isToday
-                            ? "flex h-8 w-8 items-center justify-center rounded-full border border-primary/50 text-xs font-semibold text-primary"
-                            : "flex h-8 w-8 items-center justify-center rounded-full text-xs text-neutral-700 hover:bg-surface-muted dark:text-neutral-300"
+                            ? "flex h-8 w-8 items-center justify-center rounded-full border border-primary/50 text-xs font-semibold text-primary transition-colors hover:bg-primary/15 dark:hover:bg-primary/25 dark:hover:text-accent"
+                            : "flex h-8 w-8 items-center justify-center rounded-full text-xs text-neutral-700 transition-colors hover:bg-primary/10 hover:text-primary dark:text-neutral-300 dark:hover:bg-primary/20 dark:hover:text-accent"
                     }
                   >
                     {date.getDate()}
@@ -330,7 +330,7 @@ export function ReservationForm({
                       className={
                         selectedTime === t
                           ? "rounded-xl bg-primary py-2 text-sm font-bold text-primary-foreground"
-                          : "rounded-xl border border-neutral-200 py-2 text-sm text-neutral-700 hover:border-primary/40 hover:text-primary dark:border-neutral-700 dark:text-neutral-300"
+                          : "rounded-xl border border-neutral-200 py-2 text-sm text-neutral-700 transition-colors hover:border-primary/40 hover:bg-primary/5 hover:text-primary dark:border-neutral-700 dark:text-neutral-300 dark:hover:border-accent/40 dark:hover:bg-primary/15 dark:hover:text-accent"
                       }
                     >
                       {t}

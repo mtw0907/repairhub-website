@@ -222,7 +222,7 @@ export function PartnerReservationRow({ reservation }: { reservation: Reservatio
             <button
               onClick={() => setEditing(false)}
               disabled={loading}
-              className="rounded-lg border border-neutral-300 px-3 py-1.5 text-xs font-medium transition-colors hover:bg-neutral-100 dark:border-neutral-700 dark:hover:bg-neutral-800"
+              className="rounded-lg border border-neutral-300 px-3 py-1.5 text-xs font-medium transition-colors hover:border-primary/30 hover:bg-primary/8 hover:text-primary dark:border-neutral-700 dark:hover:border-primary/30 dark:hover:bg-primary/15 dark:hover:text-accent"
             >
               취소
             </button>
@@ -253,7 +253,7 @@ export function PartnerReservationRow({ reservation }: { reservation: Reservatio
             <button
               onClick={() => setCompleting(false)}
               disabled={loading}
-              className="rounded-lg border border-neutral-300 px-3 py-1.5 text-xs font-medium transition-colors hover:bg-neutral-100 dark:border-neutral-700 dark:hover:bg-neutral-800"
+              className="rounded-lg border border-neutral-300 px-3 py-1.5 text-xs font-medium transition-colors hover:border-primary/30 hover:bg-primary/8 hover:text-primary dark:border-neutral-700 dark:hover:border-primary/30 dark:hover:bg-primary/15 dark:hover:text-accent"
             >
               취소
             </button>
@@ -301,7 +301,7 @@ export function PartnerReservationRow({ reservation }: { reservation: Reservatio
             <button
               onClick={() => setEditing(true)}
               disabled={loading}
-              className="rounded-lg border border-neutral-300 px-3 py-1.5 text-xs font-medium transition-colors hover:bg-neutral-100 dark:border-neutral-700 dark:hover:bg-neutral-800"
+              className="rounded-lg border border-neutral-300 px-3 py-1.5 text-xs font-medium transition-colors hover:border-primary/30 hover:bg-primary/8 hover:text-primary dark:border-neutral-700 dark:hover:border-primary/30 dark:hover:bg-primary/15 dark:hover:text-accent"
             >
               일정/메모 변경
             </button>
