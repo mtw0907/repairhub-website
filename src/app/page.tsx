@@ -144,7 +144,7 @@ export default async function LandingPage() {
         {/* Hero */}
         <section className="relative isolate overflow-hidden px-4 pb-20 pt-20 sm:px-6 sm:pb-28 sm:pt-28">
           {/* 배경: /public/assets/hero-repair.jpg가 있으면 그 사진을, 없으면
-              보라색 그라데이션으로 대체 (CSS 다중 배경 — 이미지 404 시 자동으로
+              남색 그라데이션으로 대체 (CSS 다중 배경 — 이미지 404 시 자동으로
               두 번째 레이어만 남음). 실제 사진을 준비하면 같은 경로에 넣기만
               하면 됩니다. */}
           <div
@@ -152,13 +152,13 @@ export default async function LandingPage() {
             className="absolute inset-0 -z-20 bg-cover bg-center"
             style={{
               backgroundImage:
-                "url(/assets/hero-repair.jpg), linear-gradient(135deg, #100e1c 0%, #17152b 55%, #221b3d 100%)",
+                "url(/assets/hero-repair.jpg), linear-gradient(135deg, #0f1620 0%, #1e293b 55%, #2c3b52 100%)",
             }}
           />
-          <div aria-hidden className="absolute inset-0 -z-10 bg-[#17152b]/60" />
+          <div aria-hidden className="absolute inset-0 -z-10 bg-black/55" />
           <div
             aria-hidden
-            className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_60%_50%_at_50%_-10%,color-mix(in_srgb,var(--accent)_18%,transparent),transparent)]"
+            className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_60%_50%_at_50%_-10%,color-mix(in_srgb,var(--accent)_25%,transparent),transparent)]"
           />
 
           <div className="relative mx-auto max-w-2xl text-center">

@@ -25,10 +25,10 @@ export function DashboardShell({
               href="/"
               className="hidden items-center gap-2 sm:flex"
             >
-              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-accent/10 text-accent">
+              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
                 <Guitar className="h-5 w-5" />
               </span>
-              <span className="text-lg font-extrabold tracking-tight text-accent dark:text-neutral-100">
+              <span className="text-lg font-extrabold tracking-tight text-primary dark:text-neutral-100">
                 소리수리
               </span>
             </Link>
