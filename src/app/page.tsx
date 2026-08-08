@@ -395,12 +395,6 @@ export default async function LandingPage() {
                   </h2>
                   <p className="mt-1 text-sm text-neutral-500">평점과 추천 지수가 높은 업체예요</p>
                 </div>
-                <Link
-                  href="/companies"
-                  className="flex shrink-0 items-center gap-1 text-sm font-medium text-primary hover:underline"
-                >
-                  전체보기 <ArrowRight className="h-3.5 w-3.5" />
-                </Link>
               </div>
               {popular.length > 0 ? (
                 <div className="grid gap-5 sm:grid-cols-2">
@@ -416,21 +410,24 @@ export default async function LandingPage() {
             </div>
 
             <div>
-              <div className="mb-5 flex items-end justify-between">
+              <div className="mb-5">
                 <h2 className="text-xl font-bold text-neutral-900 dark:text-neutral-100 sm:text-2xl">
                   내 주변 수리업체
                 </h2>
-                <Link
-                  href="/companies"
-                  className="flex shrink-0 items-center gap-1 text-sm font-medium text-primary hover:underline"
-                >
-                  지도 전체보기
-                </Link>
               </div>
               <div className="h-[340px] overflow-hidden rounded-2xl border border-neutral-200/70 shadow-sm dark:border-neutral-800 lg:h-[440px]">
                 <HomeMapPreview companies={mapCompanies} kakaoMapKey={kakaoMapKey} />
               </div>
             </div>
+          </div>
+
+          <div className="mt-8 flex justify-center">
+            <Link
+              href="/companies"
+              className="flex items-center gap-2 rounded-xl bg-accent px-8 py-3.5 text-base font-bold text-accent-foreground shadow-md transition-transform hover:scale-[1.02] hover:bg-accent/90"
+            >
+              전체보기 <ArrowRight className="h-4.5 w-4.5" />
+            </Link>
           </div>
         </section>
 
