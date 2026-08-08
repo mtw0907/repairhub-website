@@ -38,50 +38,24 @@ export function HomeMapPreview({
   const { loaded, error: loadError } = useKakaoMapsLoaded(kakaoMapKey);
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
-  const instanceId = useRef(Math.random().toString(36).slice(2, 8));
-
-  console.log(
-    `[HomeMapPreview:${instanceId.current}] render`,
-    JSON.stringify({ loaded, loadError, kakaoMapKey: kakaoMapKey?.slice(0, 6) }),
-  );
 
   useEffect(() => {
-    console.log(`[HomeMapPreview:${instanceId.current}] mounted`);
-    return () => console.log(`[HomeMapPreview:${instanceId.current}] UNMOUNTED`);
-  }, []);
-
-  useEffect(() => {
-    console.log(
-      `[HomeMapPreview:${instanceId.current}] effect fired`,
-      JSON.stringify({
-        loaded,
-        hasContainer: !!containerRef.current,
-        hasMapAlready: !!mapRef.current,
-        hasKakao: !!window.kakao?.maps,
-      }),
-    );
     if (!loaded || !containerRef.current || mapRef.current || !window.kakao?.maps) return;
-    try {
-      const kakao = window.kakao;
-      const map = new kakao.maps.Map(containerRef.current, {
-        center: new kakao.maps.LatLng(DEFAULT_MAP_CENTER.lat, DEFAULT_MAP_CENTER.lng),
-        level: 7,
-      });
-      mapRef.current = map;
-      console.log(`[HomeMapPreview:${instanceId.current}] map created`);
+    const kakao = window.kakao;
+    const map = new kakao.maps.Map(containerRef.current, {
+      center: new kakao.maps.LatLng(DEFAULT_MAP_CENTER.lat, DEFAULT_MAP_CENTER.lng),
+      level: 7,
+    });
+    mapRef.current = map;
 
-      companies.forEach((company) => {
-        const overlay = new kakao.maps.CustomOverlay({
-          position: new kakao.maps.LatLng(company.lat, company.lng),
-          content: createPinElement(company, (id) => router.push(`/companies/${id}`)),
-          yAnchor: 1,
-        });
-        overlay.setMap(map);
+    companies.forEach((company) => {
+      const overlay = new kakao.maps.CustomOverlay({
+        position: new kakao.maps.LatLng(company.lat, company.lng),
+        content: createPinElement(company, (id) => router.push(`/companies/${id}`)),
+        yAnchor: 1,
       });
-      console.log(`[HomeMapPreview:${instanceId.current}] pins placed`, companies.length);
-    } catch (e) {
-      console.error(`[HomeMapPreview:${instanceId.current}] map init threw`, String(e));
-    }
+      overlay.setMap(map);
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loaded]);
 
