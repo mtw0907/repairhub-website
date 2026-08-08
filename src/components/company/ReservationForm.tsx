@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronLeft, ChevronRight, Store, Truck, Package } from "lucide-react";
 import { RESERVATION_METHOD_LABEL, type ReservationMethod } from "@/lib/constants";
+import { AddressSearchField } from "@/components/AddressSearchField";
 
 const WEEKDAY_LABELS = ["일", "월", "화", "수", "목", "금", "토"];
 
@@ -52,7 +53,9 @@ export function ReservationForm({
   const [slots, setSlots] = useState<string[] | null>(null);
   const [loadingSlots, setLoadingSlots] = useState(false);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
-  const [visitAddress, setVisitAddress] = useState("");
+  const [addressBase, setAddressBase] = useState("");
+  const [addressDetail, setAddressDetail] = useState("");
+  const visitAddress = [addressBase, addressDetail].filter(Boolean).join(" ");
   const [memo, setMemo] = useState("");
   const [message, setMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -117,7 +120,8 @@ export function ReservationForm({
       setSelectedDate(null);
       setSelectedTime(null);
       setSlots(null);
-      setVisitAddress("");
+      setAddressBase("");
+      setAddressDetail("");
       setMemo("");
     } else {
       const data = await res.json().catch(() => null);
@@ -250,12 +254,12 @@ export function ReservationForm({
           <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">
             출장 받으실 주소
           </label>
-          <input
+          <AddressSearchField
             required
-            value={visitAddress}
-            onChange={(e) => setVisitAddress(e.target.value)}
-            placeholder="예: 서울특별시 마포구 월드컵로 1, 101동 101호"
-            className="w-full rounded-xl border border-neutral-200 bg-surface-muted px-3 py-2.5 text-sm outline-none transition-colors focus:border-primary/40 focus:ring-2 focus:ring-primary/10 dark:border-neutral-700 dark:bg-neutral-800"
+            baseAddress={addressBase}
+            detailAddress={addressDetail}
+            onBaseAddressChange={setAddressBase}
+            onDetailAddressChange={setAddressDetail}
           />
         </div>
       )}
@@ -269,11 +273,11 @@ export function ReservationForm({
             <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">
               수리 후 반송 받으실 주소 (선택)
             </label>
-            <input
-              value={visitAddress}
-              onChange={(e) => setVisitAddress(e.target.value)}
-              placeholder="예: 서울특별시 마포구 월드컵로 1, 101동 101호"
-              className="w-full rounded-xl border border-neutral-200 bg-surface-muted px-3 py-2.5 text-sm outline-none transition-colors focus:border-primary/40 focus:ring-2 focus:ring-primary/10 dark:border-neutral-700 dark:bg-neutral-800"
+            <AddressSearchField
+              baseAddress={addressBase}
+              detailAddress={addressDetail}
+              onBaseAddressChange={setAddressBase}
+              onDetailAddressChange={setAddressDetail}
             />
           </div>
         </div>
