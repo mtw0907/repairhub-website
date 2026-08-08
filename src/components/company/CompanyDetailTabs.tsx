@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import {
   Home,
   ListChecks,
   CalendarClock,
-  Calculator,
   MessageCircle,
   Star,
   Truck,
@@ -13,9 +13,10 @@ import {
   Clock,
   PenLine,
   ChevronDown,
+  Sparkles,
+  ArrowRight,
 } from "lucide-react";
 import { ReservationForm } from "@/components/company/ReservationForm";
-import { EstimateForm } from "@/components/company/EstimateForm";
 import { InquiryForm } from "@/components/company/InquiryForm";
 import { ReviewForm } from "@/components/company/ReviewForm";
 import { ReportButton } from "@/components/ReportButton";
@@ -79,7 +80,7 @@ export function CompanyDetailTabs({
     { key: "home", label: "홈", icon: Home },
     { key: "services", label: "서비스", icon: ListChecks },
     { key: "reservation", label: "예약 요청", icon: CalendarClock },
-    { key: "estimate", label: "견적 요청", icon: Calculator },
+    { key: "estimate", label: "견적 요청", icon: Sparkles },
     { key: "inquiry", label: "문의하기", icon: MessageCircle },
     { key: "reviews", label: `리뷰 (${reviewCount})`, icon: Star },
   ];
@@ -210,11 +211,39 @@ export function CompanyDetailTabs({
           </div>
         )}
 
-        {tab === "estimate" && (
-          <div className="rounded-2xl border border-neutral-200/70 bg-white p-5 shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
-            <EstimateForm companyId={companyId} isUser={isUser} />
-          </div>
-        )}
+        {tab === "estimate" &&
+          (isUser ? (
+            <Link
+              href="/dashboard/repair-requests/new"
+              className="group flex flex-col items-center justify-center gap-3 rounded-2xl bg-gradient-to-br from-accent to-accent/80 p-8 text-center shadow-md transition-transform hover:scale-[1.01]"
+            >
+              <span className="flex h-14 w-14 items-center justify-center rounded-full bg-white/25 text-accent-foreground">
+                <Sparkles className="h-7 w-7" />
+              </span>
+              <div>
+                <p className="text-xl font-extrabold text-accent-foreground">AI 견적 요청</p>
+                <p className="mt-1 text-sm text-accent-foreground/80">
+                  증상을 입력하면 AI가 분석해 이 업체를 포함한 여러 업체의 견적을 받아보세요.
+                </p>
+              </div>
+              <span className="mt-1 flex items-center gap-1 rounded-full bg-white/90 px-4 py-2 text-sm font-bold text-primary transition-transform group-hover:translate-x-1">
+                지금 시작하기
+                <ArrowRight className="h-4 w-4" />
+              </span>
+            </Link>
+          ) : (
+            <div className="flex flex-col items-center gap-3 rounded-2xl border border-neutral-200/70 bg-white px-5 py-10 text-center shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
+              <p className="text-sm text-neutral-600 dark:text-neutral-400">
+                로그인하면 AI가 증상을 분석해 견적을 받아볼 수 있어요.
+              </p>
+              <Link
+                href="/login"
+                className="rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm transition-transform hover:scale-[1.02] hover:bg-primary/90"
+              >
+                로그인하고 AI 견적 요청하기
+              </Link>
+            </div>
+          ))}
 
         {tab === "inquiry" && (
           <div className="rounded-2xl border border-neutral-200/70 bg-white p-5 shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
