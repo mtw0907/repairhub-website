@@ -39,23 +39,37 @@ export function HomeMapPreview({
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
 
-  useEffect(() => {
-    if (!loaded || !containerRef.current || mapRef.current || !window.kakao?.maps) return;
-    const kakao = window.kakao;
-    const map = new kakao.maps.Map(containerRef.current, {
-      center: new kakao.maps.LatLng(DEFAULT_MAP_CENTER.lat, DEFAULT_MAP_CENTER.lng),
-      level: 7,
-    });
-    mapRef.current = map;
+  console.log("[HomeMapPreview] render", { loaded, loadError, kakaoMapKey: kakaoMapKey?.slice(0, 6) });
 
-    companies.forEach((company) => {
-      const overlay = new kakao.maps.CustomOverlay({
-        position: new kakao.maps.LatLng(company.lat, company.lng),
-        content: createPinElement(company, (id) => router.push(`/companies/${id}`)),
-        yAnchor: 1,
-      });
-      overlay.setMap(map);
+  useEffect(() => {
+    console.log("[HomeMapPreview] effect fired", {
+      loaded,
+      hasContainer: !!containerRef.current,
+      hasMapAlready: !!mapRef.current,
+      hasKakao: !!window.kakao?.maps,
     });
+    if (!loaded || !containerRef.current || mapRef.current || !window.kakao?.maps) return;
+    try {
+      const kakao = window.kakao;
+      const map = new kakao.maps.Map(containerRef.current, {
+        center: new kakao.maps.LatLng(DEFAULT_MAP_CENTER.lat, DEFAULT_MAP_CENTER.lng),
+        level: 7,
+      });
+      mapRef.current = map;
+      console.log("[HomeMapPreview] map created", map);
+
+      companies.forEach((company) => {
+        const overlay = new kakao.maps.CustomOverlay({
+          position: new kakao.maps.LatLng(company.lat, company.lng),
+          content: createPinElement(company, (id) => router.push(`/companies/${id}`)),
+          yAnchor: 1,
+        });
+        overlay.setMap(map);
+      });
+      console.log("[HomeMapPreview] pins placed", companies.length);
+    } catch (e) {
+      console.error("[HomeMapPreview] map init threw", e);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loaded]);
 
