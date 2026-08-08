@@ -54,6 +54,7 @@ export function CompanyCard({
   compareSlot,
   showActions,
   highlighted,
+  compact,
 }: {
   company: CompanySummary;
   isUser: boolean;
@@ -63,6 +64,8 @@ export function CompanyCard({
   showActions?: boolean;
   /** Visually emphasizes the card, e.g. when its map pin is selected. */
   highlighted?: boolean;
+  /** Tighter padding/text + fewer secondary details, for narrow 3-up rows (home page). */
+  compact?: boolean;
 }) {
   const photo = company.photoUrl ?? company.logoUrl ?? null;
   const isVerified = company.status === "APPROVED";
@@ -125,9 +128,15 @@ export function CompanyCard({
           {compareSlot && <div className="absolute bottom-2.5 right-2.5">{compareSlot}</div>}
         </div>
 
-        <div className="flex flex-1 flex-col gap-2.5 p-4">
+        <div className={compact ? "flex flex-1 flex-col gap-1.5 p-3" : "flex flex-1 flex-col gap-2.5 p-4"}>
           <div className="flex items-start justify-between gap-2">
-            <h3 className="text-base font-bold leading-snug text-neutral-900 group-hover:text-primary dark:text-neutral-100">
+            <h3
+              className={
+                compact
+                  ? "text-sm font-bold leading-snug text-neutral-900 group-hover:text-primary dark:text-neutral-100"
+                  : "text-base font-bold leading-snug text-neutral-900 group-hover:text-primary dark:text-neutral-100"
+              }
+            >
               {company.name}
             </h3>
             <span
@@ -178,7 +187,7 @@ export function CompanyCard({
 
           {company.services.length > 0 && (
             <div className="flex flex-wrap gap-1.5">
-              {company.services.slice(0, 3).map((s) => (
+              {company.services.slice(0, compact ? 2 : 3).map((s) => (
                 <span
                   key={s}
                   className="rounded-full bg-surface-muted px-2 py-0.5 text-[11px] text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300"

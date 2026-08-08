@@ -384,38 +384,58 @@ export default async function LandingPage() {
           </div>
         </section>
 
-        {/* 인기 업체 + 내 주변 지도 (위치 기반 데이터가 없어 평점/추천 기준으로 통합 제공) */}
+        {/* 인기 업체 + 신규 업체 (좌, 각 한 줄) + 내 주변 지도 (우, 두 줄 높이만큼) */}
         <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
-          <div className="grid gap-8 lg:grid-cols-3">
-            <div className="lg:col-span-2">
-              <div className="mb-5 flex items-end justify-between">
-                <div>
+          <div className="grid gap-8 lg:grid-cols-3 lg:items-stretch">
+            <div className="flex flex-col gap-10 lg:col-span-2">
+              <div>
+                <div className="mb-5">
                   <h2 className="text-xl font-bold text-neutral-900 dark:text-neutral-100 sm:text-2xl">
                     지금 인기 있는 업체
                   </h2>
                   <p className="mt-1 text-sm text-neutral-500">평점과 추천 지수가 높은 업체예요</p>
                 </div>
+                {popular.length > 0 ? (
+                  <div className="grid gap-5 sm:grid-cols-3">
+                    {popular.slice(0, 3).map((c) => (
+                      <CompanyCard key={c.id} company={c} isUser={isUser} favorited={favoritedIds.has(c.id)} compact />
+                    ))}
+                  </div>
+                ) : (
+                  <p className="rounded-2xl border border-dashed border-neutral-300 py-12 text-center text-sm text-neutral-500">
+                    아직 등록된 업체가 없습니다.
+                  </p>
+                )}
               </div>
-              {popular.length > 0 ? (
-                <div className="grid gap-5 sm:grid-cols-2">
-                  {popular.map((c) => (
-                    <CompanyCard key={c.id} company={c} isUser={isUser} favorited={favoritedIds.has(c.id)} />
-                  ))}
+
+              <div>
+                <div className="mb-5">
+                  <h2 className="text-xl font-bold text-neutral-900 dark:text-neutral-100 sm:text-2xl">
+                    새로 합류한 업체
+                  </h2>
+                  <p className="mt-1 text-sm text-neutral-500">소리수리에 최근 등록된 업체예요</p>
                 </div>
-              ) : (
-                <p className="rounded-2xl border border-dashed border-neutral-300 py-12 text-center text-sm text-neutral-500">
-                  아직 등록된 업체가 없습니다.
-                </p>
-              )}
+                {fresh.length > 0 ? (
+                  <div className="grid gap-5 sm:grid-cols-3">
+                    {fresh.slice(0, 3).map((c) => (
+                      <CompanyCard key={c.id} company={c} isUser={isUser} favorited={favoritedIds.has(c.id)} compact />
+                    ))}
+                  </div>
+                ) : (
+                  <p className="rounded-2xl border border-dashed border-neutral-300 py-12 text-center text-sm text-neutral-500">
+                    아직 등록된 업체가 없습니다.
+                  </p>
+                )}
+              </div>
             </div>
 
-            <div>
+            <div className="flex flex-col">
               <div className="mb-5">
                 <h2 className="text-xl font-bold text-neutral-900 dark:text-neutral-100 sm:text-2xl">
                   내 주변 수리업체
                 </h2>
               </div>
-              <div className="h-[340px] overflow-hidden rounded-2xl border border-neutral-200/70 shadow-sm dark:border-neutral-800 lg:h-[440px]">
+              <div className="min-h-[420px] flex-1 overflow-hidden rounded-2xl border border-neutral-200/70 shadow-sm dark:border-neutral-800">
                 <HomeMapPreview companies={mapCompanies} kakaoMapKey={kakaoMapKey} />
               </div>
             </div>
@@ -426,32 +446,9 @@ export default async function LandingPage() {
               href="/companies"
               className="flex items-center gap-2 rounded-xl bg-accent px-8 py-3.5 text-base font-bold text-accent-foreground shadow-md transition-transform hover:scale-[1.02] hover:bg-accent/90"
             >
-              전체보기 <ArrowRight className="h-4.5 w-4.5" />
+              업체 전체보기 <ArrowRight className="h-4.5 w-4.5" />
             </Link>
           </div>
-        </section>
-
-        {/* 신규 업체 */}
-        <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
-          <div className="mb-5 flex items-end justify-between">
-            <div>
-              <h2 className="text-xl font-bold text-neutral-900 dark:text-neutral-100 sm:text-2xl">
-                새로 합류한 업체
-              </h2>
-              <p className="mt-1 text-sm text-neutral-500">소리수리에 최근 등록된 업체예요</p>
-            </div>
-          </div>
-          {fresh.length > 0 ? (
-            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {fresh.map((c) => (
-                <CompanyCard key={c.id} company={c} isUser={isUser} favorited={favoritedIds.has(c.id)} />
-              ))}
-            </div>
-          ) : (
-            <p className="rounded-2xl border border-dashed border-neutral-300 py-12 text-center text-sm text-neutral-500">
-              아직 등록된 업체가 없습니다.
-            </p>
-          )}
         </section>
 
         {/* 수리사례 */}
