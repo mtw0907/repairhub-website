@@ -38,16 +38,28 @@ export function HomeMapPreview({
   const { loaded, error: loadError } = useKakaoMapsLoaded(kakaoMapKey);
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
+  const instanceId = useRef(Math.random().toString(36).slice(2, 8));
 
-  console.log("[HomeMapPreview] render", { loaded, loadError, kakaoMapKey: kakaoMapKey?.slice(0, 6) });
+  console.log(
+    `[HomeMapPreview:${instanceId.current}] render`,
+    JSON.stringify({ loaded, loadError, kakaoMapKey: kakaoMapKey?.slice(0, 6) }),
+  );
 
   useEffect(() => {
-    console.log("[HomeMapPreview] effect fired", {
-      loaded,
-      hasContainer: !!containerRef.current,
-      hasMapAlready: !!mapRef.current,
-      hasKakao: !!window.kakao?.maps,
-    });
+    console.log(`[HomeMapPreview:${instanceId.current}] mounted`);
+    return () => console.log(`[HomeMapPreview:${instanceId.current}] UNMOUNTED`);
+  }, []);
+
+  useEffect(() => {
+    console.log(
+      `[HomeMapPreview:${instanceId.current}] effect fired`,
+      JSON.stringify({
+        loaded,
+        hasContainer: !!containerRef.current,
+        hasMapAlready: !!mapRef.current,
+        hasKakao: !!window.kakao?.maps,
+      }),
+    );
     if (!loaded || !containerRef.current || mapRef.current || !window.kakao?.maps) return;
     try {
       const kakao = window.kakao;
@@ -56,7 +68,7 @@ export function HomeMapPreview({
         level: 7,
       });
       mapRef.current = map;
-      console.log("[HomeMapPreview] map created", map);
+      console.log(`[HomeMapPreview:${instanceId.current}] map created`);
 
       companies.forEach((company) => {
         const overlay = new kakao.maps.CustomOverlay({
@@ -66,9 +78,9 @@ export function HomeMapPreview({
         });
         overlay.setMap(map);
       });
-      console.log("[HomeMapPreview] pins placed", companies.length);
+      console.log(`[HomeMapPreview:${instanceId.current}] pins placed`, companies.length);
     } catch (e) {
-      console.error("[HomeMapPreview] map init threw", e);
+      console.error(`[HomeMapPreview:${instanceId.current}] map init threw`, String(e));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loaded]);
