@@ -141,7 +141,7 @@ export default async function CompanyDetailPage({
       <main className="mx-auto w-full max-w-5xl flex-1 px-4 pb-16 sm:px-6">
         <div className="-mt-14 flex flex-col gap-4 rounded-2xl border border-neutral-200/70 bg-white p-5 shadow-lg dark:border-neutral-800 dark:bg-neutral-900 sm:-mt-16 sm:flex-row sm:items-start sm:justify-between sm:p-6">
           <div className="flex items-start gap-4">
-            <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-surface-muted text-xl font-bold text-primary/40 ring-4 ring-white dark:ring-neutral-900">
+            <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-br from-primary/15 via-surface-muted to-accent/20 text-xl font-bold text-primary ring-4 ring-white dark:ring-neutral-900">
               {company.logoUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={company.logoUrl} alt={company.name} className="h-full w-full object-cover" />

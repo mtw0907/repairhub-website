@@ -90,18 +90,18 @@ export function ReservationForm({ companyId, isUser }: { companyId: string; isUs
             type="button"
             onClick={() => setViewMonth(new Date(viewMonth.getFullYear(), viewMonth.getMonth() - 1, 1))}
             aria-label="이전 달"
-            className="flex h-8 w-8 items-center justify-center rounded-full text-neutral-500 hover:bg-surface-muted"
+            className="flex h-8 w-8 items-center justify-center rounded-full text-primary/70 hover:bg-primary/10"
           >
             <ChevronLeft className="h-4 w-4" />
           </button>
-          <p className="text-sm font-bold text-neutral-900 dark:text-neutral-100">
+          <p className="text-sm font-bold text-primary dark:text-neutral-100">
             {viewMonth.getFullYear()}년 {viewMonth.getMonth() + 1}월
           </p>
           <button
             type="button"
             onClick={() => setViewMonth(new Date(viewMonth.getFullYear(), viewMonth.getMonth() + 1, 1))}
             aria-label="다음 달"
-            className="flex h-8 w-8 items-center justify-center rounded-full text-neutral-500 hover:bg-surface-muted"
+            className="flex h-8 w-8 items-center justify-center rounded-full text-primary/70 hover:bg-primary/10"
           >
             <ChevronRight className="h-4 w-4" />
           </button>

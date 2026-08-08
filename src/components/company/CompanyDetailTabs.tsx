@@ -15,6 +15,10 @@ import {
   ChevronDown,
   Sparkles,
   ArrowRight,
+  Info,
+  Tag,
+  Wrench,
+  Award,
 } from "lucide-react";
 import { ReservationForm } from "@/components/company/ReservationForm";
 import { InquiryForm } from "@/components/company/InquiryForm";
@@ -114,12 +118,26 @@ export function CompanyDetailTabs({
         {tab === "home" && (
           <div className="space-y-6">
             {introduction && (
-              <p className="whitespace-pre-line rounded-2xl border border-neutral-200/70 bg-white p-5 text-sm leading-relaxed text-neutral-700 shadow-sm dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-300">
-                {introduction}
-              </p>
+              <div className="rounded-2xl border border-neutral-200/70 bg-white p-5 shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
+                <div className="mb-3 flex items-center gap-2">
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                    <Info className="h-4 w-4" />
+                  </span>
+                  <h2 className="text-sm font-bold text-neutral-900 dark:text-neutral-100">업체 소개</h2>
+                </div>
+                <p className="whitespace-pre-line text-sm leading-relaxed text-neutral-700 dark:text-neutral-300">
+                  {introduction}
+                </p>
+              </div>
             )}
 
             <div className="rounded-2xl border border-neutral-200/70 bg-white p-5 shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
+              <div className="mb-3 flex items-center gap-2">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                  <Clock className="h-4 w-4" />
+                </span>
+                <h2 className="text-sm font-bold text-neutral-900 dark:text-neutral-100">영업 정보</h2>
+              </div>
               <div className="flex flex-wrap gap-2 text-xs">
                 <span
                   className={
@@ -134,7 +152,7 @@ export function CompanyDetailTabs({
                 <span
                   className={
                     courierDrop
-                      ? "flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-1 font-medium text-primary"
+                      ? "flex items-center gap-1 rounded-full bg-accent/15 px-2.5 py-1 font-medium text-accent"
                       : "flex items-center gap-1 rounded-full bg-neutral-100 px-2.5 py-1 text-neutral-500 dark:bg-neutral-800"
                   }
                 >
@@ -143,7 +161,7 @@ export function CompanyDetailTabs({
                 </span>
               </div>
               {businessHoursText && (
-                <p className="mt-3 flex items-center gap-1.5 text-sm text-neutral-500">
+                <p className="mt-3 flex items-center gap-1.5 border-t border-neutral-100 pt-3 text-sm text-neutral-500 dark:border-neutral-800">
                   <Clock className="h-3.5 w-3.5 shrink-0" />
                   {businessHoursText}
                 </p>
@@ -152,12 +170,19 @@ export function CompanyDetailTabs({
 
             {priceItems.length > 0 && (
               <div className="rounded-2xl border border-neutral-200/70 bg-white p-5 shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
-                <h2 className="mb-3 text-sm font-bold text-neutral-900 dark:text-neutral-100">가격표</h2>
+                <div className="mb-3 flex items-center gap-2">
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-accent/15 text-accent">
+                    <Tag className="h-4 w-4" />
+                  </span>
+                  <h2 className="text-sm font-bold text-neutral-900 dark:text-neutral-100">가격표</h2>
+                </div>
                 <ul className="divide-y divide-neutral-100 rounded-xl border border-neutral-100 text-sm dark:divide-neutral-800 dark:border-neutral-800">
                   {priceItems.map((p) => (
                     <li key={p.id} className="flex justify-between px-4 py-2.5">
                       <span>{p.label}</span>
-                      <span className="font-semibold text-primary">{p.price.toLocaleString()}원</span>
+                      <span className="font-bold text-accent">
+                        {p.price.toLocaleString()}원
+                      </span>
                     </li>
                   ))}
                 </ul>
@@ -169,13 +194,18 @@ export function CompanyDetailTabs({
         {tab === "services" && (
           <div className="grid gap-5 rounded-2xl border border-neutral-200/70 bg-white p-5 shadow-sm dark:border-neutral-800 dark:bg-neutral-900 sm:grid-cols-2">
             <div>
-              <h2 className="mb-2.5 text-sm font-bold text-neutral-900 dark:text-neutral-100">수리 품목</h2>
+              <div className="mb-2.5 flex items-center gap-2">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                  <Wrench className="h-4 w-4" />
+                </span>
+                <h2 className="text-sm font-bold text-neutral-900 dark:text-neutral-100">수리 품목</h2>
+              </div>
               <div className="flex flex-wrap gap-1.5">
                 {services.length > 0 ? (
                   services.map((s) => (
                     <span
                       key={s.id}
-                      className="rounded-full bg-surface-muted px-2.5 py-1 text-xs text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300"
+                      className="rounded-full bg-primary/8 px-2.5 py-1 text-xs font-medium text-primary dark:bg-primary/15"
                     >
                       {s.name}
                     </span>
@@ -186,13 +216,18 @@ export function CompanyDetailTabs({
               </div>
             </div>
             <div>
-              <h2 className="mb-2.5 text-sm font-bold text-neutral-900 dark:text-neutral-100">취급 브랜드</h2>
+              <div className="mb-2.5 flex items-center gap-2">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-accent/15 text-accent">
+                  <Award className="h-4 w-4" />
+                </span>
+                <h2 className="text-sm font-bold text-neutral-900 dark:text-neutral-100">취급 브랜드</h2>
+              </div>
               <div className="flex flex-wrap gap-1.5">
                 {brands.length > 0 ? (
                   brands.map((b) => (
                     <span
                       key={b.id}
-                      className="rounded-full bg-surface-muted px-2.5 py-1 text-xs text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300"
+                      className="rounded-full bg-accent/15 px-2.5 py-1 text-xs font-medium text-accent"
                     >
                       {b.name}
                     </span>
@@ -271,7 +306,7 @@ export function CompanyDetailTabs({
                 {visibleReviews.map((r) => (
                   <div key={r.id} className="relative">
                     <div className="absolute -top-1.5 left-6 h-3 w-3 rotate-45 rounded-[2px] bg-white dark:bg-neutral-900" />
-                    <div className="relative rounded-2xl border border-neutral-200/70 bg-white p-4 text-sm shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
+                    <div className="relative rounded-2xl border border-l-4 border-neutral-200/70 border-l-accent bg-white p-4 text-sm shadow-sm dark:border-neutral-800 dark:border-l-accent">
                       <div className="flex items-center justify-between">
                         <span className="font-semibold text-neutral-900 dark:text-neutral-100">
                           {maskName(r.user.name)}
