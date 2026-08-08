@@ -85,7 +85,7 @@ export default async function PartnerRevenuePage({
         </div>
 
         <p className="mb-6 text-xs text-neutral-500">
-          예약을 &quot;완료 처리&quot;할 때 입력한 청구 금액을 집계합니다. RepairHub가 실제 결제를
+          예약을 &quot;완료 처리&quot;할 때 입력한 청구 금액을 집계합니다. 소리수리가 실제 결제를
           중개하지 않으므로, 파트너님의 자체 매출 기록용 통계입니다.
         </p>
 

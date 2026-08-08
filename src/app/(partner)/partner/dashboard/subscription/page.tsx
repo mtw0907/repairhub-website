@@ -34,7 +34,7 @@ export default async function PartnerSubscriptionPage() {
             <>
               <p className="text-sm text-neutral-500">현재 플랜</p>
               <p className="mt-1 flex items-center gap-2 text-lg font-bold text-neutral-900 dark:text-neutral-100">
-                RepairHub Pro
+                소리수리 Pro
                 <span className="rounded-full bg-accent px-2.5 py-0.5 text-xs font-semibold text-accent-foreground">
                   프리미엄
                 </span>

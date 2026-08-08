@@ -24,7 +24,7 @@ const CONSENT_EXEMPT_PATHS = new Set(["/consent", "/terms", "/privacy"]);
 
 const MAINTENANCE_HTML = `<!doctype html>
 <html lang="ko"><head><meta charset="utf-8" />
-<title>점검 중 - RepairHub</title>
+<title>점검 중 - 소리수리</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <style>
   body { font-family: system-ui, sans-serif; background: #fafafa; color: #171717;

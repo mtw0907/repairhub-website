@@ -26,7 +26,7 @@ export async function POST(req: Request) {
         const code = await issueOtp(email, purpose);
         await sendMail({
           to: email,
-          subject: "[RepairHub] 비밀번호 재설정 인증번호",
+          subject: "[소리수리] 비밀번호 재설정 인증번호",
           text: `인증번호: ${code}\n10분 이내에 입력해주세요.`,
         });
       }
@@ -41,7 +41,7 @@ export async function POST(req: Request) {
 
     await sendMail({
       to: email,
-      subject: "[RepairHub] 이메일 인증번호",
+      subject: "[소리수리] 이메일 인증번호",
       text: `인증번호: ${code}\n10분 이내에 입력해주세요.`,
     });
 

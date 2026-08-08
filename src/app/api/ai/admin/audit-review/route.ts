@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { requireRole } from "@/lib/rbac";
 import { runAiCompletion, toAiErrorResponse } from "@/lib/ai";
 
-const SYSTEM_PROMPT = `당신은 RepairHub 플랫폼의 후기 검수 및 스팸 탐지 담당자입니다. 주어진 후기
+const SYSTEM_PROMPT = `당신은 소리수리 플랫폼의 후기 검수 및 스팸 탐지 담당자입니다. 주어진 후기
 내용을 검토하고 다음 형식으로 정확히 답변하세요:
 
 스팸 여부: (예/아니오)

@@ -4,14 +4,14 @@
   --background: #ffffff;
   --foreground: #18181b;
 
-  /* Site-wide palette (숨고/오늘의집/카카오맵 스타일). Used everywhere —
-     user-facing pages and PARTNER/ADMIN/SUPER_ADMIN dashboards alike. */
-  --primary: #1e293b;
+  /* 소리수리 브랜드 팔레트 (화이트 + 보라색). Used everywhere — user-facing
+     pages and PARTNER/ADMIN/SUPER_ADMIN dashboards alike. */
+  --primary: #6c3bff;
   --primary-foreground: #ffffff;
-  --accent: #d4af37;
-  --accent-foreground: #1e293b;
+  --accent: #8b5cf6;
+  --accent-foreground: #ffffff;
   --surface: #ffffff;
-  --surface-muted: #f8f9fb;
+  --surface-muted: #f8f7fc;
 }
 
 @theme inline {
@@ -31,12 +31,12 @@
   :root {
     --background: #0a0a0a;
     --foreground: #f4f4f5;
-    --primary: #334155;
-    --primary-foreground: #f4f4f5;
-    --accent: #e0c368;
-    --accent-foreground: #1e293b;
-    --surface: #12141a;
-    --surface-muted: #171a21;
+    --primary: #9166ff;
+    --primary-foreground: #ffffff;
+    --accent: #a78bfa;
+    --accent-foreground: #1c1033;
+    --surface: #14121c;
+    --surface-muted: #191725;
   }
 }
 

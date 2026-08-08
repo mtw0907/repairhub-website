@@ -108,7 +108,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white hover:bg-neutral-700 disabled:opacity-50 dark:bg-white dark:text-neutral-900"
+              className="w-full rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm transition-transform hover:scale-[1.01] hover:bg-primary/90 disabled:opacity-50 disabled:hover:scale-100"
             >
               {loading ? "확인 중..." : "로그인"}
             </button>
@@ -134,7 +134,7 @@ export default function LoginPage() {
       <div className="w-full max-w-sm space-y-6">
         <div className="text-center">
           <h1 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100">
-            RepairHub 로그인
+            소리수리 로그인
           </h1>
           <p className="mt-1 text-sm text-neutral-500">
             음향기기 · 악기 수리 플랫폼

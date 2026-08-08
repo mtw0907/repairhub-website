@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { requireRole } from "@/lib/rbac";
 import { runAiCompletion, toAiErrorResponse } from "@/lib/ai";
 
-const SYSTEM_PROMPT = `당신은 RepairHub 플랫폼의 신고 분류 담당자입니다. 신고 사유와 신고 대상
+const SYSTEM_PROMPT = `당신은 소리수리 플랫폼의 신고 분류 담당자입니다. 신고 사유와 신고 대상
 내용을 검토하고 다음 형식으로 정확히 답변하세요:
 
 긴급도: (높음/중간/낮음)

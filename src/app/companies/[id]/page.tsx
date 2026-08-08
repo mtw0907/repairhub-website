@@ -25,8 +25,8 @@ export async function generateMetadata({
   const description =
     company.seoDescription ||
     company.introduction ||
-    `${company.name} - ${company.region ?? ""} 음향기기·악기 수리업체. RepairHub에서 예약과 견적을 받아보세요.`;
-  const title = `${company.name}${company.region ? ` - ${company.region}` : ""} 음향기기·악기 수리 | RepairHub`;
+    `${company.name} - ${company.region ?? ""} 음향기기·악기 수리업체. 소리수리에서 예약과 견적을 받아보세요.`;
+  const title = `${company.name}${company.region ? ` - ${company.region}` : ""} 음향기기·악기 수리 | 소리수리`;
 
   return {
     title,

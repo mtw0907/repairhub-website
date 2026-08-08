@@ -84,7 +84,7 @@ export default function SubscriptionCheckoutPage() {
       </header>
       <main className="mx-auto max-w-md px-4 py-12 text-center sm:px-6">
         <h1 className="mb-2 text-xl font-extrabold tracking-tight text-primary dark:text-neutral-100">
-          RepairHub Pro 구독
+          소리수리 Pro 구독
         </h1>
         <p className="mb-1 text-3xl font-extrabold text-neutral-900 dark:text-neutral-100">
           월 {PRO_PLAN_PRICE.toLocaleString()}원
@@ -107,7 +107,7 @@ export default function SubscriptionCheckoutPage() {
           {loading ? "결제 준비 중..." : "토스페이먼츠로 결제하기"}
         </button>
         <p className="mt-4 text-xs text-neutral-400">
-          결제 페이지는 토스페이먼츠에서 안전하게 처리되며, 카드 정보는 RepairHub 서버에
+          결제 페이지는 토스페이먼츠에서 안전하게 처리되며, 카드 정보는 소리수리 서버에
           저장되지 않습니다.
         </p>
       </main>

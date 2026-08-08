@@ -14,7 +14,7 @@ export async function generateMetadata({
   const { keyword } = await params;
   const data = await getSeoLandingData("BRAND", decodeURIComponent(keyword));
   if (!data) return {};
-  return { title: `${data.seoPage.title} | RepairHub`, description: data.seoPage.introText };
+  return { title: `${data.seoPage.title} | 소리수리`, description: data.seoPage.introText };
 }
 
 export default async function BrandLandingPage({

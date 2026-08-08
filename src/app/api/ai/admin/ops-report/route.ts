@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { requireRole } from "@/lib/rbac";
 import { runAiCompletion, toAiErrorResponse } from "@/lib/ai";
 
-const SYSTEM_PROMPT = `당신은 RepairHub 플랫폼의 운영 분석가입니다. 아래 현재 운영 지표를 바탕으로
+const SYSTEM_PROMPT = `당신은 소리수리 플랫폼의 운영 분석가입니다. 아래 현재 운영 지표를 바탕으로
 간단한 운영 리포트를 작성하세요. 다음 구조로 한국어로 작성하세요:
 
 1. 요약 (2~3문장)

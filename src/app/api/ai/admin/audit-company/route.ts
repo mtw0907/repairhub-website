@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { requireRole } from "@/lib/rbac";
 import { runAiCompletion, toAiErrorResponse } from "@/lib/ai";
 
-const SYSTEM_PROMPT = `당신은 RepairHub 플랫폼의 업체 등록 검수 및 품질 평가 담당자입니다.
+const SYSTEM_PROMPT = `당신은 소리수리 플랫폼의 업체 등록 검수 및 품질 평가 담당자입니다.
 주어진 업체 데이터를 보고 다음 형식으로 정확히 답변하세요:
 
 점수: NN/100

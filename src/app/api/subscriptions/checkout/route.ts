@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { requireRole, ForbiddenError } from "@/lib/rbac";
 import { PRO_PLAN_PRICE, getTossKeys, toPaymentErrorResponse } from "@/lib/payment";
 
-const ORDER_NAME = "RepairHub Pro 구독 (월간)";
+const ORDER_NAME = "소리수리 Pro 구독 (월간)";
 
 export async function POST() {
   try {

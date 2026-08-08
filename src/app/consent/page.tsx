@@ -1,13 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { ROLE_DASHBOARD_PATH, type Role } from "@/lib/constants";
 
 export default function ConsentPage() {
-  const router = useRouter();
   const { update } = useSession();
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [agreePrivacy, setAgreePrivacy] = useState(false);
@@ -38,8 +36,10 @@ export default function ConsentPage() {
     // cookie the proxy gate reads.
     const updated = await update({});
     const role = updated?.user?.role as Role | undefined;
-    router.push(role ? ROLE_DASHBOARD_PATH[role] : "/");
-    router.refresh();
+    // A full navigation (not router.push) so the proxy's role-gate check
+    // always reads the just-refreshed cookie instead of a route the App
+    // Router may have prefetched before termsAgreedAt was set.
+    window.location.href = role ? ROLE_DASHBOARD_PATH[role] : "/";
   }
 
   return (

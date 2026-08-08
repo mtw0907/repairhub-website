@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "RepairHub — 음향기기·악기 수리 플랫폼",
+  title: "소리수리 — 음향기기·악기 수리 플랫폼",
   description: "전국 음향기기 및 악기 수리업체 검색, 비교, 예약, 견적, AI 상담 플랫폼",
 };
 

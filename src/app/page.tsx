@@ -141,42 +141,57 @@ export default async function LandingPage() {
       <SiteHeader />
 
       <main className="flex-1">
-        {/* 큰 검색창 */}
-        <section className="relative overflow-hidden bg-primary px-4 pb-16 pt-16 sm:px-6 sm:pb-20 sm:pt-24">
+        {/* Hero */}
+        <section className="relative isolate overflow-hidden px-4 pb-20 pt-20 sm:px-6 sm:pb-28 sm:pt-28">
+          {/* 배경: /public/assets/hero-repair.jpg가 있으면 그 사진을, 없으면
+              보라색 그라데이션으로 대체 (CSS 다중 배경 — 이미지 404 시 자동으로
+              두 번째 레이어만 남음). 실제 사진을 준비하면 같은 경로에 넣기만
+              하면 됩니다. */}
           <div
             aria-hidden
-            className="pointer-events-none absolute inset-0 -z-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_-10%,color-mix(in_srgb,var(--accent)_25%,transparent),transparent)]"
+            className="absolute inset-0 -z-20 bg-cover bg-center"
+            style={{
+              backgroundImage:
+                "url(/assets/hero-repair.jpg), linear-gradient(135deg, #1a1030 0%, #3b1f78 45%, #6c3bff 100%)",
+            }}
           />
+          <div aria-hidden className="absolute inset-0 -z-10 bg-black/55" />
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_60%_50%_at_50%_-10%,color-mix(in_srgb,var(--accent)_35%,transparent),transparent)]"
+          />
+
           <div className="relative mx-auto max-w-2xl text-center">
-            <p className="mb-4 inline-flex items-center rounded-full bg-white/10 px-3 py-1 text-xs font-medium text-white/80">
+            <p className="mb-4 inline-flex items-center rounded-full bg-white/10 px-3 py-1 text-xs font-medium text-white/80 backdrop-blur-sm">
               전국 음향기기 · 악기 수리 플랫폼
             </p>
-            <h1 className="text-3xl font-extrabold leading-tight tracking-tight text-white sm:text-5xl">
-              믿을 수 있는 수리업체를
+            <h1 className="text-4xl font-extrabold leading-tight tracking-tight text-white sm:text-6xl">
+              믿을 수 있는 악기 수리,
               <br />
-              <span className="text-accent">가장 빠르게</span> 찾는 방법
+              <span className="text-accent">소리수리</span>에서 한 번에
             </h1>
-            <p className="mx-auto mt-4 max-w-xl text-sm text-white/70 sm:text-base">
-              검색부터 비교, 예약, 견적, AI 상담까지 — 악기와 음향기기 수리에 필요한 모든 과정을
-              한 곳에서 해결하세요.
+            <p className="mx-auto mt-5 max-w-xl text-base text-white/80 sm:text-lg">
+              악기와 음향기기 수리업체를 찾고,
+              <br className="hidden sm:block" />
+              AI 견적부터 예약까지 한 번에
             </p>
 
             <form
               action="/companies"
-              className="mx-auto mt-8 flex max-w-xl flex-col gap-2 rounded-2xl bg-white p-2 shadow-xl sm:flex-row"
+              className="mx-auto mt-9 flex max-w-xl flex-col gap-2 rounded-2xl bg-white p-2.5 shadow-2xl sm:flex-row"
             >
-              <div className="flex flex-1 items-center gap-2 px-3 py-2.5">
+              <div className="flex flex-1 items-center gap-2 px-3 py-3">
                 <Search className="h-5 w-5 shrink-0 text-neutral-400" />
                 <input
                   type="text"
                   name="keyword"
-                  placeholder="예: 펜더 스트라토캐스터, 앰프 소음, 서울 기타 수리"
-                  className="w-full min-w-0 border-0 bg-transparent text-sm text-neutral-800 outline-none placeholder:text-neutral-400"
+                  placeholder="악기, 브랜드, 업체명을 검색하세요."
+                  className="w-full min-w-0 border-0 bg-transparent text-base text-neutral-800 outline-none placeholder:text-neutral-400"
                 />
               </div>
               <button
                 type="submit"
-                className="shrink-0 rounded-xl bg-primary px-6 py-3 text-sm font-bold text-primary-foreground transition-transform hover:scale-[1.02] hover:bg-primary/90"
+                className="shrink-0 rounded-xl bg-primary px-7 py-3.5 text-base font-bold text-primary-foreground shadow-lg shadow-primary/30 transition-transform hover:scale-[1.02] hover:bg-primary/90"
               >
                 업체 찾기
               </button>
@@ -334,7 +349,7 @@ export default async function LandingPage() {
               <h2 className="text-xl font-bold text-neutral-900 dark:text-neutral-100 sm:text-2xl">
                 새로 합류한 업체
               </h2>
-              <p className="mt-1 text-sm text-neutral-500">RepairHub에 최근 등록된 업체예요</p>
+              <p className="mt-1 text-sm text-neutral-500">소리수리에 최근 등록된 업체예요</p>
             </div>
           </div>
           {fresh.length > 0 ? (
@@ -424,7 +439,7 @@ export default async function LandingPage() {
       </main>
 
       <footer className="border-t border-neutral-200 bg-white px-6 py-8 text-center text-xs text-neutral-400 dark:border-neutral-800 dark:bg-neutral-950">
-        © {new Date().getFullYear()} RepairHub. 전국 음향기기 · 악기 수리업체 플랫폼.
+        © {new Date().getFullYear()} 소리수리. 전국 음향기기 · 악기 수리업체 플랫폼.
       </footer>
     </div>
   );

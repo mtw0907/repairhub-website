@@ -1,12 +1,10 @@
 import Link from "next/link";
-import { CalendarClock, Heart, Home, Search, Sparkles } from "lucide-react";
+import { Guitar, Heart } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { ROLE_DASHBOARD_PATH, type Role } from "@/lib/constants";
 import { HeaderSearch } from "@/components/HeaderSearch";
 import { NotificationBell } from "@/components/notifications/NotificationBell";
-
-const NAV_LINK =
-  "flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-medium text-neutral-600 transition-colors hover:bg-neutral-100 hover:text-primary dark:text-neutral-400 dark:hover:bg-neutral-900 dark:hover:text-white";
+import { SiteNav } from "@/components/SiteNav";
 
 export async function SiteHeader() {
   const session = await auth();
@@ -16,38 +14,17 @@ export async function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-neutral-200/80 bg-white/90 backdrop-blur-md dark:border-neutral-800/80 dark:bg-neutral-950/90">
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3.5 sm:px-6">
+      <div className="relative mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-4 sm:px-6 sm:py-5">
         <Link href="/" className="flex shrink-0 items-center gap-2">
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-sm font-bold text-primary-foreground">
-            R
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
+            <Guitar className="h-5 w-5" />
           </span>
-          <span className="hidden text-lg font-bold tracking-tight text-primary sm:inline dark:text-neutral-100">
-            Repair<span className="text-accent">Hub</span>
+          <span className="text-xl font-extrabold tracking-tight text-primary sm:text-2xl dark:text-neutral-100">
+            소리수리
           </span>
         </Link>
 
-        <nav className="flex items-center gap-0.5 sm:gap-1">
-          <Link href="/" className={NAV_LINK}>
-            <Home className="h-4 w-4 md:hidden" />
-            <span className="hidden md:inline">홈</span>
-          </Link>
-          <Link href="/companies" className={NAV_LINK}>
-            <Search className="h-4 w-4 md:hidden" />
-            <span className="hidden md:inline">업체 찾기</span>
-          </Link>
-          {isUser && (
-            <Link href="/dashboard/repair-requests/new" className={NAV_LINK}>
-              <Sparkles className="h-4 w-4 md:hidden" />
-              <span className="hidden md:inline">AI 견적</span>
-            </Link>
-          )}
-          {isUser && (
-            <Link href="/dashboard/reservations" className={NAV_LINK}>
-              <CalendarClock className="h-4 w-4 md:hidden" />
-              <span className="hidden md:inline">예약 현황</span>
-            </Link>
-          )}
-        </nav>
+        <SiteNav isUser={isUser} />
 
         <div className="flex shrink-0 items-center gap-1 sm:gap-1.5">
           <HeaderSearch />

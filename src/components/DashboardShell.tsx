@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ChevronRight, type LucideIcon } from "lucide-react";
+import { ChevronRight, Guitar, type LucideIcon } from "lucide-react";
 import { SignOutButton } from "@/components/SignOutButton";
 import { NotificationBell } from "@/components/notifications/NotificationBell";
 
@@ -23,9 +23,14 @@ export function DashboardShell({
           <div className="flex items-center gap-3">
             <Link
               href="/"
-              className="hidden h-9 w-9 items-center justify-center rounded-lg bg-primary text-base font-bold text-primary-foreground sm:flex"
+              className="hidden items-center gap-2 sm:flex"
             >
-              R
+              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                <Guitar className="h-5 w-5" />
+              </span>
+              <span className="text-lg font-extrabold tracking-tight text-primary dark:text-neutral-100">
+                소리수리
+              </span>
             </Link>
             <div>
               <p className="text-sm font-semibold text-accent">{roleLabel}</p>
