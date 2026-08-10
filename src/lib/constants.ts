@@ -64,7 +64,7 @@ export const ROLE_DASHBOARD_PATH: Record<Role, string> = {
   SUPER_ADMIN: "/super-admin/dashboard",
 };
 
-export const PRO_PLAN_PRICE = 29000; // KRW/월, 원 단위. 별도 요금제 체계 없이 단일 Pro 플랜.
+export const PRO_PLAN_PRICE = 9900; // KRW/월, 원 단위. 별도 요금제 체계 없이 단일 Pro 플랜.
 
 // 랜딩/검색 페이지의 카테고리 바로가기용 큐레이션 목록. Service는 파트너가
 // 자유 텍스트로 입력하므로 DB에 실제 카테고리 테이블은 없음 — 이 목록은
