@@ -33,14 +33,11 @@ function authHeader(secretKey: string) {
   return `Basic ${encoded}`;
 }
 
-export async function confirmTossPayment(params: {
-  paymentKey: string;
-  orderId: string;
-  amount: number;
-}) {
+// 카드 등록(빌링 인증) 후 발급된 authKey를 실제 청구에 쓸 billingKey로 교환.
+export async function issueBillingKey(params: { authKey: string; customerKey: string }) {
   const { secretKey } = await getTossKeys();
 
-  const res = await fetch("https://api.tosspayments.com/v1/payments/confirm", {
+  const res = await fetch("https://api.tosspayments.com/v1/billing/authorizations/issue", {
     method: "POST",
     headers: {
       Authorization: authHeader(secretKey),
@@ -51,7 +48,34 @@ export async function confirmTossPayment(params: {
 
   const data = await res.json();
   if (!res.ok) {
-    throw new TossApiError(data?.message ?? "결제 승인에 실패했습니다.", res.status);
+    throw new TossApiError(data?.message ?? "카드 등록에 실패했습니다.", res.status);
+  }
+  return data as { billingKey: string };
+}
+
+// 등록된 billingKey로 카드 청구(정기결제/자동결제).
+export async function chargeBilling(params: {
+  billingKey: string;
+  customerKey: string;
+  amount: number;
+  orderId: string;
+  orderName: string;
+}) {
+  const { secretKey } = await getTossKeys();
+  const { billingKey, ...body } = params;
+
+  const res = await fetch(`https://api.tosspayments.com/v1/billing/${billingKey}`, {
+    method: "POST",
+    headers: {
+      Authorization: authHeader(secretKey),
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
+
+  const data = await res.json();
+  if (!res.ok) {
+    throw new TossApiError(data?.message ?? "자동결제 청구에 실패했습니다.", res.status);
   }
   return data;
 }

@@ -72,6 +72,9 @@ model Company {
   status        String   @default("UNVERIFIED")
   isPremium     Boolean  @default(false)
   isFeatured    Boolean  @default(false)
+  billingKey         String? // 토스페이먼츠 빌링키 (자동결제용 카드 등록 시 발급)
+  billingCustomerKey String? // 빌링키 발급에 쓰인 고유 식별자
+  autoRenew          Boolean @default(true) // false면 만료일에 자동 재청구하지 않음
   onSiteVisit   Boolean  @default(false) // 출장 가능
   courierDrop   Boolean  @default(false) // 택배 가능
   viewCount     Int      @default(0)

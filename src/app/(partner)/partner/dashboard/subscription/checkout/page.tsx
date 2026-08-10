@@ -1,20 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { PRO_PLAN_PRICE } from "@/lib/constants";
 
 declare global {
   interface Window {
     TossPayments?: (clientKey: string) => {
-      requestPayment: (
+      requestBillingAuth: (
         method: string,
         options: {
-          amount: number;
-          orderId: string;
-          orderName: string;
-          customerName?: string;
+          customerKey: string;
           successUrl: string;
           failUrl: string;
         },
@@ -38,7 +34,6 @@ function loadTossScript(): Promise<void> {
 }
 
 export default function SubscriptionCheckoutPage() {
-  const { data: session } = useSession();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -58,11 +53,8 @@ export default function SubscriptionCheckoutPage() {
       await loadTossScript();
       const tossPayments = window.TossPayments!(data.clientKey);
       const origin = window.location.origin;
-      await tossPayments.requestPayment("카드", {
-        amount: data.amount,
-        orderId: data.orderId,
-        orderName: data.orderName,
-        customerName: session?.user?.name ?? undefined,
+      await tossPayments.requestBillingAuth("카드", {
+        customerKey: data.customerKey,
         successUrl: `${origin}/partner/dashboard/subscription/success`,
         failUrl: `${origin}/partner/dashboard/subscription/fail`,
       });
@@ -90,7 +82,8 @@ export default function SubscriptionCheckoutPage() {
           월 {PRO_PLAN_PRICE.toLocaleString()}원
         </p>
         <p className="mb-8 text-sm text-neutral-500">
-          프리미엄 노출, 추천 업체 우선 배치 등 Pro 혜택을 이용하세요.
+          프리미엄 노출, 추천 업체 우선 배치 등 Pro 혜택을 이용하세요. 매달 자동으로
+          결제되며 언제든 해지할 수 있습니다.
         </p>
 
         {error && (
@@ -104,10 +97,10 @@ export default function SubscriptionCheckoutPage() {
           disabled={loading}
           className="w-full rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground shadow-sm transition-transform hover:scale-[1.01] hover:bg-primary/90 disabled:opacity-50 disabled:hover:scale-100"
         >
-          {loading ? "결제 준비 중..." : "토스페이먼츠로 결제하기"}
+          {loading ? "결제 준비 중..." : "카드 등록하고 정기결제 시작"}
         </button>
         <p className="mt-4 text-xs text-neutral-400">
-          결제 페이지는 토스페이먼츠에서 안전하게 처리되며, 카드 정보는 소리수리 서버에
+          카드 등록은 토스페이먼츠에서 안전하게 처리되며, 카드 정보는 소리수리 서버에
           저장되지 않습니다.
         </p>
       </main>

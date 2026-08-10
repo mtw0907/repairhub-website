@@ -56,6 +56,9 @@ npx prisma migrate deploy  # 운영 배포 파이프라인
    (개발용 시드 계정/비밀번호를 운영에 그대로 두지 않기)
 4. **최고관리자 → 시스템 설정**에서 OpenAI API Key, 토스페이먼츠 Client/Secret Key, Kakao Maps
    키 등록
+4-1. 파트너 Pro 구독은 토스페이먼츠 **빌링(정기결제)** 서비스로 신청해야 함 (일반결제 아님).
+   `CRON_SECRET` 환경변수를 랜덤 문자열로 생성해 Vercel에 등록 — 매일 만료 구독을 자동
+   재청구하는 `vercel.json`의 크론(`/api/cron/subscriptions/renew`) 인증에 사용됨
 5. NextAuth v5는 배포 플랫폼에 따라 `AUTH_TRUST_HOST=true` 환경변수가 필요할 수 있음
    (호스트 헤더 신뢰 관련 오류 발생 시 추가)
 6. `NEXT_PUBLIC_SITE_URL`을 실제 배포 도메인으로 설정 (sitemap.xml/robots.txt에 사용됨)
@@ -84,7 +87,9 @@ npm run build
   `requireRole`/`requireOwnCompany` 헬퍼)
 - **AI 기능**: `src/lib/ai.ts` — OpenAI 키 미설정 시 그레이스풀 폴백, 모든 호출을
   `AiUsageLog`에 기록
-- **결제**: `src/lib/payment.ts` — 토스페이먼츠 결제창 연동(리다이렉트 방식이라 카드 정보가
-  서버를 거치지 않음), 서버가 클라이언트 결제 금액을 재검증
+- **결제**: `src/lib/payment.ts` — 토스페이먼츠 빌링(정기결제) 연동. 최초 가입 시 카드를
+  등록해 billingKey를 발급받고(`Company.billingKey`), 이후 매달 `/api/cron/subscriptions/renew`
+  (Vercel Cron, `vercel.json`)가 자동으로 재청구. 카드 정보는 서버를 거치지 않으며, 서버가
+  클라이언트 결제 금액을 재검증
 - **시스템 설정**: `src/lib/systemSettings.ts` — API Key/SMTP/점검모드 등을 DB에 저장,
   민감한 값은 조회 API로 절대 반환하지 않음

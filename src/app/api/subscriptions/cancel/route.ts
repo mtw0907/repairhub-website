@@ -22,7 +22,7 @@ export async function POST() {
 
     await prisma.company.update({
       where: { id: user.companyId },
-      data: { isPremium: false },
+      data: { isPremium: false, autoRenew: false },
     });
 
     return NextResponse.json({ ok: true });

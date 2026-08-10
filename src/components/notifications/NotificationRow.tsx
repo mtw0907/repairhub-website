@@ -2,6 +2,7 @@ import {
   BadgeCheck,
   CalendarClock,
   CalendarPlus,
+  CreditCard,
   Database,
   Flag,
   MessageCircle,
@@ -39,6 +40,7 @@ const TYPE_ICON: Record<string, LucideIcon> = {
   REPORT_FILED: Flag,
   ADMIN_ACCOUNT_CHANGED: ShieldAlert,
   DB_BACKUP_EVENT: Database,
+  SUBSCRIPTION_RENEWAL_FAILED: CreditCard,
 };
 
 export function formatRelativeTime(date: string | Date): string {

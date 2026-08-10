@@ -10,20 +10,19 @@ function SuccessContent() {
   const [message, setMessage] = useState<string | null>(null);
 
   useEffect(() => {
-    const paymentKey = searchParams.get("paymentKey");
-    const orderId = searchParams.get("orderId");
-    const amount = searchParams.get("amount");
+    const authKey = searchParams.get("authKey");
+    const customerKey = searchParams.get("customerKey");
 
-    if (!paymentKey || !orderId || !amount) {
+    if (!authKey || !customerKey) {
       setStatus("error");
-      setMessage("결제 정보가 올바르지 않습니다.");
+      setMessage("카드 등록 정보가 올바르지 않습니다.");
       return;
     }
 
-    fetch("/api/payments/toss/confirm", {
+    fetch("/api/subscriptions/billing-auth", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ paymentKey, orderId, amount: Number(amount) }),
+      body: JSON.stringify({ authKey, customerKey }),
     })
       .then(async (res) => {
         const data = await res.json().catch(() => null);
@@ -31,31 +30,33 @@ function SuccessContent() {
           setStatus("ok");
         } else {
           setStatus("error");
-          setMessage(data?.error ?? "결제 승인 중 오류가 발생했습니다.");
+          setMessage(data?.error ?? "구독 시작 중 오류가 발생했습니다.");
         }
       })
       .catch(() => {
         setStatus("error");
-        setMessage("결제 승인 요청 중 오류가 발생했습니다.");
+        setMessage("구독 시작 요청 중 오류가 발생했습니다.");
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-4 px-6 py-20 text-center">
-      {status === "loading" && <p className="text-sm text-neutral-500">결제를 확인하는 중입니다...</p>}
+      {status === "loading" && <p className="text-sm text-neutral-500">구독을 시작하는 중입니다...</p>}
       {status === "ok" && (
         <>
           <h1 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100">
             Pro 구독이 시작되었습니다
           </h1>
-          <p className="text-sm text-neutral-500">이제 프리미엄 혜택을 이용하실 수 있습니다.</p>
+          <p className="text-sm text-neutral-500">
+            이제 프리미엄 혜택을 이용하실 수 있습니다. 매달 자동으로 결제됩니다.
+          </p>
         </>
       )}
       {status === "error" && (
         <>
           <h1 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100">
-            결제 승인 실패
+            구독 시작 실패
           </h1>
           <p className="text-sm text-amber-700 dark:text-amber-400">{message}</p>
         </>
