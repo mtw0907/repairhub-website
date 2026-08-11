@@ -79,7 +79,7 @@ export function AdminCompanyRow({ company }: { company: AdminCompany }) {
     <div className="rounded-xl border border-neutral-200/70 bg-white p-4 text-sm shadow-sm transition-shadow hover:shadow-md dark:border-neutral-800 dark:bg-neutral-900">
       <div className="flex items-center justify-between gap-3">
         <div>
-          <Link href={`/companies/${company.id}`} className="font-semibold text-neutral-900 hover:text-primary hover:underline dark:text-neutral-100">
+          <Link href={`/companies/${company.id}`} className="font-semibold text-neutral-900 hover:text-accent hover:underline dark:text-neutral-100">
             {company.name}
           </Link>
           <p className="text-xs text-neutral-500">{company.region}</p>
@@ -109,7 +109,7 @@ export function AdminCompanyRow({ company }: { company: AdminCompany }) {
           <button
             onClick={() => patch({ status: "SUSPENDED" })}
             disabled={loading}
-            className="rounded-lg border border-neutral-300 px-2.5 py-1.5 text-xs font-medium transition-colors hover:border-primary/30 hover:bg-primary/8 hover:text-primary disabled:opacity-50 dark:border-neutral-700 dark:hover:border-primary/30 dark:hover:bg-primary/15 dark:hover:text-accent"
+            className="rounded-lg border border-neutral-300 px-2.5 py-1.5 text-xs font-medium transition-colors hover:border-accent/50 hover:bg-accent/10 hover:text-accent disabled:opacity-50 dark:border-neutral-700 dark:hover:border-accent/40 dark:hover:bg-accent/15 dark:hover:text-accent"
           >
             정지
           </button>
@@ -117,7 +117,7 @@ export function AdminCompanyRow({ company }: { company: AdminCompany }) {
           <button
             onClick={() => patch({ status: "APPROVED" })}
             disabled={loading}
-            className="rounded-lg border border-neutral-300 px-2.5 py-1.5 text-xs font-medium transition-colors hover:border-primary/30 hover:bg-primary/8 hover:text-primary disabled:opacity-50 dark:border-neutral-700 dark:hover:border-primary/30 dark:hover:bg-primary/15 dark:hover:text-accent"
+            className="rounded-lg border border-neutral-300 px-2.5 py-1.5 text-xs font-medium transition-colors hover:border-accent/50 hover:bg-accent/10 hover:text-accent disabled:opacity-50 dark:border-neutral-700 dark:hover:border-accent/40 dark:hover:bg-accent/15 dark:hover:text-accent"
           >
             정지 해제
           </button>
@@ -128,7 +128,7 @@ export function AdminCompanyRow({ company }: { company: AdminCompany }) {
           className={
             company.isPremium
               ? "rounded-lg border border-accent/50 bg-accent/10 px-2.5 py-1.5 text-xs font-medium text-accent-foreground disabled:opacity-50 dark:text-accent"
-              : "rounded-lg border border-neutral-300 px-2.5 py-1.5 text-xs font-medium transition-colors hover:border-primary/30 hover:bg-primary/8 hover:text-primary disabled:opacity-50 dark:border-neutral-700 dark:hover:border-primary/30 dark:hover:bg-primary/15 dark:hover:text-accent"
+              : "rounded-lg border border-neutral-300 px-2.5 py-1.5 text-xs font-medium transition-colors hover:border-accent/50 hover:bg-accent/10 hover:text-accent disabled:opacity-50 dark:border-neutral-700 dark:hover:border-accent/40 dark:hover:bg-accent/15 dark:hover:text-accent"
           }
         >
           {company.isPremium ? "프리미엄 해제" : "프리미엄 지정"}
@@ -139,7 +139,7 @@ export function AdminCompanyRow({ company }: { company: AdminCompany }) {
           className={
             company.isFeatured
               ? "rounded-lg border border-primary/40 bg-primary/10 px-2.5 py-1.5 text-xs font-medium text-primary disabled:opacity-50"
-              : "rounded-lg border border-neutral-300 px-2.5 py-1.5 text-xs font-medium transition-colors hover:border-primary/30 hover:bg-primary/8 hover:text-primary disabled:opacity-50 dark:border-neutral-700 dark:hover:border-primary/30 dark:hover:bg-primary/15 dark:hover:text-accent"
+              : "rounded-lg border border-neutral-300 px-2.5 py-1.5 text-xs font-medium transition-colors hover:border-accent/50 hover:bg-accent/10 hover:text-accent disabled:opacity-50 dark:border-neutral-700 dark:hover:border-accent/40 dark:hover:bg-accent/15 dark:hover:text-accent"
           }
         >
           {company.isFeatured ? "추천 해제" : "추천 업체 지정"}

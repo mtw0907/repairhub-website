@@ -210,7 +210,7 @@ export function CompanyInfoForm({ initial }: { initial: CompanyInfo }) {
               </button>
             </div>
           ))}
-          <label className="flex h-20 w-20 cursor-pointer items-center justify-center rounded-xl border border-dashed border-neutral-300 text-xs text-neutral-400 transition-colors hover:border-primary/40 hover:bg-primary/8 hover:text-primary dark:border-neutral-700 dark:hover:border-primary/30 dark:hover:bg-primary/15 dark:hover:text-accent">
+          <label className="flex h-20 w-20 cursor-pointer items-center justify-center rounded-xl border border-dashed border-neutral-300 text-xs text-neutral-400 transition-colors hover:border-accent/50 hover:bg-accent/10 hover:text-accent dark:border-neutral-700 dark:hover:border-accent/40 dark:hover:bg-accent/15 dark:hover:text-accent">
             {uploadingPhoto ? "업로드 중..." : "+ 추가"}
             <input
               type="file"

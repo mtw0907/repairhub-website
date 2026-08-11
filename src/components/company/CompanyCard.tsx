@@ -133,8 +133,8 @@ export function CompanyCard({
             <h3
               className={
                 compact
-                  ? "text-sm font-bold leading-snug text-neutral-900 group-hover:text-primary dark:text-neutral-100"
-                  : "text-base font-bold leading-snug text-neutral-900 group-hover:text-primary dark:text-neutral-100"
+                  ? "text-sm font-bold leading-snug text-neutral-900 group-hover:text-accent dark:text-neutral-100"
+                  : "text-base font-bold leading-snug text-neutral-900 group-hover:text-accent dark:text-neutral-100"
               }
             >
               {company.name}

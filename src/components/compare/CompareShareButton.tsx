@@ -25,7 +25,7 @@ export function CompareShareButton() {
     <button
       type="button"
       onClick={handleShare}
-      className="flex items-center gap-1.5 rounded-xl border border-neutral-200 bg-white px-3.5 py-2 text-sm font-medium text-neutral-700 shadow-sm transition-colors hover:border-primary/30 hover:bg-primary/8 hover:text-primary dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-200 dark:hover:border-primary/30 dark:hover:bg-primary/15 dark:hover:text-accent"
+      className="flex items-center gap-1.5 rounded-xl border border-neutral-200 bg-white px-3.5 py-2 text-sm font-medium text-neutral-700 shadow-sm transition-colors hover:border-accent/50 hover:bg-accent/10 hover:text-accent dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-200 dark:hover:border-accent/40 dark:hover:bg-accent/15 dark:hover:text-accent"
     >
       {copied ? (
         <>

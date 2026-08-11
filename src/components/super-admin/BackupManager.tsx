@@ -68,7 +68,7 @@ export function BackupManager({ backups }: { backups: Backup[] }) {
             <div className="flex items-center gap-2">
               <a
                 href={`/api/super-admin/backup/${b.filename}`}
-                className="rounded-lg border border-neutral-300 px-2.5 py-1.5 text-xs font-medium transition-colors hover:border-primary/30 hover:bg-primary/8 hover:text-primary dark:border-neutral-700 dark:hover:border-primary/30 dark:hover:bg-primary/15 dark:hover:text-accent"
+                className="rounded-lg border border-neutral-300 px-2.5 py-1.5 text-xs font-medium transition-colors hover:border-accent/50 hover:bg-accent/10 hover:text-accent dark:border-neutral-700 dark:hover:border-accent/40 dark:hover:bg-accent/15 dark:hover:text-accent"
               >
                 다운로드
               </a>

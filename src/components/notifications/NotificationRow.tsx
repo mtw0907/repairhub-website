@@ -69,7 +69,7 @@ export function NotificationRow({
     <button
       type="button"
       onClick={() => onClick(notification)}
-      className={`flex w-full items-start gap-3 rounded-xl p-3 text-left transition-colors hover:bg-primary/8 dark:hover:bg-primary/15 ${
+      className={`flex w-full items-start gap-3 rounded-xl p-3 text-left transition-colors hover:bg-accent/10 dark:hover:bg-accent/15 ${
         !notification.read ? "bg-primary/5" : ""
       }`}
     >

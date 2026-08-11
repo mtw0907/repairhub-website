@@ -58,7 +58,7 @@ export default async function PartnerStatsPage() {
           </h1>
           <Link
             href="/partner/dashboard/revenue"
-            className="text-xs font-medium text-neutral-500 underline underline-offset-2 hover:text-primary"
+            className="text-xs font-medium text-neutral-500 underline underline-offset-2 hover:text-accent"
           >
             매출 관리
           </Link>

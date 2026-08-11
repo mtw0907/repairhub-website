@@ -163,7 +163,7 @@ export default async function ReservationDetailPage({
             </div>
             <a
               href="#reservation-info"
-              className="shrink-0 rounded-lg border border-neutral-300 px-3 py-1.5 text-xs font-semibold whitespace-nowrap transition-colors hover:border-primary/30 hover:bg-primary/8 hover:text-primary dark:border-neutral-700 dark:hover:border-primary/30 dark:hover:bg-primary/15 dark:hover:text-accent"
+              className="shrink-0 rounded-lg border border-neutral-300 px-3 py-1.5 text-xs font-semibold whitespace-nowrap transition-colors hover:border-accent/50 hover:bg-accent/10 hover:text-accent dark:border-neutral-700 dark:hover:border-accent/40 dark:hover:bg-accent/15 dark:hover:text-accent"
             >
               상세 일정 확인
             </a>
@@ -188,7 +188,7 @@ export default async function ReservationDetailPage({
                   업체명
                 </dt>
                 <dd className="text-right font-medium text-neutral-900 dark:text-neutral-100">
-                  <Link href={`/companies/${company.id}`} className="hover:text-primary hover:underline">
+                  <Link href={`/companies/${company.id}`} className="hover:text-accent hover:underline">
                     {company.name}
                   </Link>
                 </dd>
@@ -278,7 +278,7 @@ export default async function ReservationDetailPage({
                         href={mapUrl}
                         target="_blank"
                         rel="noreferrer"
-                        className="shrink-0 rounded-lg border border-neutral-300 px-2 py-1 text-xs font-medium whitespace-nowrap transition-colors hover:border-primary/30 hover:bg-primary/8 hover:text-primary dark:border-neutral-700 dark:hover:border-primary/30 dark:hover:bg-primary/15 dark:hover:text-accent"
+                        className="shrink-0 rounded-lg border border-neutral-300 px-2 py-1 text-xs font-medium whitespace-nowrap transition-colors hover:border-accent/50 hover:bg-accent/10 hover:text-accent dark:border-neutral-700 dark:hover:border-accent/40 dark:hover:bg-accent/15 dark:hover:text-accent"
                       >
                         지도 보기
                       </a>
@@ -308,7 +308,7 @@ export default async function ReservationDetailPage({
                     {reservation.repairRequestId && (
                       <Link
                         href={`/dashboard/repair-requests/${reservation.repairRequestId}`}
-                        className="shrink-0 rounded-lg border border-neutral-300 px-2 py-1 text-xs font-medium whitespace-nowrap transition-colors hover:border-primary/30 hover:bg-primary/8 hover:text-primary dark:border-neutral-700 dark:hover:border-primary/30 dark:hover:bg-primary/15 dark:hover:text-accent"
+                        className="shrink-0 rounded-lg border border-neutral-300 px-2 py-1 text-xs font-medium whitespace-nowrap transition-colors hover:border-accent/50 hover:bg-accent/10 hover:text-accent dark:border-neutral-700 dark:hover:border-accent/40 dark:hover:bg-accent/15 dark:hover:text-accent"
                       >
                         견적 상세 보기
                       </Link>
@@ -354,7 +354,7 @@ export default async function ReservationDetailPage({
             <div className="mt-4 grid grid-cols-2 gap-2">
               <Link
                 href={`/companies/${company.id}#문의`}
-                className="flex items-center justify-center gap-1.5 rounded-xl border border-neutral-300 px-3 py-2 text-sm font-medium transition-colors hover:border-primary/30 hover:bg-primary/8 hover:text-primary dark:border-neutral-700 dark:hover:border-primary/30 dark:hover:bg-primary/15 dark:hover:text-accent"
+                className="flex items-center justify-center gap-1.5 rounded-xl border border-neutral-300 px-3 py-2 text-sm font-medium transition-colors hover:border-accent/50 hover:bg-accent/10 hover:text-accent dark:border-neutral-700 dark:hover:border-accent/40 dark:hover:bg-accent/15 dark:hover:text-accent"
               >
                 <MessageCircle className="h-4 w-4" />
                 업체에 문의하기
@@ -362,7 +362,7 @@ export default async function ReservationDetailPage({
               {company.phone ? (
                 <a
                   href={`tel:${company.phone}`}
-                  className="flex items-center justify-center gap-1.5 rounded-xl border border-neutral-300 px-3 py-2 text-sm font-medium transition-colors hover:border-primary/30 hover:bg-primary/8 hover:text-primary dark:border-neutral-700 dark:hover:border-primary/30 dark:hover:bg-primary/15 dark:hover:text-accent"
+                  className="flex items-center justify-center gap-1.5 rounded-xl border border-neutral-300 px-3 py-2 text-sm font-medium transition-colors hover:border-accent/50 hover:bg-accent/10 hover:text-accent dark:border-neutral-700 dark:hover:border-accent/40 dark:hover:bg-accent/15 dark:hover:text-accent"
                 >
                   <Phone className="h-4 w-4" />
                   전화하기

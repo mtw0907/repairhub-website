@@ -187,7 +187,7 @@ export function PartnerReservationRow({ reservation }: { reservation: Reservatio
               </span>
               <button
                 onClick={() => setEditingAmount(true)}
-                className="text-xs font-medium text-primary underline underline-offset-2 transition-colors hover:text-primary/80 dark:hover:text-accent"
+                className="text-xs font-medium text-primary underline underline-offset-2 transition-colors hover:text-accent dark:hover:text-accent"
               >
                 {reservation.completedAmount != null ? "수정" : "입력"}
               </button>
@@ -222,7 +222,7 @@ export function PartnerReservationRow({ reservation }: { reservation: Reservatio
             <button
               onClick={() => setEditing(false)}
               disabled={loading}
-              className="rounded-lg border border-neutral-300 px-3 py-1.5 text-xs font-medium transition-colors hover:border-primary/30 hover:bg-primary/8 hover:text-primary dark:border-neutral-700 dark:hover:border-primary/30 dark:hover:bg-primary/15 dark:hover:text-accent"
+              className="rounded-lg border border-neutral-300 px-3 py-1.5 text-xs font-medium transition-colors hover:border-accent/50 hover:bg-accent/10 hover:text-accent dark:border-neutral-700 dark:hover:border-accent/40 dark:hover:bg-accent/15 dark:hover:text-accent"
             >
               취소
             </button>
@@ -253,7 +253,7 @@ export function PartnerReservationRow({ reservation }: { reservation: Reservatio
             <button
               onClick={() => setCompleting(false)}
               disabled={loading}
-              className="rounded-lg border border-neutral-300 px-3 py-1.5 text-xs font-medium transition-colors hover:border-primary/30 hover:bg-primary/8 hover:text-primary dark:border-neutral-700 dark:hover:border-primary/30 dark:hover:bg-primary/15 dark:hover:text-accent"
+              className="rounded-lg border border-neutral-300 px-3 py-1.5 text-xs font-medium transition-colors hover:border-accent/50 hover:bg-accent/10 hover:text-accent dark:border-neutral-700 dark:hover:border-accent/40 dark:hover:bg-accent/15 dark:hover:text-accent"
             >
               취소
             </button>
@@ -301,7 +301,7 @@ export function PartnerReservationRow({ reservation }: { reservation: Reservatio
             <button
               onClick={() => setEditing(true)}
               disabled={loading}
-              className="rounded-lg border border-neutral-300 px-3 py-1.5 text-xs font-medium transition-colors hover:border-primary/30 hover:bg-primary/8 hover:text-primary dark:border-neutral-700 dark:hover:border-primary/30 dark:hover:bg-primary/15 dark:hover:text-accent"
+              className="rounded-lg border border-neutral-300 px-3 py-1.5 text-xs font-medium transition-colors hover:border-accent/50 hover:bg-accent/10 hover:text-accent dark:border-neutral-700 dark:hover:border-accent/40 dark:hover:bg-accent/15 dark:hover:text-accent"
             >
               일정/메모 변경
             </button>

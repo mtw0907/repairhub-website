@@ -57,7 +57,7 @@ export function FilterBar({
       <button
         type="button"
         onClick={onOpenMore}
-        className="ml-auto flex items-center gap-1.5 rounded-lg border border-neutral-200 px-2.5 py-1.5 text-xs font-medium text-neutral-600 hover:border-primary/40 hover:text-primary dark:border-neutral-700 dark:text-neutral-300"
+        className="ml-auto flex items-center gap-1.5 rounded-lg border border-neutral-200 px-2.5 py-1.5 text-xs font-medium text-neutral-600 hover:border-accent/50 hover:text-accent dark:border-neutral-700 dark:text-neutral-300"
       >
         <SlidersHorizontal className="h-3.5 w-3.5" />
         필터 더보기

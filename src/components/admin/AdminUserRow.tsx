@@ -67,7 +67,7 @@ export function AdminUserRow({ user }: { user: AdminUser }) {
               <button
                 onClick={() => updateStatus("SUSPENDED")}
                 disabled={loading}
-                className="rounded-lg border border-neutral-300 px-2.5 py-1.5 text-xs font-medium transition-colors hover:border-primary/30 hover:bg-primary/8 hover:text-primary disabled:opacity-50 dark:border-neutral-700 dark:hover:border-primary/30 dark:hover:bg-primary/15 dark:hover:text-accent"
+                className="rounded-lg border border-neutral-300 px-2.5 py-1.5 text-xs font-medium transition-colors hover:border-accent/50 hover:bg-accent/10 hover:text-accent disabled:opacity-50 dark:border-neutral-700 dark:hover:border-accent/40 dark:hover:bg-accent/15 dark:hover:text-accent"
               >
                 정지
               </button>
@@ -92,7 +92,7 @@ export function AdminUserRow({ user }: { user: AdminUser }) {
                 <button
                   onClick={() => setConfirmingDelete(false)}
                   disabled={loading}
-                  className="rounded-lg border border-neutral-300 px-2.5 py-1.5 text-xs hover:border-primary/30 hover:bg-primary/8 hover:text-primary dark:border-neutral-700 dark:hover:border-primary/30 dark:hover:bg-primary/15 dark:hover:text-accent"
+                  className="rounded-lg border border-neutral-300 px-2.5 py-1.5 text-xs hover:border-accent/50 hover:bg-accent/10 hover:text-accent dark:border-neutral-700 dark:hover:border-accent/40 dark:hover:bg-accent/15 dark:hover:text-accent"
                 >
                   취소
                 </button>

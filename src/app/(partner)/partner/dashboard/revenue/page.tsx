@@ -78,7 +78,7 @@ export default async function PartnerRevenuePage({
           </h1>
           <Link
             href="/partner/dashboard/subscription"
-            className="text-xs font-medium text-neutral-500 underline underline-offset-2 hover:text-primary"
+            className="text-xs font-medium text-neutral-500 underline underline-offset-2 hover:text-accent"
           >
             구독 결제 내역
           </Link>
@@ -172,7 +172,7 @@ export default async function PartnerRevenuePage({
                 className={
                   currentPage <= 1
                     ? "pointer-events-none rounded-lg border border-neutral-200 px-3 py-1.5 text-neutral-300 dark:border-neutral-800"
-                    : "rounded-lg border border-neutral-200 px-3 py-1.5 text-neutral-600 hover:border-primary/40 hover:text-primary dark:border-neutral-700 dark:text-neutral-300"
+                    : "rounded-lg border border-neutral-200 px-3 py-1.5 text-neutral-600 hover:border-accent/50 hover:text-accent dark:border-neutral-700 dark:text-neutral-300"
                 }
               >
                 이전
@@ -186,7 +186,7 @@ export default async function PartnerRevenuePage({
                 className={
                   currentPage >= totalPages
                     ? "pointer-events-none rounded-lg border border-neutral-200 px-3 py-1.5 text-neutral-300 dark:border-neutral-800"
-                    : "rounded-lg border border-neutral-200 px-3 py-1.5 text-neutral-600 hover:border-primary/40 hover:text-primary dark:border-neutral-700 dark:text-neutral-300"
+                    : "rounded-lg border border-neutral-200 px-3 py-1.5 text-neutral-600 hover:border-accent/50 hover:text-accent dark:border-neutral-700 dark:text-neutral-300"
                 }
               >
                 다음

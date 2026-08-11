@@ -34,7 +34,7 @@ export function CompanyFloatingCard({
             <button
               type="button"
               onClick={onClose}
-              className="shrink-0 rounded-full p-0.5 text-neutral-400 hover:border-primary/30 hover:bg-primary/8 hover:text-primary dark:hover:border-primary/30 dark:hover:bg-primary/15 dark:hover:text-accent"
+              className="shrink-0 rounded-full p-0.5 text-neutral-400 hover:border-accent/50 hover:bg-accent/10 hover:text-accent dark:hover:border-accent/40 dark:hover:bg-accent/15 dark:hover:text-accent"
             >
               <X className="h-4 w-4" />
             </button>
@@ -82,7 +82,7 @@ export function CompanyFloatingCard({
         </Link>
         <Link
           href={`/companies/${company.id}`}
-          className="flex-1 rounded-xl border border-neutral-200 py-2 text-center text-xs font-bold text-neutral-600 transition-colors hover:border-primary/40 hover:text-primary dark:border-neutral-700 dark:text-neutral-300 dark:hover:border-accent/40 dark:hover:text-accent"
+          className="flex-1 rounded-xl border border-neutral-200 py-2 text-center text-xs font-bold text-neutral-600 transition-colors hover:border-accent/50 hover:text-accent dark:border-neutral-700 dark:text-neutral-300 dark:hover:border-accent/40 dark:hover:text-accent"
         >
           상세보기
         </Link>

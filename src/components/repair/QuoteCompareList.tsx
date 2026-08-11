@@ -80,7 +80,7 @@ export function QuoteCompareList({ quotes }: { quotes: QuoteSummary[] }) {
             className={
               sortKey === s.key
                 ? "rounded-full bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground transition-transform hover:scale-105"
-                : "rounded-full border border-neutral-300 px-3 py-1.5 text-xs text-neutral-600 transition-colors hover:border-primary/40 hover:text-primary dark:border-neutral-700 dark:text-neutral-300 dark:hover:border-accent/40 dark:hover:text-accent"
+                : "rounded-full border border-neutral-300 px-3 py-1.5 text-xs text-neutral-600 transition-colors hover:border-accent/50 hover:text-accent dark:border-neutral-700 dark:text-neutral-300 dark:hover:border-accent/40 dark:hover:text-accent"
             }
           >
             {s.label}
@@ -99,7 +99,7 @@ export function QuoteCompareList({ quotes }: { quotes: QuoteSummary[] }) {
             <div className="flex items-start justify-between gap-2">
               <Link
                 href={`/companies/${q.company.id}`}
-                className="font-semibold text-neutral-900 hover:text-primary hover:underline dark:text-neutral-100"
+                className="font-semibold text-neutral-900 hover:text-accent hover:underline dark:text-neutral-100"
               >
                 {q.company.name}
               </Link>

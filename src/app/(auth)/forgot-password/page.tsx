@@ -95,7 +95,7 @@ export default function ForgotPasswordPage() {
         <p className="text-center text-sm text-neutral-500">
           <Link
             href="/login"
-            className="font-medium text-primary underline underline-offset-2 transition-colors hover:text-primary/80 dark:hover:text-accent"
+            className="font-medium text-primary underline underline-offset-2 transition-colors hover:text-accent dark:hover:text-accent"
           >
             로그인으로 돌아가기
           </Link>

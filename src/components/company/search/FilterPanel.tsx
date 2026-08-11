@@ -62,7 +62,7 @@ export function FilterPanel({
           <button
             type="button"
             onClick={onClose}
-            className="flex h-8 w-8 items-center justify-center rounded-full text-neutral-400 hover:border-primary/30 hover:bg-primary/8 hover:text-primary dark:hover:border-primary/30 dark:hover:bg-primary/15 dark:hover:text-accent"
+            className="flex h-8 w-8 items-center justify-center rounded-full text-neutral-400 hover:border-accent/50 hover:bg-accent/10 hover:text-accent dark:hover:border-accent/40 dark:hover:bg-accent/15 dark:hover:text-accent"
           >
             <X className="h-4 w-4" />
           </button>
@@ -80,7 +80,7 @@ export function FilterPanel({
                   className={
                     filters.radiusKm === km
                       ? "rounded-full bg-primary px-3.5 py-1.5 text-xs font-semibold text-primary-foreground transition-transform hover:scale-105"
-                      : "rounded-full border border-neutral-200 px-3.5 py-1.5 text-xs font-medium text-neutral-600 transition-colors hover:border-primary/40 hover:text-primary dark:border-neutral-700 dark:text-neutral-300 dark:hover:border-accent/40 dark:hover:text-accent"
+                      : "rounded-full border border-neutral-200 px-3.5 py-1.5 text-xs font-medium text-neutral-600 transition-colors hover:border-accent/50 hover:text-accent dark:border-neutral-700 dark:text-neutral-300 dark:hover:border-accent/40 dark:hover:text-accent"
                   }
                 >
                   {km}km
@@ -92,7 +92,7 @@ export function FilterPanel({
                 className={
                   filters.radiusKm === null
                     ? "rounded-full bg-primary px-3.5 py-1.5 text-xs font-semibold text-primary-foreground transition-transform hover:scale-105"
-                    : "rounded-full border border-neutral-200 px-3.5 py-1.5 text-xs font-medium text-neutral-600 transition-colors hover:border-primary/40 hover:text-primary dark:border-neutral-700 dark:text-neutral-300 dark:hover:border-accent/40 dark:hover:text-accent"
+                    : "rounded-full border border-neutral-200 px-3.5 py-1.5 text-xs font-medium text-neutral-600 transition-colors hover:border-accent/50 hover:text-accent dark:border-neutral-700 dark:text-neutral-300 dark:hover:border-accent/40 dark:hover:text-accent"
                 }
               >
                 전국
@@ -111,7 +111,7 @@ export function FilterPanel({
                   className={
                     filters.minRating === r
                       ? "rounded-full bg-primary px-3.5 py-1.5 text-xs font-semibold text-primary-foreground transition-transform hover:scale-105"
-                      : "rounded-full border border-neutral-200 px-3.5 py-1.5 text-xs font-medium text-neutral-600 transition-colors hover:border-primary/40 hover:text-primary dark:border-neutral-700 dark:text-neutral-300 dark:hover:border-accent/40 dark:hover:text-accent"
+                      : "rounded-full border border-neutral-200 px-3.5 py-1.5 text-xs font-medium text-neutral-600 transition-colors hover:border-accent/50 hover:text-accent dark:border-neutral-700 dark:text-neutral-300 dark:hover:border-accent/40 dark:hover:text-accent"
                   }
                 >
                   {r.toFixed(1)}+
@@ -139,7 +139,7 @@ export function FilterPanel({
                   className={
                     filters[key]
                       ? "rounded-full bg-primary px-3.5 py-1.5 text-xs font-semibold text-primary-foreground transition-transform hover:scale-105"
-                      : "rounded-full border border-neutral-200 px-3.5 py-1.5 text-xs font-medium text-neutral-600 transition-colors hover:border-primary/40 hover:text-primary dark:border-neutral-700 dark:text-neutral-300 dark:hover:border-accent/40 dark:hover:text-accent"
+                      : "rounded-full border border-neutral-200 px-3.5 py-1.5 text-xs font-medium text-neutral-600 transition-colors hover:border-accent/50 hover:text-accent dark:border-neutral-700 dark:text-neutral-300 dark:hover:border-accent/40 dark:hover:text-accent"
                   }
                 >
                   {label}
@@ -153,7 +153,7 @@ export function FilterPanel({
           <button
             type="button"
             onClick={() => onChange(DEFAULT_FILTERS)}
-            className="flex-1 rounded-xl border border-neutral-200 py-2.5 text-sm font-medium text-neutral-600 transition-colors hover:border-primary/40 hover:bg-primary/8 hover:text-primary dark:border-neutral-700 dark:text-neutral-300 dark:hover:border-accent/40 dark:hover:bg-primary/15 dark:hover:text-accent"
+            className="flex-1 rounded-xl border border-neutral-200 py-2.5 text-sm font-medium text-neutral-600 transition-colors hover:border-accent/50 hover:bg-accent/10 hover:text-accent dark:border-neutral-700 dark:text-neutral-300 dark:hover:border-accent/40 dark:hover:bg-accent/15 dark:hover:text-accent"
           >
             초기화
           </button>

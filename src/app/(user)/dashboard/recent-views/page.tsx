@@ -29,14 +29,14 @@ export default async function RecentViewsPage() {
               className="group flex items-center justify-between rounded-2xl border border-neutral-200/70 bg-white p-4 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md dark:border-neutral-800 dark:bg-neutral-900"
             >
               <div>
-                <p className="font-semibold text-neutral-900 group-hover:text-primary dark:text-neutral-100">
+                <p className="font-semibold text-neutral-900 group-hover:text-accent dark:text-neutral-100">
                   {v.company.name}
                 </p>
                 <p className="mt-0.5 text-sm text-neutral-500">
                   {new Date(v.viewedAt).toLocaleString("ko-KR")}
                 </p>
               </div>
-              <ChevronRight className="h-4 w-4 shrink-0 text-neutral-300 transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
+              <ChevronRight className="h-4 w-4 shrink-0 text-neutral-300 transition-transform group-hover:translate-x-0.5 group-hover:text-accent" />
             </Link>
           ))}
           {recentViews.length === 0 && (

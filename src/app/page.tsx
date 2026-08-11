@@ -260,7 +260,7 @@ export default async function LandingPage() {
               <Link
                 key={f.href}
                 href={f.href}
-                className="group flex items-center gap-3 rounded-2xl border border-neutral-200/70 bg-white p-4 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-md dark:border-neutral-800 dark:bg-neutral-900"
+                className="group flex items-center gap-3 rounded-2xl border border-neutral-200/70 bg-white p-4 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-md dark:border-neutral-800 dark:bg-neutral-900"
               >
                 <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors group-hover:bg-accent/20 group-hover:text-accent">
                   <f.icon className="h-5 w-5" />
@@ -271,7 +271,7 @@ export default async function LandingPage() {
                   </span>
                   <span className="hidden truncate text-xs text-neutral-500 sm:block">{f.desc}</span>
                 </span>
-                <ChevronRight className="ml-auto hidden h-4 w-4 shrink-0 text-neutral-300 transition-transform group-hover:translate-x-0.5 group-hover:text-primary sm:block" />
+                <ChevronRight className="ml-auto hidden h-4 w-4 shrink-0 text-neutral-300 transition-transform group-hover:translate-x-0.5 group-hover:text-accent sm:block" />
               </Link>
             ))}
           </div>
@@ -289,7 +289,7 @@ export default async function LandingPage() {
                 <Link
                   key={cat.label}
                   href={`/companies?keyword=${encodeURIComponent(cat.label)}`}
-                  className="group flex flex-col items-center gap-2 rounded-2xl border border-neutral-200/70 bg-white p-3 text-center shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-md dark:border-neutral-800 dark:bg-neutral-900 sm:p-4"
+                  className="group flex flex-col items-center gap-2 rounded-2xl border border-neutral-200/70 bg-white p-3 text-center shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-accent/50 hover:shadow-md dark:border-neutral-800 dark:bg-neutral-900 sm:p-4"
                 >
                   <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary transition-colors group-hover:bg-accent/20 group-hover:text-accent dark:text-neutral-200">
                     <Icon className="h-5 w-5" />

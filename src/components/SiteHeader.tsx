@@ -34,7 +34,7 @@ export async function SiteHeader() {
             <Link
               href="/dashboard/favorites"
               aria-label="찜목록"
-              className="flex h-9 w-9 items-center justify-center rounded-full text-neutral-500 transition-colors hover:border-primary/30 hover:bg-primary/8 hover:text-primary dark:text-neutral-400 dark:hover:border-primary/30 dark:hover:bg-primary/15 dark:hover:text-accent"
+              className="flex h-9 w-9 items-center justify-center rounded-full text-neutral-500 transition-colors hover:border-accent/50 hover:bg-accent/10 hover:text-accent dark:text-neutral-400 dark:hover:border-accent/40 dark:hover:bg-accent/15 dark:hover:text-accent"
             >
               <Heart className="h-4.5 w-4.5" />
             </Link>
@@ -42,7 +42,7 @@ export async function SiteHeader() {
           {role ? (
             <Link
               href={ROLE_DASHBOARD_PATH[role]}
-              className="flex items-center gap-2 rounded-full py-1 pl-1 pr-3 transition-colors hover:border-primary/30 hover:bg-primary/8 hover:text-primary dark:hover:border-primary/30 dark:hover:bg-primary/15 dark:hover:text-accent sm:pr-4"
+              className="flex items-center gap-2 rounded-full py-1 pl-1 pr-3 transition-colors hover:border-accent/50 hover:bg-accent/10 hover:text-accent dark:hover:border-accent/40 dark:hover:bg-accent/15 dark:hover:text-accent sm:pr-4"
             >
               <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
                 {(name ?? "?").slice(0, 1)}

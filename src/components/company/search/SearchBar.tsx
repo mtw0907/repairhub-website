@@ -33,7 +33,7 @@ export function SearchBar({
         type="button"
         onClick={onLocate}
         title="현재 위치"
-        className="flex shrink-0 items-center gap-1.5 rounded-2xl border border-neutral-200 bg-white px-3.5 py-3 text-xs font-semibold text-neutral-600 shadow-sm transition-colors hover:border-primary/40 hover:text-primary dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-300"
+        className="flex shrink-0 items-center gap-1.5 rounded-2xl border border-neutral-200 bg-white px-3.5 py-3 text-xs font-semibold text-neutral-600 shadow-sm transition-colors hover:border-accent/50 hover:text-accent dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-300"
       >
         <Locate className="h-4 w-4" />
         <span className="hidden sm:inline">내 위치</span>
@@ -42,7 +42,7 @@ export function SearchBar({
         type="button"
         onClick={onOpenFilters}
         title="필터"
-        className="relative flex shrink-0 items-center gap-1.5 rounded-2xl border border-neutral-200 bg-white px-3.5 py-3 text-xs font-semibold text-neutral-600 shadow-sm transition-colors hover:border-primary/40 hover:text-primary dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-300"
+        className="relative flex shrink-0 items-center gap-1.5 rounded-2xl border border-neutral-200 bg-white px-3.5 py-3 text-xs font-semibold text-neutral-600 shadow-sm transition-colors hover:border-accent/50 hover:text-accent dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-300"
       >
         <SlidersHorizontal className="h-4 w-4" />
         <span className="hidden sm:inline">필터</span>
@@ -56,7 +56,7 @@ export function SearchBar({
         type="button"
         onClick={onZoomIn}
         title="지도 확대"
-        className="hidden shrink-0 items-center gap-1.5 rounded-2xl border border-neutral-200 bg-white px-3.5 py-3 text-xs font-semibold text-neutral-600 shadow-sm transition-colors hover:border-primary/40 hover:text-primary dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-300 sm:flex"
+        className="hidden shrink-0 items-center gap-1.5 rounded-2xl border border-neutral-200 bg-white px-3.5 py-3 text-xs font-semibold text-neutral-600 shadow-sm transition-colors hover:border-accent/50 hover:text-accent dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-300 sm:flex"
       >
         <ZoomIn className="h-4 w-4" />
       </button>

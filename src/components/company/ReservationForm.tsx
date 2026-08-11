@@ -168,11 +168,11 @@ export function ReservationForm({
                   className={
                     category === key
                       ? "flex items-center gap-2 rounded-xl border border-primary bg-primary/10 p-3 text-left transition-colors"
-                      : "group flex items-center gap-2 rounded-xl border border-neutral-200 p-3 text-left transition-colors hover:border-primary/40 hover:bg-primary/5 dark:border-neutral-700 dark:hover:border-accent/40 dark:hover:bg-primary/15"
+                      : "group flex items-center gap-2 rounded-xl border border-neutral-200 p-3 text-left transition-colors hover:border-accent/50 hover:bg-accent/10 dark:border-neutral-700 dark:hover:border-accent/40 dark:hover:bg-accent/15"
                   }
                 >
                   <Icon className="h-4.5 w-4.5 text-primary" />
-                  <span className="text-sm font-semibold text-neutral-900 transition-colors group-hover:text-primary dark:text-neutral-100 dark:group-hover:text-accent">
+                  <span className="text-sm font-semibold text-neutral-900 transition-colors group-hover:text-accent dark:text-neutral-100 dark:group-hover:text-accent">
                     {group.label}
                   </span>
                 </button>
@@ -193,7 +193,7 @@ export function ReservationForm({
                   className={
                     instrument === item
                       ? "rounded-full bg-primary px-3.5 py-1.5 text-sm font-semibold text-primary-foreground"
-                      : "rounded-full border border-neutral-300 px-3.5 py-1.5 text-sm text-neutral-600 transition-colors hover:border-primary/40 dark:border-neutral-700 dark:text-neutral-300"
+                      : "rounded-full border border-neutral-300 px-3.5 py-1.5 text-sm text-neutral-600 transition-colors hover:border-accent/50 dark:border-neutral-700 dark:text-neutral-300"
                   }
                 >
                   {item}
@@ -246,7 +246,7 @@ export function ReservationForm({
                   className={
                     active
                       ? "flex flex-col items-center gap-1 rounded-xl border-2 border-primary bg-primary/10 py-3 text-sm font-bold text-primary"
-                      : "flex flex-col items-center gap-1 rounded-xl border border-neutral-200 py-3 text-sm text-neutral-600 hover:border-primary/40 dark:border-neutral-700 dark:text-neutral-300"
+                      : "flex flex-col items-center gap-1 rounded-xl border border-neutral-200 py-3 text-sm text-neutral-600 hover:border-accent/50 dark:border-neutral-700 dark:text-neutral-300"
                   }
                 >
                   <Icon className="h-4.5 w-4.5" />
@@ -266,7 +266,7 @@ export function ReservationForm({
                 type="button"
                 onClick={() => setViewMonth(new Date(viewMonth.getFullYear(), viewMonth.getMonth() - 1, 1))}
                 aria-label="이전 달"
-                className="flex h-8 w-8 items-center justify-center rounded-full text-primary/70 hover:bg-primary/10"
+                className="flex h-8 w-8 items-center justify-center rounded-full text-primary/70 hover:bg-accent/15"
               >
                 <ChevronLeft className="h-4 w-4" />
               </button>
@@ -277,7 +277,7 @@ export function ReservationForm({
                 type="button"
                 onClick={() => setViewMonth(new Date(viewMonth.getFullYear(), viewMonth.getMonth() + 1, 1))}
                 aria-label="다음 달"
-                className="flex h-8 w-8 items-center justify-center rounded-full text-primary/70 hover:bg-primary/10"
+                className="flex h-8 w-8 items-center justify-center rounded-full text-primary/70 hover:bg-accent/15"
               >
                 <ChevronRight className="h-4 w-4" />
               </button>
@@ -306,8 +306,8 @@ export function ReservationForm({
                         : isPast
                           ? "flex h-8 w-8 items-center justify-center rounded-full text-xs text-neutral-300 dark:text-neutral-700"
                           : isToday
-                            ? "flex h-8 w-8 items-center justify-center rounded-full border border-primary/50 text-xs font-semibold text-primary transition-colors hover:bg-primary/15 dark:hover:bg-primary/25 dark:hover:text-accent"
-                            : "flex h-8 w-8 items-center justify-center rounded-full text-xs text-neutral-700 transition-colors hover:bg-primary/10 hover:text-primary dark:text-neutral-300 dark:hover:bg-primary/20 dark:hover:text-accent"
+                            ? "flex h-8 w-8 items-center justify-center rounded-full border border-primary/50 text-xs font-semibold text-primary transition-colors hover:bg-accent/15 dark:hover:bg-accent/25 dark:hover:text-accent"
+                            : "flex h-8 w-8 items-center justify-center rounded-full text-xs text-neutral-700 transition-colors hover:bg-accent/15 hover:text-accent dark:text-neutral-300 dark:hover:bg-accent/20 dark:hover:text-accent"
                     }
                   >
                     {date.getDate()}
@@ -332,7 +332,7 @@ export function ReservationForm({
                       className={
                         selectedTime === t
                           ? "rounded-xl bg-primary py-2 text-sm font-bold text-primary-foreground"
-                          : "rounded-xl border border-neutral-200 py-2 text-sm text-neutral-700 transition-colors hover:border-primary/40 hover:bg-primary/5 hover:text-primary dark:border-neutral-700 dark:text-neutral-300 dark:hover:border-accent/40 dark:hover:bg-primary/15 dark:hover:text-accent"
+                          : "rounded-xl border border-neutral-200 py-2 text-sm text-neutral-700 transition-colors hover:border-accent/50 hover:bg-accent/10 hover:text-accent dark:border-neutral-700 dark:text-neutral-300 dark:hover:border-accent/40 dark:hover:bg-accent/15 dark:hover:text-accent"
                       }
                     >
                       {t}

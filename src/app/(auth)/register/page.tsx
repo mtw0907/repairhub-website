@@ -124,7 +124,7 @@ export default function RegisterPage() {
                 <Link
                   href="/terms"
                   target="_blank"
-                  className="font-medium underline underline-offset-2 transition-colors hover:text-primary"
+                  className="font-medium underline underline-offset-2 transition-colors hover:text-accent"
                 >
                   이용약관
                 </Link>
@@ -143,7 +143,7 @@ export default function RegisterPage() {
                 <Link
                   href="/privacy"
                   target="_blank"
-                  className="font-medium underline underline-offset-2 transition-colors hover:text-primary"
+                  className="font-medium underline underline-offset-2 transition-colors hover:text-accent"
                 >
                   개인정보 수집 및 이용
                 </Link>
@@ -168,13 +168,13 @@ export default function RegisterPage() {
         <div className="space-y-2 text-center text-sm text-neutral-500">
           <p>
             이미 계정이 있으신가요?{" "}
-            <Link href="/login" className="font-medium text-primary underline underline-offset-2 transition-colors hover:text-primary/80 dark:hover:text-accent">
+            <Link href="/login" className="font-medium text-primary underline underline-offset-2 transition-colors hover:text-accent dark:hover:text-accent">
               로그인
             </Link>
           </p>
           <p>
             업체(수리점) 사장님이신가요?{" "}
-            <Link href="/register/partner" className="font-medium text-primary underline underline-offset-2 transition-colors hover:text-primary/80 dark:hover:text-accent">
+            <Link href="/register/partner" className="font-medium text-primary underline underline-offset-2 transition-colors hover:text-accent dark:hover:text-accent">
               업체로 가입하기 →
             </Link>
           </p>

@@ -23,7 +23,7 @@ export function HeaderSearch() {
         type="button"
         onClick={() => setOpen(true)}
         aria-label="검색"
-        className="flex h-9 w-9 items-center justify-center rounded-full text-neutral-500 transition-colors hover:border-primary/30 hover:bg-primary/8 hover:text-primary dark:text-neutral-400 dark:hover:border-primary/30 dark:hover:bg-primary/15 dark:hover:text-accent"
+        className="flex h-9 w-9 items-center justify-center rounded-full text-neutral-500 transition-colors hover:border-accent/50 hover:bg-accent/10 hover:text-accent dark:text-neutral-400 dark:hover:border-accent/40 dark:hover:bg-accent/15 dark:hover:text-accent"
       >
         <Search className="h-4.5 w-4.5" />
       </button>
@@ -35,7 +35,7 @@ export function HeaderSearch() {
       onSubmit={handleSubmit}
       className="flex items-center gap-1 rounded-full border border-neutral-200 bg-white px-3 py-1.5 dark:border-neutral-700 dark:bg-neutral-900"
     >
-      <button type="submit" aria-label="검색" className="shrink-0 text-neutral-400 hover:text-primary">
+      <button type="submit" aria-label="검색" className="shrink-0 text-neutral-400 hover:text-accent">
         <Search className="h-4 w-4" />
       </button>
       <input

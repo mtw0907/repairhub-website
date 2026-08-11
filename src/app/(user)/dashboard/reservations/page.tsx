@@ -47,9 +47,9 @@ export default async function ReservationsPage() {
                 className="group flex items-start justify-between gap-2"
               >
                 <div>
-                  <p className="flex items-center gap-1.5 font-semibold text-neutral-900 group-hover:text-primary dark:text-neutral-100">
+                  <p className="flex items-center gap-1.5 font-semibold text-neutral-900 group-hover:text-accent dark:text-neutral-100">
                     {r.company.name}
-                    <ChevronRight className="h-4 w-4 text-neutral-300 transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
+                    <ChevronRight className="h-4 w-4 text-neutral-300 transition-transform group-hover:translate-x-0.5 group-hover:text-accent" />
                   </p>
                   {(() => {
                     const method = (r.method || "VISIT") as ReservationMethod;

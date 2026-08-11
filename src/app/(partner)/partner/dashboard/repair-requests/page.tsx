@@ -46,7 +46,7 @@ export default async function PartnerRepairRequestsPage() {
                 className="group flex items-center justify-between gap-3 rounded-2xl border border-neutral-200/70 bg-white p-4 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md dark:border-neutral-800 dark:bg-neutral-900"
               >
                 <div>
-                  <p className="font-semibold text-neutral-900 group-hover:text-primary dark:text-neutral-100">
+                  <p className="font-semibold text-neutral-900 group-hover:text-accent dark:text-neutral-100">
                     {r.instrument}{r.brand ? ` · ${r.brand}` : ""} — {r.user.name}님
                   </p>
                   <p className="mt-0.5 line-clamp-1 text-sm text-neutral-500">{r.symptom}</p>
@@ -60,7 +60,7 @@ export default async function PartnerRepairRequestsPage() {
                   <span className="rounded-full bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary">
                     {STATUS_LABEL[r.status] ?? r.status}
                   </span>
-                  <ChevronRight className="h-4 w-4 text-neutral-300 transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
+                  <ChevronRight className="h-4 w-4 text-neutral-300 transition-transform group-hover:translate-x-0.5 group-hover:text-accent" />
                 </div>
               </Link>
             );

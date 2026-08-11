@@ -23,8 +23,19 @@
   --color-accent-foreground: var(--accent-foreground);
   --color-surface: var(--surface);
   --color-surface-muted: var(--surface-muted);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-pretendard);
   --font-mono: var(--font-geist-mono);
+
+  /* 가독성을 위해 Tailwind 기본 텍스트 크기보다 한 단계씩 키움 (spacing 스케일에는
+     영향 없음 — 폰트 크기 변수만 개별 override). */
+  --text-xs: 0.8125rem;
+  --text-xs--line-height: 1.25rem;
+  --text-sm: 0.9375rem;
+  --text-sm--line-height: 1.5rem;
+  --text-base: 1.0625rem;
+  --text-base--line-height: 1.65rem;
+  --text-lg: 1.1875rem;
+  --text-lg--line-height: 1.8rem;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -43,7 +54,7 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  font-family: var(--font-pretendard), Arial, Helvetica, sans-serif;
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
 }
 

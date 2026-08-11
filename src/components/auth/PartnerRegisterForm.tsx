@@ -199,7 +199,7 @@ export function PartnerRegisterForm() {
             <Link
               href="/terms"
               target="_blank"
-              className="font-medium underline underline-offset-2 transition-colors hover:text-primary"
+              className="font-medium underline underline-offset-2 transition-colors hover:text-accent"
             >
               이용약관
             </Link>
@@ -218,7 +218,7 @@ export function PartnerRegisterForm() {
             <Link
               href="/privacy"
               target="_blank"
-              className="font-medium underline underline-offset-2 transition-colors hover:text-primary"
+              className="font-medium underline underline-offset-2 transition-colors hover:text-accent"
             >
               개인정보 수집 및 이용
             </Link>

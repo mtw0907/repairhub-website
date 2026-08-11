@@ -78,7 +78,7 @@ export function OtpEmailField({
           type="button"
           onClick={handleSend}
           disabled={loading || verified || !email}
-          className="shrink-0 rounded-xl border border-neutral-300 px-3 py-2.5 text-sm font-medium whitespace-nowrap transition-colors hover:border-primary/30 hover:bg-primary/8 hover:text-primary disabled:opacity-50 dark:border-neutral-700 dark:hover:border-primary/30 dark:hover:bg-primary/15 dark:hover:text-accent"
+          className="shrink-0 rounded-xl border border-neutral-300 px-3 py-2.5 text-sm font-medium whitespace-nowrap transition-colors hover:border-accent/50 hover:bg-accent/10 hover:text-accent disabled:opacity-50 dark:border-neutral-700 dark:hover:border-accent/40 dark:hover:bg-accent/15 dark:hover:text-accent"
         >
           {verified ? "인증완료" : sent ? "재전송" : "인증번호 받기"}
         </button>

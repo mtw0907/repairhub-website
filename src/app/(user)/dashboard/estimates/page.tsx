@@ -29,7 +29,7 @@ export default async function EstimatesPage() {
               <div className="flex items-start justify-between gap-2">
                 <Link
                   href={`/companies/${e.company.id}`}
-                  className="font-semibold text-neutral-900 hover:text-primary hover:underline dark:text-neutral-100"
+                  className="font-semibold text-neutral-900 hover:text-accent hover:underline dark:text-neutral-100"
                 >
                   {e.company.name}
                 </Link>

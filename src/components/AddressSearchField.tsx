@@ -62,7 +62,7 @@ export function AddressSearchField({
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="flex shrink-0 items-center gap-1 rounded-xl border border-primary/40 px-3 py-2.5 text-sm font-semibold text-primary transition-colors hover:bg-primary/10"
+          className="flex shrink-0 items-center gap-1 rounded-xl border border-primary/40 px-3 py-2.5 text-sm font-semibold text-primary transition-colors hover:bg-accent/15"
         >
           <Search className="h-4 w-4" />
           주소 검색

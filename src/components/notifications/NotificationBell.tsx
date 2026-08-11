@@ -64,7 +64,7 @@ export function NotificationBell() {
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-label="알림"
-        className="relative flex h-9 w-9 items-center justify-center rounded-full text-neutral-500 transition-colors hover:border-primary/30 hover:bg-primary/8 hover:text-primary dark:text-neutral-400 dark:hover:border-primary/30 dark:hover:bg-primary/15 dark:hover:text-accent"
+        className="relative flex h-9 w-9 items-center justify-center rounded-full text-neutral-500 transition-colors hover:border-accent/50 hover:bg-accent/10 hover:text-accent dark:text-neutral-400 dark:hover:border-accent/40 dark:hover:bg-accent/15 dark:hover:text-accent"
       >
         <Bell className="h-4.5 w-4.5" />
         {unreadCount > 0 && (
@@ -82,7 +82,7 @@ export function NotificationBell() {
               <button
                 type="button"
                 onClick={handleMarkAllRead}
-                className="text-xs font-medium text-neutral-400 hover:text-primary"
+                className="text-xs font-medium text-neutral-400 hover:text-accent"
               >
                 모두 읽음
               </button>
@@ -101,7 +101,7 @@ export function NotificationBell() {
           <Link
             href="/notifications"
             onClick={() => setOpen(false)}
-            className="block border-t border-neutral-100 py-2.5 text-center text-xs font-semibold text-neutral-500 hover:text-primary dark:border-neutral-800"
+            className="block border-t border-neutral-100 py-2.5 text-center text-xs font-semibold text-neutral-500 hover:text-accent dark:border-neutral-800"
           >
             전체 보기
           </Link>

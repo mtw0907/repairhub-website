@@ -116,7 +116,7 @@ export function NewRepairRequestForm({
                     className={
                       category === key
                         ? "flex items-center gap-3 rounded-xl border border-primary bg-primary/10 p-4 text-left transition-colors"
-                        : "flex items-center gap-3 rounded-xl border border-neutral-200 p-4 text-left transition-colors hover:border-primary/30 dark:border-neutral-700"
+                        : "flex items-center gap-3 rounded-xl border border-neutral-200 p-4 text-left transition-colors hover:border-accent/50 dark:border-neutral-700"
                     }
                   >
                     <Icon className="h-5 w-5 text-primary" />
@@ -141,7 +141,7 @@ export function NewRepairRequestForm({
                     className={
                       instrument === item
                         ? "rounded-full bg-primary px-4 py-1.5 text-sm font-semibold text-primary-foreground"
-                        : "rounded-full border border-neutral-300 px-4 py-1.5 text-sm text-neutral-600 transition-colors hover:border-primary/40 dark:border-neutral-700 dark:text-neutral-300"
+                        : "rounded-full border border-neutral-300 px-4 py-1.5 text-sm text-neutral-600 transition-colors hover:border-accent/50 dark:border-neutral-700 dark:text-neutral-300"
                     }
                   >
                     {item}
@@ -179,7 +179,7 @@ export function NewRepairRequestForm({
           <button
             type="button"
             onClick={() => setStep(1)}
-            className="flex items-center gap-1 text-sm font-medium text-neutral-500 hover:text-primary"
+            className="flex items-center gap-1 text-sm font-medium text-neutral-500 hover:text-accent"
           >
             <ChevronLeft className="h-4 w-4" />
             이전으로

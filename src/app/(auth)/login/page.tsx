@@ -119,7 +119,7 @@ export default function LoginPage() {
                 setOtp("");
                 setError(null);
               }}
-              className="w-full text-center text-sm text-neutral-500 underline underline-offset-2 transition-colors hover:text-primary"
+              className="w-full text-center text-sm text-neutral-500 underline underline-offset-2 transition-colors hover:text-accent"
             >
               뒤로가기
             </button>
@@ -161,7 +161,7 @@ export default function LoginPage() {
               </label>
               <Link
                 href="/forgot-password"
-                className="text-xs text-neutral-500 underline underline-offset-2 transition-colors hover:text-primary"
+                className="text-xs text-neutral-500 underline underline-offset-2 transition-colors hover:text-accent"
               >
                 비밀번호를 잊으셨나요?
               </Link>
@@ -192,7 +192,7 @@ export default function LoginPage() {
           계정이 없으신가요?{" "}
           <Link
             href="/register"
-            className="font-medium text-neutral-900 underline transition-colors hover:text-primary dark:text-neutral-100 dark:hover:text-accent"
+            className="font-medium text-neutral-900 underline transition-colors hover:text-accent dark:text-neutral-100 dark:hover:text-accent"
           >
             회원가입
           </Link>

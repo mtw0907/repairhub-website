@@ -49,7 +49,7 @@ export function SiteNav({ isUser }: { isUser: boolean }) {
               className={
                 active
                   ? "flex items-center gap-2 rounded-full px-3.5 py-2 text-base font-semibold text-primary lg:px-4"
-                  : "flex items-center gap-2 rounded-full px-3.5 py-2 text-base font-medium text-neutral-600 transition-colors hover:bg-primary/10 hover:text-primary dark:text-neutral-400 dark:hover:border-primary/30 dark:hover:bg-primary/15 dark:hover:text-accent lg:px-4"
+                  : "flex items-center gap-2 rounded-full px-3.5 py-2 text-base font-medium text-neutral-600 transition-colors hover:bg-accent/15 hover:text-accent dark:text-neutral-400 dark:hover:border-accent/40 dark:hover:bg-accent/15 dark:hover:text-accent lg:px-4"
               }
             >
               <item.icon className={active ? "h-5 w-5 text-primary" : "h-5 w-5"} />
@@ -70,7 +70,7 @@ export function SiteNav({ isUser }: { isUser: boolean }) {
         onClick={() => setMobileOpen((v) => !v)}
         aria-label="메뉴 열기"
         aria-expanded={mobileOpen}
-        className="order-last flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-neutral-600 transition-colors hover:bg-primary/10 hover:text-primary dark:text-neutral-300 dark:hover:border-primary/30 dark:hover:bg-primary/15 dark:hover:text-accent md:hidden"
+        className="order-last flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-neutral-600 transition-colors hover:bg-accent/15 hover:text-accent dark:text-neutral-300 dark:hover:border-accent/40 dark:hover:bg-accent/15 dark:hover:text-accent md:hidden"
       >
         {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
       </button>
@@ -89,7 +89,7 @@ export function SiteNav({ isUser }: { isUser: boolean }) {
                   className={
                     active
                       ? "flex items-center gap-3 rounded-xl bg-primary/10 px-4 py-3 text-base font-semibold text-primary"
-                      : "flex items-center gap-3 rounded-xl px-4 py-3 text-base font-medium text-neutral-700 transition-colors hover:bg-primary/10 dark:text-neutral-300 dark:hover:border-primary/30 dark:hover:bg-primary/15 dark:hover:text-accent"
+                      : "flex items-center gap-3 rounded-xl px-4 py-3 text-base font-medium text-neutral-700 transition-colors hover:bg-accent/15 dark:text-neutral-300 dark:hover:border-accent/40 dark:hover:bg-accent/15 dark:hover:text-accent"
                   }
                 >
                   <item.icon className="h-5 w-5" />

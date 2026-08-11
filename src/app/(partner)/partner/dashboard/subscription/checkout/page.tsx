@@ -69,7 +69,7 @@ export default function SubscriptionCheckoutPage() {
       <header className="sticky top-0 z-30 flex items-center border-b border-neutral-200/80 bg-white/90 px-4 py-3.5 backdrop-blur-md dark:border-neutral-800/80 dark:bg-neutral-950/90 sm:px-6">
         <Link
           href="/partner/dashboard/subscription"
-          className="text-sm font-medium text-neutral-500 transition-colors hover:text-primary dark:text-neutral-400"
+          className="text-sm font-medium text-neutral-500 transition-colors hover:text-accent dark:text-neutral-400"
         >
           ← 구독 관리로
         </Link>
