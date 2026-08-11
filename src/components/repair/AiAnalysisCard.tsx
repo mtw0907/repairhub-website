@@ -40,6 +40,9 @@ export function AiAnalysisCard({ result }: { result: AiAnalysisResult }) {
           <p className="text-lg font-bold text-primary">
             {result.priceMin.toLocaleString()}원 ~ {result.priceMax.toLocaleString()}원
           </p>
+          <p className="mt-1 text-xs text-neutral-400">
+            AI 예상 비용이며, 실제 견적은 기기 상태와 업체에 따라 다를 수 있어요.
+          </p>
         </div>
 
         <div>
@@ -58,7 +61,7 @@ export function AiAnalysisCard({ result }: { result: AiAnalysisResult }) {
 
         <div className="flex items-start gap-2 rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs text-amber-800 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-300">
           <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-          AI 분석은 참고용이며 실제 수리는 업체 점검 후 결정됩니다.
+          AI 분석은 참고용이며, 실제 수리 여부·금액은 업체 점검 후 최종 결정됩니다.
         </div>
       </div>
     </div>
