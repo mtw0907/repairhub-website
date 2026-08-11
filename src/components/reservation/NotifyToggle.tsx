@@ -33,8 +33,8 @@ export function NotifyToggle({
       aria-pressed={enabled}
       className={
         enabled
-          ? "relative h-7 w-12 shrink-0 rounded-full bg-primary transition-colors disabled:opacity-50"
-          : "relative h-7 w-12 shrink-0 rounded-full bg-neutral-300 transition-colors disabled:opacity-50 dark:bg-neutral-700"
+          ? "relative h-7 w-12 shrink-0 rounded-full bg-primary transition-colors hover:bg-primary/90 disabled:opacity-50"
+          : "relative h-7 w-12 shrink-0 rounded-full bg-neutral-300 transition-colors hover:bg-neutral-400 disabled:opacity-50 dark:bg-neutral-700 dark:hover:bg-neutral-600"
       }
     >
       <span

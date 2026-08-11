@@ -71,7 +71,7 @@ export function ReportButton({
       <button
         type="button"
         onClick={() => setOpen(false)}
-        className="text-xs text-neutral-400"
+        className="text-xs text-neutral-400 transition-colors hover:text-neutral-600 dark:hover:text-neutral-300"
       >
         취소
       </button>

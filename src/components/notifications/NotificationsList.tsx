@@ -67,8 +67,8 @@ export function NotificationsList() {
           onClick={() => setTab("all")}
           className={
             tab === "all"
-              ? "rounded-full bg-primary px-4 py-1.5 text-xs font-semibold text-primary-foreground"
-              : "rounded-full border border-neutral-200 px-4 py-1.5 text-xs font-medium text-neutral-600 dark:border-neutral-700 dark:text-neutral-300"
+              ? "rounded-full bg-primary px-4 py-1.5 text-xs font-semibold text-primary-foreground transition-transform hover:scale-105"
+              : "rounded-full border border-neutral-200 px-4 py-1.5 text-xs font-medium text-neutral-600 transition-colors hover:border-primary/40 hover:text-primary dark:border-neutral-700 dark:text-neutral-300 dark:hover:border-accent/40 dark:hover:text-accent"
           }
         >
           전체
@@ -78,8 +78,8 @@ export function NotificationsList() {
           onClick={() => setTab("unread")}
           className={
             tab === "unread"
-              ? "rounded-full bg-primary px-4 py-1.5 text-xs font-semibold text-primary-foreground"
-              : "rounded-full border border-neutral-200 px-4 py-1.5 text-xs font-medium text-neutral-600 dark:border-neutral-700 dark:text-neutral-300"
+              ? "rounded-full bg-primary px-4 py-1.5 text-xs font-semibold text-primary-foreground transition-transform hover:scale-105"
+              : "rounded-full border border-neutral-200 px-4 py-1.5 text-xs font-medium text-neutral-600 transition-colors hover:border-primary/40 hover:text-primary dark:border-neutral-700 dark:text-neutral-300 dark:hover:border-accent/40 dark:hover:text-accent"
           }
         >
           안읽음{unreadCount > 0 ? ` ${unreadCount}` : ""}
@@ -102,7 +102,7 @@ export function NotificationsList() {
           type="button"
           onClick={() => load(false, tab, cursor)}
           disabled={loading}
-          className="mt-4 w-full rounded-xl border border-neutral-200 py-2.5 text-sm font-medium text-neutral-600 disabled:opacity-50 dark:border-neutral-700 dark:text-neutral-300"
+          className="mt-4 w-full rounded-xl border border-neutral-200 py-2.5 text-sm font-medium text-neutral-600 transition-colors hover:border-primary/40 hover:bg-primary/8 hover:text-primary disabled:opacity-50 dark:border-neutral-700 dark:text-neutral-300 dark:hover:border-accent/40 dark:hover:bg-primary/15 dark:hover:text-accent"
         >
           {loading ? "불러오는 중..." : "더 보기"}
         </button>

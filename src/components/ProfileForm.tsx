@@ -140,7 +140,7 @@ export function ProfileForm({
           <button
             type="button"
             onClick={() => setWithdrawing(true)}
-            className="text-sm text-red-600 underline underline-offset-2"
+            className="text-sm text-red-600 underline underline-offset-2 transition-colors hover:text-red-700 dark:hover:text-red-400"
           >
             회원 탈퇴
           </button>
@@ -177,7 +177,7 @@ export function ProfileForm({
                   setWithdrawPassword("");
                   setWithdrawError(null);
                 }}
-                className="rounded-xl border border-neutral-300 px-4 py-2 text-sm font-medium dark:border-neutral-700"
+                className="rounded-xl border border-neutral-300 px-4 py-2 text-sm font-medium transition-colors hover:bg-neutral-100 dark:border-neutral-700 dark:hover:bg-neutral-800"
               >
                 취소
               </button>

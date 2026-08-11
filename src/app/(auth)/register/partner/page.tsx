@@ -18,7 +18,10 @@ export default function PartnerRegisterPage() {
 
         <p className="text-center text-sm text-neutral-500">
           일반 사용자이신가요?{" "}
-          <Link href="/register" className="font-medium text-primary underline underline-offset-2">
+          <Link
+            href="/register"
+            className="font-medium text-primary underline underline-offset-2 transition-colors hover:text-primary/80 dark:hover:text-accent"
+          >
             일반 회원가입
           </Link>
         </p>

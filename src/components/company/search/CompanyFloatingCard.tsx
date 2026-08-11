@@ -70,19 +70,19 @@ export function CompanyFloatingCard({
       <div className="flex gap-2 border-t border-neutral-100 p-3 dark:border-neutral-800">
         <Link
           href={`/companies/${company.id}#예약`}
-          className="flex-1 rounded-xl bg-primary py-2 text-center text-xs font-bold text-primary-foreground"
+          className="flex-1 rounded-xl bg-primary py-2 text-center text-xs font-bold text-primary-foreground transition-transform hover:scale-105 hover:bg-primary/90"
         >
           예약하기
         </Link>
         <Link
           href="/dashboard/repair-requests/new"
-          className="flex-1 rounded-xl border border-accent/60 py-2 text-center text-xs font-bold text-accent-foreground/80 dark:text-accent"
+          className="flex-1 rounded-xl border border-accent/60 py-2 text-center text-xs font-bold text-accent-foreground/80 transition-colors hover:bg-accent/10 dark:text-accent dark:hover:bg-accent/15"
         >
           AI 견적
         </Link>
         <Link
           href={`/companies/${company.id}`}
-          className="flex-1 rounded-xl border border-neutral-200 py-2 text-center text-xs font-bold text-neutral-600 dark:border-neutral-700 dark:text-neutral-300"
+          className="flex-1 rounded-xl border border-neutral-200 py-2 text-center text-xs font-bold text-neutral-600 transition-colors hover:border-primary/40 hover:text-primary dark:border-neutral-700 dark:text-neutral-300 dark:hover:border-accent/40 dark:hover:text-accent"
         >
           상세보기
         </Link>

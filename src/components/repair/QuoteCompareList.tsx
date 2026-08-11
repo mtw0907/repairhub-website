@@ -79,8 +79,8 @@ export function QuoteCompareList({ quotes }: { quotes: QuoteSummary[] }) {
             onClick={() => setSortKey(s.key)}
             className={
               sortKey === s.key
-                ? "rounded-full bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground"
-                : "rounded-full border border-neutral-300 px-3 py-1.5 text-xs text-neutral-600 dark:border-neutral-700 dark:text-neutral-300"
+                ? "rounded-full bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground transition-transform hover:scale-105"
+                : "rounded-full border border-neutral-300 px-3 py-1.5 text-xs text-neutral-600 transition-colors hover:border-primary/40 hover:text-primary dark:border-neutral-700 dark:text-neutral-300 dark:hover:border-accent/40 dark:hover:text-accent"
             }
           >
             {s.label}

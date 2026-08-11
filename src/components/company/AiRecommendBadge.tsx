@@ -15,7 +15,7 @@ export function AiRecommendBadge({ reasons }: { reasons: string[] }) {
           e.stopPropagation();
           setOpen((v) => !v);
         }}
-        className="flex items-center gap-1 rounded-full bg-accent px-2 py-1 text-[11px] font-semibold text-accent-foreground shadow-sm"
+        className="flex items-center gap-1 rounded-full bg-accent px-2 py-1 text-[11px] font-semibold text-accent-foreground shadow-sm transition-transform hover:scale-105 hover:bg-accent/90"
       >
         <Sparkles className="h-3 w-3" />
         AI 추천

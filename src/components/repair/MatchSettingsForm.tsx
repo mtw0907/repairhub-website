@@ -71,8 +71,8 @@ export function MatchSettingsForm({ repairRequestId }: { repairRequestId: string
               onClick={() => setRegionScope(s.value)}
               className={
                 regionScope === s.value
-                  ? "rounded-full bg-primary px-4 py-1.5 text-sm font-semibold text-primary-foreground"
-                  : "rounded-full border border-neutral-300 px-4 py-1.5 text-sm text-neutral-600 dark:border-neutral-700 dark:text-neutral-300"
+                  ? "rounded-full bg-primary px-4 py-1.5 text-sm font-semibold text-primary-foreground transition-transform hover:scale-105"
+                  : "rounded-full border border-neutral-300 px-4 py-1.5 text-sm text-neutral-600 transition-colors hover:border-primary/40 hover:text-primary dark:border-neutral-700 dark:text-neutral-300 dark:hover:border-accent/40 dark:hover:text-accent"
               }
             >
               {s.label}
@@ -96,8 +96,8 @@ export function MatchSettingsForm({ repairRequestId }: { repairRequestId: string
               key={f.key}
               className={
                 filters[f.key]
-                  ? "flex cursor-pointer items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary"
-                  : "flex cursor-pointer items-center gap-1.5 rounded-full border border-neutral-200 px-3 py-1.5 text-xs text-neutral-600 dark:border-neutral-700 dark:text-neutral-300"
+                  ? "flex cursor-pointer items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary transition-colors hover:bg-primary/15"
+                  : "flex cursor-pointer items-center gap-1.5 rounded-full border border-neutral-200 px-3 py-1.5 text-xs text-neutral-600 transition-colors hover:border-primary/40 hover:text-primary dark:border-neutral-700 dark:text-neutral-300 dark:hover:border-accent/40 dark:hover:text-accent"
               }
             >
               <input

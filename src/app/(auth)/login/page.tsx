@@ -119,7 +119,7 @@ export default function LoginPage() {
                 setOtp("");
                 setError(null);
               }}
-              className="w-full text-center text-sm text-neutral-500 underline underline-offset-2"
+              className="w-full text-center text-sm text-neutral-500 underline underline-offset-2 transition-colors hover:text-primary"
             >
               뒤로가기
             </button>
@@ -159,7 +159,10 @@ export default function LoginPage() {
               <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300">
                 비밀번호
               </label>
-              <Link href="/forgot-password" className="text-xs text-neutral-500 underline underline-offset-2">
+              <Link
+                href="/forgot-password"
+                className="text-xs text-neutral-500 underline underline-offset-2 transition-colors hover:text-primary"
+              >
                 비밀번호를 잊으셨나요?
               </Link>
             </div>
@@ -177,7 +180,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white hover:bg-neutral-700 disabled:opacity-50 dark:bg-white dark:text-neutral-900"
+            className="w-full rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-transform hover:scale-[1.01] hover:bg-primary/90 disabled:opacity-50 disabled:hover:scale-100"
           >
             {loading ? "로그인 중..." : "로그인"}
           </button>
@@ -187,7 +190,10 @@ export default function LoginPage() {
 
         <p className="text-center text-sm text-neutral-500">
           계정이 없으신가요?{" "}
-          <Link href="/register" className="font-medium text-neutral-900 underline dark:text-neutral-100">
+          <Link
+            href="/register"
+            className="font-medium text-neutral-900 underline transition-colors hover:text-primary dark:text-neutral-100 dark:hover:text-accent"
+          >
             회원가입
           </Link>
         </p>

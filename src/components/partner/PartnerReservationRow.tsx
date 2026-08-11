@@ -166,14 +166,14 @@ export function PartnerReservationRow({ reservation }: { reservation: Reservatio
               <button
                 onClick={saveAmount}
                 disabled={loading}
-                className="rounded-lg bg-primary px-2.5 py-1.5 text-xs font-semibold text-primary-foreground disabled:opacity-50"
+                className="rounded-lg bg-primary px-2.5 py-1.5 text-xs font-semibold text-primary-foreground transition-transform hover:scale-105 disabled:opacity-50"
               >
                 저장
               </button>
               <button
                 onClick={() => setEditingAmount(false)}
                 disabled={loading}
-                className="rounded-lg border border-neutral-300 px-2.5 py-1.5 text-xs font-medium dark:border-neutral-700"
+                className="rounded-lg border border-neutral-300 px-2.5 py-1.5 text-xs font-medium transition-colors hover:bg-neutral-100 dark:border-neutral-700 dark:hover:bg-neutral-800"
               >
                 취소
               </button>
@@ -187,7 +187,7 @@ export function PartnerReservationRow({ reservation }: { reservation: Reservatio
               </span>
               <button
                 onClick={() => setEditingAmount(true)}
-                className="text-xs font-medium text-primary underline underline-offset-2"
+                className="text-xs font-medium text-primary underline underline-offset-2 transition-colors hover:text-primary/80 dark:hover:text-accent"
               >
                 {reservation.completedAmount != null ? "수정" : "입력"}
               </button>

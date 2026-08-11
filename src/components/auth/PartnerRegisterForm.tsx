@@ -196,7 +196,11 @@ export function PartnerRegisterForm() {
             className="h-4 w-4 rounded border-neutral-300 accent-primary"
           />
           <span>
-            <Link href="/terms" target="_blank" className="font-medium underline underline-offset-2">
+            <Link
+              href="/terms"
+              target="_blank"
+              className="font-medium underline underline-offset-2 transition-colors hover:text-primary"
+            >
               이용약관
             </Link>
             에 동의합니다 (필수)
@@ -211,7 +215,11 @@ export function PartnerRegisterForm() {
             className="h-4 w-4 rounded border-neutral-300 accent-primary"
           />
           <span>
-            <Link href="/privacy" target="_blank" className="font-medium underline underline-offset-2">
+            <Link
+              href="/privacy"
+              target="_blank"
+              className="font-medium underline underline-offset-2 transition-colors hover:text-primary"
+            >
               개인정보 수집 및 이용
             </Link>
             에 동의합니다 (필수)
