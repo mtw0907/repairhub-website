@@ -54,10 +54,10 @@ export function DashboardShell({
             return (
               <div
                 key={section.title}
-                className="rounded-2xl border border-neutral-200/70 bg-white p-6 shadow-sm transition-shadow hover:shadow-md dark:border-neutral-800 dark:bg-neutral-900"
+                className="group rounded-2xl border border-neutral-200/70 bg-white p-6 shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-md dark:border-neutral-800 dark:bg-neutral-900"
               >
                 <div className="mb-4 flex items-center gap-3">
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary dark:text-neutral-200">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors group-hover:bg-accent/20 group-hover:text-accent dark:text-neutral-200">
                     <Icon className="h-5 w-5" strokeWidth={2} />
                   </span>
                   <h2 className="text-base font-bold text-neutral-900 dark:text-neutral-100">
@@ -73,7 +73,7 @@ export function DashboardShell({
                         {href ? (
                           <Link
                             href={href}
-                            className="group flex items-center gap-2 rounded-xl px-3 py-3 text-[15px] font-medium text-neutral-700 transition-colors hover:bg-primary/5 hover:text-neutral-900 dark:text-neutral-300 dark:hover:bg-primary/10 dark:hover:text-neutral-100"
+                            className="group flex items-center gap-2 rounded-xl px-3 py-3 text-[15px] font-medium text-neutral-700 transition-colors hover:bg-primary/8 hover:text-primary dark:text-neutral-300 dark:hover:bg-primary/15 dark:hover:text-accent"
                           >
                             <span className="flex-1 leading-snug">{label}</span>
                             <ChevronRight className="h-4 w-4 shrink-0 text-neutral-300 transition-transform group-hover:translate-x-0.5 group-hover:text-accent dark:text-neutral-600" />

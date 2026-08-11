@@ -262,7 +262,7 @@ export default async function LandingPage() {
                 href={f.href}
                 className="group flex items-center gap-3 rounded-2xl border border-neutral-200/70 bg-white p-4 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-md dark:border-neutral-800 dark:bg-neutral-900"
               >
-                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors group-hover:bg-accent/20 group-hover:text-accent">
                   <f.icon className="h-5 w-5" />
                 </span>
                 <span className="min-w-0">

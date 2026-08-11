@@ -168,11 +168,13 @@ export function ReservationForm({
                   className={
                     category === key
                       ? "flex items-center gap-2 rounded-xl border border-primary bg-primary/10 p-3 text-left transition-colors"
-                      : "flex items-center gap-2 rounded-xl border border-neutral-200 p-3 text-left transition-colors hover:border-primary/30 dark:border-neutral-700"
+                      : "group flex items-center gap-2 rounded-xl border border-neutral-200 p-3 text-left transition-colors hover:border-primary/40 hover:bg-primary/5 dark:border-neutral-700 dark:hover:border-accent/40 dark:hover:bg-primary/15"
                   }
                 >
                   <Icon className="h-4.5 w-4.5 text-primary" />
-                  <span className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">{group.label}</span>
+                  <span className="text-sm font-semibold text-neutral-900 transition-colors group-hover:text-primary dark:text-neutral-100 dark:group-hover:text-accent">
+                    {group.label}
+                  </span>
                 </button>
               );
             },

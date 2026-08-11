@@ -104,7 +104,7 @@ export function CompanyDetailTabs({
               className={
                 active
                   ? "flex shrink-0 items-center gap-1.5 rounded-xl bg-primary px-3.5 py-2 text-sm font-bold text-primary-foreground"
-                  : "flex shrink-0 items-center gap-1.5 rounded-xl px-3.5 py-2 text-sm font-medium text-neutral-500 hover:bg-surface-muted dark:text-neutral-400"
+                  : "flex shrink-0 items-center gap-1.5 rounded-xl px-3.5 py-2 text-sm font-medium text-neutral-500 transition-colors hover:bg-primary/8 hover:text-primary dark:text-neutral-400 dark:hover:bg-primary/15 dark:hover:text-accent"
               }
             >
               <t.icon className="h-4 w-4" />
