@@ -105,6 +105,10 @@ export function CompanySearchView({
       if (filters.radiusKm !== null && (distanceKm === undefined || distanceKm > filters.radiusKm))
         return false;
       if (filters.minRating !== null && (c.avgRating ?? 0) < filters.minRating) return false;
+      if (filters.regionSido) {
+        const regionMatch = filters.regionDistrict || filters.regionSido;
+        if (!(c.region ?? "").includes(regionMatch)) return false;
+      }
       if (filters.onSiteOnly && !c.onSiteVisit) return false;
       if (filters.courierOnly && !c.courierDrop) return false;
       if (filters.availableTodayOnly && !(c.todaySlots && c.todaySlots.length > 0)) return false;
