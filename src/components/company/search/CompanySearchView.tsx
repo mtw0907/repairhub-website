@@ -101,9 +101,6 @@ export function CompanySearchView({
 
   const filtered = useMemo(() => {
     return searched.filter((c) => {
-      const distanceKm = (c as CompanySummary & { distanceKm?: number }).distanceKm;
-      if (filters.radiusKm !== null && (distanceKm === undefined || distanceKm > filters.radiusKm))
-        return false;
       if (filters.minRating !== null && (c.avgRating ?? 0) < filters.minRating) return false;
       if (filters.regionSido) {
         const regionMatch = filters.regionDistrict || filters.regionSido;

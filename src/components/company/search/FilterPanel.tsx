@@ -5,7 +5,6 @@ import { KOREAN_REGIONS } from "@/lib/koreanRegions";
 import { SelectMenu } from "@/components/ui/SelectMenu";
 
 export type SearchFilters = {
-  radiusKm: number | null; // null = 전국
   minRating: number | null;
   regionSido: string | null; // null = 지역 필터 없음
   regionDistrict: string | null; // null = regionSido 전체
@@ -17,7 +16,6 @@ export type SearchFilters = {
 };
 
 export const DEFAULT_FILTERS: SearchFilters = {
-  radiusKm: null,
   minRating: null,
   regionSido: null,
   regionDistrict: null,
@@ -30,7 +28,6 @@ export const DEFAULT_FILTERS: SearchFilters = {
 
 export function countActiveFilters(f: SearchFilters): number {
   let n = 0;
-  if (f.radiusKm !== null) n++;
   if (f.minRating !== null) n++;
   if (f.regionSido !== null) n++;
   if (f.onSiteOnly) n++;
@@ -41,7 +38,6 @@ export function countActiveFilters(f: SearchFilters): number {
   return n;
 }
 
-const RADIUS_OPTIONS = [5, 10, 15, 20];
 const RATING_OPTIONS = [4.0, 4.5, 5.0];
 
 export function FilterPanel({
@@ -105,37 +101,6 @@ export function FilterPanel({
                   ...districtOptions.map((d) => ({ value: d, label: d })),
                 ]}
               />
-            </div>
-          </div>
-
-          <div>
-            <p className="mb-2 text-sm font-semibold text-neutral-700 dark:text-neutral-300">거리</p>
-            <div className="flex flex-wrap gap-2">
-              {RADIUS_OPTIONS.map((km) => (
-                <button
-                  key={km}
-                  type="button"
-                  onClick={() => toggle("radiusKm", km)}
-                  className={
-                    filters.radiusKm === km
-                      ? "rounded-full bg-primary px-3.5 py-1.5 text-xs font-semibold text-primary-foreground transition-transform hover:scale-105"
-                      : "rounded-full border border-neutral-200 px-3.5 py-1.5 text-xs font-medium text-neutral-600 transition-colors hover:border-accent/50 hover:text-accent dark:border-neutral-700 dark:text-neutral-300 dark:hover:border-accent/40 dark:hover:text-accent"
-                  }
-                >
-                  {km}km
-                </button>
-              ))}
-              <button
-                type="button"
-                onClick={() => onChange({ ...filters, radiusKm: null })}
-                className={
-                  filters.radiusKm === null
-                    ? "rounded-full bg-primary px-3.5 py-1.5 text-xs font-semibold text-primary-foreground transition-transform hover:scale-105"
-                    : "rounded-full border border-neutral-200 px-3.5 py-1.5 text-xs font-medium text-neutral-600 transition-colors hover:border-accent/50 hover:text-accent dark:border-neutral-700 dark:text-neutral-300 dark:hover:border-accent/40 dark:hover:text-accent"
-                }
-              >
-                전국
-              </button>
             </div>
           </div>
 

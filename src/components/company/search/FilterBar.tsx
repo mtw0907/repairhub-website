@@ -2,8 +2,8 @@
 
 import { SlidersHorizontal } from "lucide-react";
 import type { SearchFilters } from "@/components/company/search/FilterPanel";
-
-const RADIUS_OPTIONS = [5, 10, 15, 20];
+import { KOREAN_REGIONS } from "@/lib/koreanRegions";
+import { SelectMenu } from "@/components/ui/SelectMenu";
 
 const TOGGLES: [keyof SearchFilters, string][] = [
   ["aiRecommendOnly", "AI 추천"],
@@ -24,20 +24,18 @@ export function FilterBar({
 }) {
   return (
     <div className="flex flex-wrap items-center gap-2 border-b border-neutral-200 bg-white/95 px-3 py-2.5 backdrop-blur dark:border-neutral-800 dark:bg-neutral-900/95">
-      <select
-        value={filters.radiusKm ?? ""}
-        onChange={(e) =>
-          onChange({ ...filters, radiusKm: e.target.value === "" ? null : Number(e.target.value) })
-        }
-        className="rounded-lg border border-neutral-200 bg-white px-2.5 py-1.5 text-xs font-medium text-neutral-700 outline-none dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-200"
-      >
-        <option value="">전국</option>
-        {RADIUS_OPTIONS.map((km) => (
-          <option key={km} value={km}>
-            반경 {km}km
-          </option>
-        ))}
-      </select>
+      <div className="w-28">
+        <SelectMenu
+          compact
+          placeholder="전국"
+          value={filters.regionSido ?? ""}
+          onChange={(v) => onChange({ ...filters, regionSido: v || null, regionDistrict: null })}
+          options={[
+            { value: "", label: "전국" },
+            ...KOREAN_REGIONS.map((r) => ({ value: r.name, label: r.name })),
+          ]}
+        />
+      </div>
 
       {TOGGLES.map(([key, label]) => (
         <label
