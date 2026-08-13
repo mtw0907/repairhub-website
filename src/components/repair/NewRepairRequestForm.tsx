@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Sparkles, Guitar, Speaker, ChevronLeft } from "lucide-react";
+import { Sparkles, Guitar, Speaker, ChevronLeft, HelpCircle } from "lucide-react";
 import { REPAIR_TARGETS } from "@/lib/constants";
 
 type Category = "INSTRUMENT" | "AUDIO_EQUIPMENT";
@@ -26,6 +26,10 @@ export function NewRepairRequestForm({
   const [uploading, setUploading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [clarifyQuestions, setClarifyQuestions] = useState<string[]>([]);
+  const [clarifyAnswers, setClarifyAnswers] = useState<string[]>([]);
+  const [clarifyFetched, setClarifyFetched] = useState(false);
+  const [clarifying, setClarifying] = useState(false);
 
   async function handleUpload(e: React.ChangeEvent<HTMLInputElement>, kind: "photo" | "video") {
     const file = e.target.files?.[0];
@@ -47,13 +51,51 @@ export function NewRepairRequestForm({
     e.target.value = "";
   }
 
+  async function handleClarifyOrSubmit() {
+    if (clarifyFetched) {
+      handleSubmit();
+      return;
+    }
+    setClarifying(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/repair-requests/clarify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ category, instrument, brand, symptom }),
+      });
+      const data = await res.json().catch(() => null);
+      const questions: string[] = Array.isArray(data?.questions) ? data.questions : [];
+      setClarifyFetched(true);
+      if (questions.length > 0) {
+        setClarifyQuestions(questions);
+        setClarifyAnswers(new Array(questions.length).fill(""));
+        setClarifying(false);
+      } else {
+        setClarifying(false);
+        handleSubmit();
+      }
+    } catch {
+      // 확인 질문은 보조 기능이라, 실패해도 곧바로 분석으로 진행.
+      setClarifyFetched(true);
+      setClarifying(false);
+      handleSubmit();
+    }
+  }
+
   async function handleSubmit() {
     setSubmitting(true);
     setError(null);
+    const finalSymptom =
+      clarifyQuestions.length > 0
+        ? `${symptom}\n\n[추가 확인]\n${clarifyQuestions
+            .map((q, i) => `Q. ${q}\nA. ${clarifyAnswers[i]?.trim() || "(답변 없음)"}`)
+            .join("\n")}`
+        : symptom;
     const res = await fetch("/api/repair-requests", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ category, instrument, brand, symptom, photos, videos }),
+      body: JSON.stringify({ category, instrument, brand, symptom: finalSymptom, photos, videos }),
     });
     const data = await res.json().catch(() => null);
     setSubmitting(false);
@@ -225,16 +267,48 @@ export function NewRepairRequestForm({
             </div>
           </div>
 
+          {clarifyQuestions.length > 0 && (
+            <div className="space-y-3 rounded-xl border border-accent/30 bg-accent/5 p-4">
+              <p className="flex items-center gap-1.5 text-sm font-bold text-neutral-900 dark:text-neutral-100">
+                <HelpCircle className="h-4 w-4 text-accent" />
+                더 정확한 분석을 위해 몇 가지 확인할게요
+              </p>
+              {clarifyQuestions.map((q, i) => (
+                <div key={q}>
+                  <label className="mb-1 block text-sm text-neutral-700 dark:text-neutral-300">{q}</label>
+                  <input
+                    value={clarifyAnswers[i] ?? ""}
+                    onChange={(e) =>
+                      setClarifyAnswers((prev) => {
+                        const next = [...prev];
+                        next[i] = e.target.value;
+                        return next;
+                      })
+                    }
+                    placeholder="답변을 입력해주세요 (선택)"
+                    className="w-full rounded-xl border border-neutral-200 bg-white px-3 py-2.5 text-sm outline-none transition-colors focus:border-primary/40 focus:ring-2 focus:ring-primary/10 dark:border-neutral-700 dark:bg-neutral-900"
+                  />
+                </div>
+              ))}
+            </div>
+          )}
+
           {error && <p className="text-sm text-red-600">{error}</p>}
 
           <button
             type="button"
-            disabled={!symptom || submitting || uploading}
-            onClick={handleSubmit}
+            disabled={!symptom || submitting || uploading || clarifying}
+            onClick={handleClarifyOrSubmit}
             className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-bold text-primary-foreground shadow-sm transition-transform hover:scale-[1.01] hover:bg-primary/90 disabled:opacity-40 disabled:hover:scale-100"
           >
             <Sparkles className="h-4 w-4 text-accent" />
-            {submitting ? "AI 분석 중..." : "AI 분석 시작하기"}
+            {clarifying
+              ? "확인할 내용 준비 중..."
+              : submitting
+                ? "AI 분석 중..."
+                : clarifyFetched
+                  ? "AI 분석 시작하기"
+                  : "다음"}
           </button>
         </div>
       )}
