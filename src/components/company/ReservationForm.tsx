@@ -395,6 +395,10 @@ export function ReservationForm({
         />
       </div>
 
+      <p className="text-xs text-neutral-400">
+        업체 페이지의 가격표는 참고용이며, 실제 수리 비용은 방문/점검 후 업체와 협의해 확정됩니다.
+      </p>
+
       {message && <p className="text-sm text-neutral-600 dark:text-neutral-400">{message}</p>}
 
       <button
