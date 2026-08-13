@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { MapPin } from "lucide-react";
+import { MapPin, ChevronDown } from "lucide-react";
 import { REGION_SCOPES } from "@/lib/constants";
+import { KOREAN_REGIONS } from "@/lib/koreanRegions";
 
 const FILTER_OPTIONS: { key: keyof Filters; label: string }[] = [
   { key: "onSiteOnly", label: "출장 가능" },
@@ -24,7 +25,12 @@ type Filters = {
 export function MatchSettingsForm({ repairRequestId }: { repairRequestId: string }) {
   const router = useRouter();
   const [regionScope, setRegionScope] = useState<"DONG" | "GU" | "SI">("GU");
-  const [regionValue, setRegionValue] = useState("");
+  const [sido, setSido] = useState("");
+  const [district, setDistrict] = useState(""); // 빈 값 = 시/도 전체
+  const selectedRegion = KOREAN_REGIONS.find((r) => r.name === sido);
+  // Company.region은 자유 텍스트라, 구/군/시가 있으면 그 이름만(예: "마포구")
+  // 매칭 조건으로 써야 표기 방식이 달라도("서울특별시 마포구" 등) 안정적으로 걸린다.
+  const regionValue = district || sido;
   const [filters, setFilters] = useState<Filters>({
     onSiteOnly: false,
     sameDayOnly: false,
@@ -79,13 +85,50 @@ export function MatchSettingsForm({ repairRequestId }: { repairRequestId: string
             </button>
           ))}
         </div>
-        <input
-          required
-          value={regionValue}
-          onChange={(e) => setRegionValue(e.target.value)}
-          placeholder="예: 서울특별시 마포구"
-          className="mt-2 w-full rounded-xl border border-neutral-200 bg-surface-muted px-3 py-2.5 text-sm outline-none transition-colors focus:border-primary/40 focus:ring-2 focus:ring-primary/10 dark:border-neutral-700 dark:bg-neutral-800"
-        />
+        <div className="mt-2 grid grid-cols-2 gap-2">
+          <div className="relative">
+            <select
+              required
+              value={sido}
+              onChange={(e) => {
+                setSido(e.target.value);
+                setDistrict("");
+              }}
+              className="w-full appearance-none rounded-xl border border-neutral-200 bg-surface-muted px-3 py-2.5 pr-8 text-sm outline-none transition-colors focus:border-primary/40 focus:ring-2 focus:ring-primary/10 dark:border-neutral-700 dark:bg-neutral-800"
+            >
+              <option value="" disabled>
+                시/도 선택
+              </option>
+              {KOREAN_REGIONS.map((r) => (
+                <option key={r.name} value={r.name}>
+                  {r.name}
+                </option>
+              ))}
+            </select>
+            <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
+          </div>
+          <div className="relative">
+            <select
+              value={district}
+              onChange={(e) => setDistrict(e.target.value)}
+              disabled={!sido || !selectedRegion?.districts.length}
+              className="w-full appearance-none rounded-xl border border-neutral-200 bg-surface-muted px-3 py-2.5 pr-8 text-sm outline-none transition-colors focus:border-primary/40 focus:ring-2 focus:ring-primary/10 disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-800"
+            >
+              <option value="">{sido ? `${sido} 전체` : "구/군/시 선택"}</option>
+              {selectedRegion?.districts.map((d) => (
+                <option key={d} value={d}>
+                  {d}
+                </option>
+              ))}
+            </select>
+            <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
+          </div>
+        </div>
+        {sido && (
+          <p className="mt-1.5 text-xs text-neutral-400">
+            선택된 지역: {sido} {district || "전체"}
+          </p>
+        )}
       </div>
 
       <div>
@@ -116,7 +159,7 @@ export function MatchSettingsForm({ repairRequestId }: { repairRequestId: string
 
       <button
         type="submit"
-        disabled={submitting}
+        disabled={submitting || !sido}
         className="w-full rounded-xl bg-primary px-5 py-3 text-sm font-bold text-primary-foreground shadow-sm transition-transform hover:scale-[1.01] hover:bg-primary/90 disabled:opacity-40 disabled:hover:scale-100"
       >
         {submitting ? "업체 매칭 중..." : "업체 매칭 시작하기"}
