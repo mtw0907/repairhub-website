@@ -92,13 +92,6 @@ export const REPAIR_TARGETS: Record<"INSTRUMENT" | "AUDIO_EQUIPMENT", { label: s
   },
 };
 
-// RepairRequest Step 4 지역 매칭 기준 (실제 위경도 데이터가 없어 텍스트 지역 매칭만 지원)
-export const REGION_SCOPES: { value: "DONG" | "GU" | "SI"; label: string }[] = [
-  { value: "DONG", label: "같은 동" },
-  { value: "GU", label: "같은 구" },
-  { value: "SI", label: "같은 시" },
-];
-
 // 사용자당 하루 AI 수리 견적 매칭 요청 가능 횟수 (자정 기준 쿨다운)
 export const REPAIR_REQUEST_DAILY_LIMIT = 3;
 // 한 번의 매칭에서 견적 요청을 보낼 수 있는 최대 업체 수
