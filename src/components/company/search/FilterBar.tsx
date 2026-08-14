@@ -22,9 +22,11 @@ export function FilterBar({
   onChange: (filters: SearchFilters) => void;
   onOpenMore: () => void;
 }) {
+  const districtOptions = KOREAN_REGIONS.find((r) => r.name === filters.regionSido)?.districts ?? [];
+
   return (
     <div className="flex flex-wrap items-center gap-2 border-b border-neutral-200 bg-white/95 px-3 py-2.5 backdrop-blur dark:border-neutral-800 dark:bg-neutral-900/95">
-      <div className="w-28">
+      <div className="w-24">
         <SelectMenu
           compact
           placeholder="전국"
@@ -33,6 +35,19 @@ export function FilterBar({
           options={[
             { value: "", label: "전국" },
             ...KOREAN_REGIONS.map((r) => ({ value: r.name, label: r.name })),
+          ]}
+        />
+      </div>
+      <div className="w-28">
+        <SelectMenu
+          compact
+          placeholder="구/군/시"
+          value={filters.regionDistrict ?? ""}
+          onChange={(v) => onChange({ ...filters, regionDistrict: v || null })}
+          disabled={!filters.regionSido || districtOptions.length === 0}
+          options={[
+            { value: "", label: filters.regionSido ? `${filters.regionSido} 전체` : "구/군/시" },
+            ...districtOptions.map((d) => ({ value: d, label: d })),
           ]}
         />
       </div>

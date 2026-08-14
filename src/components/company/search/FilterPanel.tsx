@@ -1,8 +1,6 @@
 "use client";
 
 import { X } from "lucide-react";
-import { KOREAN_REGIONS } from "@/lib/koreanRegions";
-import { SelectMenu } from "@/components/ui/SelectMenu";
 
 export type SearchFilters = {
   minRating: number | null;
@@ -57,8 +55,6 @@ export function FilterPanel({
     onChange({ ...filters, [key]: filters[key] === value ? null : value });
   }
 
-  const districtOptions = KOREAN_REGIONS.find((r) => r.name === filters.regionSido)?.districts ?? [];
-
   return (
     <div className="fixed inset-0 z-40 flex items-end justify-center bg-black/30 sm:items-center">
       <div className="max-h-[85vh] w-full max-w-md overflow-y-auto rounded-t-3xl bg-white p-5 shadow-2xl dark:bg-neutral-900 sm:rounded-3xl">
@@ -74,36 +70,6 @@ export function FilterPanel({
         </div>
 
         <div className="space-y-6">
-          <div>
-            <p className="mb-2 text-sm font-semibold text-neutral-700 dark:text-neutral-300">지역</p>
-            <div className="grid grid-cols-2 gap-2">
-              <SelectMenu
-                placeholder="전국"
-                value={filters.regionSido ?? ""}
-                onChange={(v) =>
-                  onChange({ ...filters, regionSido: v || null, regionDistrict: null })
-                }
-                options={[
-                  { value: "", label: "전국" },
-                  ...KOREAN_REGIONS.map((r) => ({ value: r.name, label: r.name })),
-                ]}
-              />
-              <SelectMenu
-                placeholder="구/군/시 선택"
-                value={filters.regionDistrict ?? ""}
-                onChange={(v) => onChange({ ...filters, regionDistrict: v || null })}
-                disabled={!filters.regionSido || districtOptions.length === 0}
-                options={[
-                  {
-                    value: "",
-                    label: filters.regionSido ? `${filters.regionSido} 전체` : "구/군/시 선택",
-                  },
-                  ...districtOptions.map((d) => ({ value: d, label: d })),
-                ]}
-              />
-            </div>
-          </div>
-
           <div>
             <p className="mb-2 text-sm font-semibold text-neutral-700 dark:text-neutral-300">평점</p>
             <div className="flex flex-wrap gap-2">

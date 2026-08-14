@@ -1,12 +1,15 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { ChevronDown, Check } from "lucide-react";
 
 export type SelectMenuOption = { value: string; label: string };
 
 /** 사이트 디자인에 맞춘 커스텀 드롭다운. 네이티브 select는 열린 목록의
- * 폰트/색을 CSS로 제어할 수 없어서, 닫힌 상태와 열린 목록 모두 직접 그린다. */
+ * 폰트/색을 CSS로 제어할 수 없어서, 닫힌 상태와 열린 목록 모두 직접 그린다.
+ * 열린 목록은 document.body에 포털로 렌더링해, 조상 요소에 overflow-hidden이
+ * 걸려 있어도(지도/카드 패널 등) 잘리지 않고 항상 트리거 바로 아래에 뜬다. */
 export function SelectMenu({
   value,
   placeholder,
@@ -24,22 +27,50 @@ export function SelectMenu({
   compact?: boolean;
 }) {
   const [open, setOpen] = useState(false);
-  const rootRef = useRef<HTMLDivElement>(null);
+  const [mounted, setMounted] = useState(false);
+  const [pos, setPos] = useState({ top: 0, left: 0, width: 0 });
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const listRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => setMounted(true), []);
+
+  useLayoutEffect(() => {
+    if (!open || !buttonRef.current) return;
+    const rect = buttonRef.current.getBoundingClientRect();
+    setPos({ top: rect.bottom + 6, left: rect.left, width: rect.width });
+  }, [open]);
 
   useEffect(() => {
     if (!open) return;
-    function onClickOutside(e: MouseEvent) {
-      if (rootRef.current && !rootRef.current.contains(e.target as Node)) setOpen(false);
+    function onOutside(e: MouseEvent) {
+      if (
+        buttonRef.current &&
+        !buttonRef.current.contains(e.target as Node) &&
+        listRef.current &&
+        !listRef.current.contains(e.target as Node)
+      ) {
+        setOpen(false);
+      }
     }
-    document.addEventListener("mousedown", onClickOutside);
-    return () => document.removeEventListener("mousedown", onClickOutside);
+    function onScrollOrResize() {
+      setOpen(false);
+    }
+    document.addEventListener("mousedown", onOutside);
+    window.addEventListener("scroll", onScrollOrResize, true);
+    window.addEventListener("resize", onScrollOrResize);
+    return () => {
+      document.removeEventListener("mousedown", onOutside);
+      window.removeEventListener("scroll", onScrollOrResize, true);
+      window.removeEventListener("resize", onScrollOrResize);
+    };
   }, [open]);
 
   const selected = options.find((o) => o.value === value);
 
   return (
-    <div ref={rootRef} className="relative">
+    <div className="relative">
       <button
+        ref={buttonRef}
         type="button"
         disabled={disabled}
         onClick={() => setOpen((v) => !v)}
@@ -65,30 +96,40 @@ export function SelectMenu({
         />
       </button>
 
-      {open && (
-        <div
-          className={`absolute z-20 mt-1.5 max-h-64 overflow-y-auto rounded-xl border border-neutral-200 bg-white p-1 shadow-lg dark:border-neutral-700 dark:bg-neutral-900 ${compact ? "w-40" : "w-full"}`}
-        >
-          {options.map((o) => (
-            <button
-              key={o.value}
-              type="button"
-              onClick={() => {
-                onChange(o.value);
-                setOpen(false);
-              }}
-              className={
-                o.value === value
-                  ? "flex w-full items-center justify-between rounded-lg bg-primary/10 px-3 py-2 text-left text-sm font-semibold text-primary"
-                  : "flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm text-neutral-700 transition-colors hover:bg-accent/10 hover:text-accent dark:text-neutral-300"
-              }
-            >
-              {o.label}
-              {o.value === value && <Check className="h-3.5 w-3.5 shrink-0" />}
-            </button>
-          ))}
-        </div>
-      )}
+      {open &&
+        mounted &&
+        createPortal(
+          <div
+            ref={listRef}
+            style={{
+              position: "fixed",
+              top: pos.top,
+              left: pos.left,
+              width: compact ? 160 : Math.max(pos.width, 160),
+            }}
+            className="z-50 max-h-64 overflow-y-auto rounded-xl border border-neutral-200 bg-white p-1 shadow-lg dark:border-neutral-700 dark:bg-neutral-900"
+          >
+            {options.map((o) => (
+              <button
+                key={o.value}
+                type="button"
+                onClick={() => {
+                  onChange(o.value);
+                  setOpen(false);
+                }}
+                className={
+                  o.value === value
+                    ? "flex w-full items-center justify-between rounded-lg bg-primary/10 px-3 py-2 text-left text-sm font-semibold text-primary"
+                    : "flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm text-neutral-700 transition-colors hover:bg-accent/10 hover:text-accent dark:text-neutral-300"
+                }
+              >
+                {o.label}
+                {o.value === value && <Check className="h-3.5 w-3.5 shrink-0" />}
+              </button>
+            ))}
+          </div>,
+          document.body,
+        )}
     </div>
   );
 }
