@@ -21,14 +21,11 @@ export function DashboardShell({
       <header className="border-b border-neutral-200/80 bg-white/90 backdrop-blur-md dark:border-neutral-800/80 dark:bg-neutral-950/90">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-5">
           <div className="flex items-center gap-3">
-            <Link
-              href="/"
-              className="hidden items-center gap-2 sm:flex"
-            >
-              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
+            <Link href="/" className="flex items-center gap-2">
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors hover:bg-accent/20 hover:text-accent dark:hover:bg-accent/25 dark:hover:text-accent">
                 <Guitar className="h-5 w-5" />
               </span>
-              <span className="text-lg font-extrabold tracking-tight text-primary dark:text-neutral-100">
+              <span className="hidden text-lg font-extrabold tracking-tight text-primary dark:text-neutral-100 sm:inline">
                 소리수리
               </span>
             </Link>
