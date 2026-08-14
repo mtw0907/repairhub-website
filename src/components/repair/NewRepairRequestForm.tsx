@@ -19,6 +19,7 @@ export function NewRepairRequestForm({
   const [step, setStep] = useState(1);
   const [category, setCategory] = useState<Category | null>(null);
   const [instrument, setInstrument] = useState("");
+  const [isCustomInstrument, setIsCustomInstrument] = useState(false);
   const [brand, setBrand] = useState("");
   const [symptom, setSymptom] = useState("");
   const [photos, setPhotos] = useState<string[]>([]);
@@ -154,6 +155,7 @@ export function NewRepairRequestForm({
                     onClick={() => {
                       setCategory(key);
                       setInstrument("");
+                      setIsCustomInstrument(false);
                     }}
                     className={
                       category === key
@@ -179,9 +181,12 @@ export function NewRepairRequestForm({
                   <button
                     key={item}
                     type="button"
-                    onClick={() => setInstrument(item)}
+                    onClick={() => {
+                      setInstrument(item);
+                      setIsCustomInstrument(false);
+                    }}
                     className={
-                      instrument === item
+                      !isCustomInstrument && instrument === item
                         ? "rounded-full bg-primary px-4 py-1.5 text-sm font-semibold text-primary-foreground"
                         : "rounded-full border border-neutral-300 px-4 py-1.5 text-sm text-neutral-600 transition-colors hover:border-accent/50 dark:border-neutral-700 dark:text-neutral-300"
                     }
@@ -189,7 +194,30 @@ export function NewRepairRequestForm({
                     {item}
                   </button>
                 ))}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsCustomInstrument(true);
+                    setInstrument("");
+                  }}
+                  className={
+                    isCustomInstrument
+                      ? "rounded-full bg-primary px-4 py-1.5 text-sm font-semibold text-primary-foreground"
+                      : "rounded-full border border-dashed border-neutral-300 px-4 py-1.5 text-sm text-neutral-500 transition-colors hover:border-accent/50 dark:border-neutral-700 dark:text-neutral-400"
+                  }
+                >
+                  직접 입력
+                </button>
               </div>
+              {isCustomInstrument && (
+                <input
+                  autoFocus
+                  value={instrument}
+                  onChange={(e) => setInstrument(e.target.value)}
+                  placeholder="목록에 없는 종류를 직접 입력해주세요"
+                  className="mt-2 w-full rounded-xl border border-neutral-200 bg-surface-muted px-3 py-2.5 text-sm outline-none transition-colors focus:border-primary/40 focus:ring-2 focus:ring-primary/10 dark:border-neutral-700 dark:bg-neutral-800"
+                />
+              )}
             </div>
           )}
 
