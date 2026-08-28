@@ -2,6 +2,7 @@ import Link from "next/link";
 import { BadgeCheck, Clock, MapPin, Star, Truck } from "lucide-react";
 import { FavoriteButton } from "@/components/company/FavoriteButton";
 import { AiRecommendBadge } from "@/components/company/AiRecommendBadge";
+import { Tag } from "@/components/ui/Tag";
 import {
   RESERVATION_STATUS_LABEL,
   RESERVATION_STATUS_STYLE,
@@ -77,14 +78,14 @@ export function CompanyCard({
 
   return (
     <div
-      className={`group relative flex flex-col overflow-hidden rounded-2xl border bg-surface shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg ${
+      className={`group relative flex flex-col overflow-hidden rounded-2xl border bg-surface shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md ${
         highlighted
           ? "border-primary ring-2 ring-primary/30"
           : "border-neutral-200/70 dark:border-neutral-800"
       }`}
     >
       <Link href={`/companies/${company.id}`} className="flex flex-1 flex-col">
-        <div className="relative aspect-[4/3] w-full overflow-hidden bg-gradient-to-br from-primary/10 to-accent/15">
+        <div className="relative aspect-[4/3] w-full overflow-hidden bg-surface-muted">
           {photo ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
@@ -94,7 +95,7 @@ export function CompanyCard({
               className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
             />
           ) : (
-            <div className="flex h-full w-full items-center justify-center text-3xl font-bold text-primary/25">
+            <div className="flex h-full w-full items-center justify-center text-3xl font-bold text-primary/20">
               {company.name.slice(0, 1)}
             </div>
           )}
@@ -190,18 +191,20 @@ export function CompanyCard({
             </span>
           )}
 
-          {company.services.length > 0 && (
-            <div className="flex flex-wrap gap-1.5">
-              {company.services.slice(0, compact ? 2 : 3).map((s) => (
-                <span
-                  key={s}
-                  className="rounded-full bg-surface-muted px-2 py-0.5 text-[11px] text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300"
-                >
-                  {s}
-                </span>
-              ))}
-            </div>
-          )}
+          {(() => {
+            const tags = company.categoryNames?.length ? company.categoryNames : company.services;
+            return (
+              tags.length > 0 && (
+                <div className="flex flex-wrap gap-1.5">
+                  {tags.slice(0, compact ? 2 : 3).map((t) => (
+                    <Tag key={t} className="text-[11px]">
+                      {t}
+                    </Tag>
+                  ))}
+                </div>
+              )
+            );
+          })()}
 
           {company.todaySlots && company.todaySlots.length > 0 && (
             <div className="flex flex-wrap items-center gap-1.5 text-[11px] text-neutral-500 dark:text-neutral-400">

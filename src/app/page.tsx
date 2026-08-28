@@ -12,22 +12,30 @@ import {
   MessageCircle,
   Store,
   CalendarClock,
-  CalendarCheck,
   Building2,
   ShieldCheck,
   Grid3x3,
+  Guitar,
+  Speaker,
+  Camera,
+  Plane,
+  Printer,
+  Scale,
 } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { CompanyCard, type CompanySummary } from "@/components/company/CompanyCard";
 import { AiChatWidget } from "@/components/ai/AiChatWidget";
 import { HomeMapPreview } from "@/components/home/HomeMapPreview";
+import { SectionTitle } from "@/components/ui/SectionTitle";
+import { EmptyState } from "@/components/ui/EmptyState";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { getSetting } from "@/lib/systemSettings";
 import { POPULAR_CATEGORY_SLUGS } from "@/lib/constants";
 import { getCategoryTree, getCategoryIcon } from "@/lib/categories";
 import { maskName } from "@/lib/format";
+import { haversineDistanceKm, formatDistanceKm, DEFAULT_MAP_CENTER } from "@/lib/geo";
 
 const PARTNER_AI_SHORTCUTS = [
   { href: "/partner/dashboard/ai/blog", label: "블로그 작성", icon: PenLine },
@@ -37,10 +45,10 @@ const PARTNER_AI_SHORTCUTS = [
 ];
 
 const FEATURE_LINKS = [
-  { href: "/companies", title: "업체 찾기", desc: "내 주변 악기 수리업체를 쉽게 찾아보세요.", icon: Store },
+  { href: "/companies", title: "업체 찾기", desc: "내 주변 전문 장비 수리업체를 쉽게 찾아보세요.", icon: Store },
   {
     href: "/dashboard/repair-requests/new",
-    title: "AI 견적 받기",
+    title: "AI 수리진단",
     desc: "AI가 분석하고 여러 업체의 견적을 비교해보세요.",
     icon: Sparkles,
   },
@@ -58,6 +66,33 @@ const FEATURE_LINKS = [
   },
 ];
 
+// Hero 검색창 아래 예시 칩. 실제 사진/일러스트 대신 카테고리 아이콘 콜라주로
+// "여러 전문 장비를 다룬다"는 인상을 준다 — 아래 HERO_COLLAGE와 함께 쓰인다.
+const EXAMPLE_QUERIES = ["기타 줄이 버징나요", "JBL 스피커 전원이 안켜져요", "소니 카메라 렌즈 오류", "DJI 드론 추락"];
+
+const HERO_COLLAGE = [
+  { icon: Guitar, className: "left-2 top-6 h-16 w-16 rotate-[-8deg] sm:h-20 sm:w-20" },
+  { icon: Speaker, className: "left-24 top-0 h-14 w-14 rotate-[6deg] sm:h-16 sm:w-16" },
+  { icon: Camera, className: "left-4 top-32 h-14 w-14 rotate-[4deg] sm:h-16 sm:w-16" },
+  { icon: Plane, className: "left-28 top-24 h-16 w-16 rotate-[-4deg] sm:h-20 sm:w-20" },
+  { icon: Printer, className: "left-8 top-56 h-12 w-12 rotate-[-6deg] sm:h-14 sm:w-14" },
+];
+
+// AI 수리진단 소개 섹션의 4단계 설명 (지시서 5번 SECTION 3).
+const AI_STEPS = [
+  "장비 선택",
+  "증상 입력",
+  "사진 첨부",
+  "예상 문제 분석 후 여러 업체에 견적 요청",
+];
+
+// 견적 비교 소개 섹션의 목업 카드 — 실제 데이터 아님, UI 예시용 (지시서 SECTION 5).
+const MOCK_QUOTES = [
+  { name: "업체 A", price: "45,000원", duration: "2일", rating: "4.9" },
+  { name: "업체 B", price: "60,000원", duration: "1일", rating: "4.8" },
+  { name: "업체 C", price: "50,000원", duration: "3일", rating: "5.0" },
+];
+
 function toCompanySummary(c: {
   id: string;
   name: string;
@@ -66,6 +101,7 @@ function toCompanySummary(c: {
   introduction: string | null;
   services: { name: string }[];
   brands: { name: string }[];
+  categories: { category: { name: string; slug: string; parent: { name: string; slug: string } | null } }[];
   onSiteVisit: boolean;
   courierDrop: boolean;
   reviews: { rating: number }[];
@@ -79,6 +115,9 @@ function toCompanySummary(c: {
   const avgRating =
     reviewCount > 0 ? c.reviews.reduce((sum, r) => sum + r.rating, 0) / reviewCount : null;
   const photos: string[] = c.photos ? JSON.parse(c.photos) : [];
+  const categoryNames = Array.from(
+    new Set(c.categories.flatMap((cc) => [cc.category.name, cc.category.parent?.name].filter((s): s is string => !!s))),
+  );
   return {
     id: c.id,
     name: c.name,
@@ -87,6 +126,7 @@ function toCompanySummary(c: {
     introduction: c.introduction,
     services: c.services.map((s) => s.name),
     brands: c.brands.map((b) => b.name),
+    categoryNames,
     onSiteVisit: c.onSiteVisit,
     courierDrop: c.courierDrop,
     avgRating,
@@ -99,7 +139,6 @@ function toCompanySummary(c: {
   };
 }
 
-
 export default async function LandingPage() {
   const session = await auth();
   const isUser = session?.user?.role === "USER";
@@ -107,10 +146,23 @@ export default async function LandingPage() {
   const companyInclude = {
     services: true,
     brands: true,
+    categories: {
+      include: { category: { select: { name: true, slug: true, parent: { select: { name: true, slug: true } } } } },
+    },
     reviews: { where: { status: "VISIBLE" as const }, select: { rating: true } },
   };
 
-  const [popularRaw, newRaw, workCases, reviews, kakaoMapKey, approvedCompanyCount, categoryTree] = await Promise.all([
+  const [
+    popularRaw,
+    newRaw,
+    workCases,
+    reviews,
+    kakaoMapKey,
+    approvedCompanyCount,
+    categoryTree,
+    repairRequestCount,
+    ratingAgg,
+  ] = await Promise.all([
     prisma.company.findMany({
       where: { status: "APPROVED" },
       include: companyInclude,
@@ -137,6 +189,8 @@ export default async function LandingPage() {
     getSetting("KAKAO_MAP_JS_KEY"),
     prisma.company.count({ where: { status: "APPROVED" } }),
     getCategoryTree(),
+    prisma.repairRequest.count(),
+    prisma.review.aggregate({ where: { status: "VISIBLE" }, _avg: { rating: true } }),
   ]);
 
   const popularCategories = POPULAR_CATEGORY_SLUGS.map((slug) =>
@@ -156,19 +210,36 @@ export default async function LandingPage() {
       : [];
   const favoritedIds = new Set(favorites.map((f) => f.companyId));
 
+  const companyPool = Array.from(new Map([...popularRaw, ...newRaw].map((c) => [c.id, c])).values());
+  // "내 주변 추천 수리업체" — 브라우저 위치 접근 없이 서버에서 렌더링해야
+  // 해서, 기본 지도 중심(서울시청)으로부터의 거리 기준으로 정렬한 미리보기.
+  // 실제 내 위치 기반 정밀 검색은 /companies 페이지에서 제공한다.
+  const nearby = companyPool
+    .filter((c) => c.latitude != null && c.longitude != null)
+    .map((c) => {
+      const distanceKm = haversineDistanceKm(DEFAULT_MAP_CENTER.lat, DEFAULT_MAP_CENTER.lng, c.latitude!, c.longitude!);
+      return { ...toCompanySummary(c), distanceLabel: formatDistanceKm(distanceKm), distanceKm };
+    })
+    .sort((a, b) => a.distanceKm - b.distanceKm)
+    .slice(0, 4);
+
   const mapCompanies = Array.from(
     new Map(
-      [...popularRaw, ...newRaw]
+      companyPool
         .filter((c) => c.latitude != null && c.longitude != null)
         .map((c) => [c.id, { id: c.id, name: c.name, lat: c.latitude as number, lng: c.longitude as number }]),
     ).values(),
   ).slice(0, 8);
 
   const STATS = [
-    { title: "실시간 예약", desc: "원하는 시간에 바로 예약", icon: CalendarCheck },
-    { title: "AI 견적 매칭", desc: "증상 분석부터 맞춤 견적까지", icon: Sparkles },
-    { title: `등록 업체 ${approvedCompanyCount}곳`, desc: "믿을 수 있는 검증된 업체", icon: Building2 },
-    { title: "안전한 거래", desc: "소리수리가 보증하는 안심 거래", icon: ShieldCheck },
+    { title: `등록 수리업체 ${approvedCompanyCount}곳`, desc: "믿을 수 있는 검증된 업체", icon: Building2 },
+    { title: `누적 견적 요청 ${repairRequestCount}건`, desc: "AI가 분석한 수리 상담", icon: Sparkles },
+    {
+      title: ratingAgg._avg.rating ? `평균 만족도 ${ratingAgg._avg.rating.toFixed(1)}점` : "실제 이용 후기 기반",
+      desc: "이용자가 직접 남긴 리뷰 평점",
+      icon: Star,
+    },
+    { title: "안전한 예약 시스템", desc: "소리수리가 보증하는 안심 거래", icon: ShieldCheck },
   ];
 
   return (
@@ -177,69 +248,98 @@ export default async function LandingPage() {
 
       <main className="flex-1">
         {/* Hero */}
-        <section className="relative isolate overflow-hidden px-4 pb-20 pt-20 sm:px-6 sm:pb-28 sm:pt-28">
-          {/* 배경: /public/assets/hero-repair.jpg가 있으면 그 사진을, 없으면
-              남색 그라데이션으로 대체 (CSS 다중 배경 — 이미지 404 시 자동으로
-              두 번째 레이어만 남음). 실제 사진을 준비하면 같은 경로에 넣기만
-              하면 됩니다. */}
+        <section className="relative isolate overflow-hidden px-4 pb-16 pt-16 sm:px-6 sm:pb-24 sm:pt-24">
           <div
             aria-hidden
             className="absolute inset-0 -z-20 bg-cover bg-center"
             style={{
-              backgroundImage:
-                "url(/assets/hero-repair.jpg), linear-gradient(135deg, #0f1620 0%, #1e293b 55%, #2c3b52 100%)",
+              backgroundImage: "linear-gradient(135deg, #0f1620 0%, #1e293b 55%, #2c3b52 100%)",
             }}
           />
-          <div aria-hidden className="absolute inset-0 -z-10 bg-black/55" />
           <div
             aria-hidden
-            className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_60%_50%_at_50%_-10%,color-mix(in_srgb,var(--accent)_25%,transparent),transparent)]"
+            className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_60%_50%_at_50%_-10%,color-mix(in_srgb,var(--accent)_20%,transparent),transparent)]"
           />
 
-          <div className="relative mx-auto max-w-2xl text-center">
-            <p className="mb-4 inline-flex items-center rounded-full bg-white/10 px-3 py-1 text-xs font-medium text-white/80 backdrop-blur-sm">
-              전국 음향기기 · 악기 수리 플랫폼
-            </p>
-            <h1 className="text-4xl font-extrabold leading-tight tracking-tight text-white sm:text-6xl">
-              믿을 수 있는 악기 수리,
-              <br />
-              <span className="text-accent">소리수리</span>에서 한 번에
-            </h1>
-            <p className="mx-auto mt-5 max-w-xl text-base text-white/80 sm:text-lg">
-              악기와 음향기기 수리업체를 찾고,
-              <br className="hidden sm:block" />
-              AI 견적부터 예약까지 한 번에
-            </p>
+          <div className="relative mx-auto grid max-w-6xl items-center gap-10 lg:grid-cols-[minmax(0,1fr)_280px]">
+            <div className="text-center lg:text-left">
+              <p className="mb-4 inline-flex items-center rounded-full bg-white/10 px-3 py-1 text-xs font-medium text-white/80 backdrop-blur-sm">
+                전국 전문 장비 수리 플랫폼
+              </p>
+              <h1 className="text-4xl font-extrabold leading-tight tracking-tight text-white sm:text-5xl">
+                고장난 장비,
+                <br />
+                <span className="text-accent">어디서 수리</span>할까요?
+              </h1>
+              <p className="mx-auto mt-5 max-w-xl text-base text-white/80 sm:text-lg lg:mx-0">
+                악기 · 음향 · 카메라 · 영상 · 드론 · 3D프린터까지
+                <br className="hidden sm:block" />
+                가까운 전문 수리업체를 찾고 견적을 비교하세요.
+              </p>
 
-            <form
-              action="/companies"
-              className="mx-auto mt-9 flex max-w-xl flex-col gap-2 rounded-2xl bg-white p-2.5 shadow-2xl sm:flex-row"
-            >
-              <div className="flex flex-1 items-center gap-2 px-3 py-3">
-                <Search className="h-5 w-5 shrink-0 text-neutral-400" />
-                <input
-                  type="text"
-                  name="keyword"
-                  placeholder="악기, 브랜드, 업체명을 검색하세요."
-                  className="w-full min-w-0 border-0 bg-transparent text-base text-neutral-800 outline-none placeholder:text-neutral-400"
-                />
-              </div>
-              <button
-                type="submit"
-                className="shrink-0 rounded-xl bg-primary px-7 py-3.5 text-base font-bold text-primary-foreground shadow-lg shadow-primary/30 transition-transform hover:scale-[1.02] hover:bg-primary/90"
+              <form
+                action="/companies"
+                className="mx-auto mt-9 flex max-w-xl flex-col gap-2 rounded-2xl bg-white p-2.5 shadow-2xl sm:flex-row lg:mx-0"
               >
-                업체 찾기
-              </button>
-            </form>
+                <div className="flex flex-1 items-center gap-2 px-3 py-3">
+                  <Search className="h-5 w-5 shrink-0 text-neutral-400" />
+                  <input
+                    type="text"
+                    name="keyword"
+                    placeholder="장비명 또는 고장 증상을 입력하세요"
+                    className="w-full min-w-0 border-0 bg-transparent text-base text-neutral-800 outline-none placeholder:text-neutral-400"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  className="shrink-0 rounded-xl bg-primary px-6 py-3.5 text-base font-bold text-primary-foreground shadow-lg shadow-primary/30 transition-transform hover:scale-[1.02] hover:bg-primary/90"
+                >
+                  업체 찾기
+                </button>
+                <Link
+                  href="/dashboard/repair-requests/new"
+                  className="flex shrink-0 items-center justify-center gap-1.5 rounded-xl bg-accent px-6 py-3.5 text-base font-bold text-accent-foreground shadow-lg shadow-accent/30 transition-transform hover:scale-[1.02] hover:bg-accent/90"
+                >
+                  <Sparkles className="h-4.5 w-4.5" />
+                  AI 수리진단
+                </Link>
+              </form>
 
-            <div className="mt-5 flex justify-center gap-3 text-sm">
-              <Link href="/companies" className="font-medium text-white/80 underline-offset-4 hover:text-white hover:underline">
-                전체 업체 둘러보기
-              </Link>
-              <span className="text-white/30">·</span>
-              <Link href="/register" className="font-medium text-white/80 underline-offset-4 hover:text-white hover:underline">
-                회원가입
-              </Link>
+              <div className="mx-auto mt-4 flex max-w-xl flex-wrap justify-center gap-1.5 lg:mx-0 lg:justify-start">
+                {EXAMPLE_QUERIES.map((q) => (
+                  <Link
+                    key={q}
+                    href={`/companies?keyword=${encodeURIComponent(q)}`}
+                    className="rounded-full bg-white/10 px-3 py-1.5 text-xs text-white/70 backdrop-blur-sm transition-colors hover:bg-white/20 hover:text-white"
+                  >
+                    {q}
+                  </Link>
+                ))}
+              </div>
+
+              <div className="mt-5 flex justify-center gap-3 text-sm lg:justify-start">
+                <Link href="/companies" className="font-medium text-white/80 underline-offset-4 hover:text-white hover:underline">
+                  전체 업체 둘러보기
+                </Link>
+                <span className="text-white/30">·</span>
+                <Link href="/register" className="font-medium text-white/80 underline-offset-4 hover:text-white hover:underline">
+                  회원가입
+                </Link>
+              </div>
+            </div>
+
+            {/* 여러 전문 장비를 다룬다는 인상을 주는 아이콘 콜라주 — 실제
+                사진/일러스트 대신 카테고리 아이콘을 카드형으로 겹쳐 배치.
+                나중에 실제 사진을 준비하면 이 블록을 <img>로 교체 가능. */}
+            <div className="relative hidden h-72 lg:block" aria-hidden>
+              {HERO_COLLAGE.map(({ icon: Icon, className }, i) => (
+                <span
+                  key={i}
+                  className={`absolute flex items-center justify-center rounded-2xl bg-white/95 text-primary shadow-xl ${className}`}
+                >
+                  <Icon className="h-1/2 w-1/2" />
+                </span>
+              ))}
             </div>
           </div>
         </section>
@@ -270,32 +370,36 @@ export default async function LandingPage() {
 
         {/* 인기 카테고리 */}
         <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
-          <div className="mb-5 flex items-center justify-between">
-            <h2 className="text-xl font-bold text-neutral-900 dark:text-neutral-100 sm:text-2xl">
-              인기 카테고리
-            </h2>
-            <Link
-              href="/categories"
-              className="flex items-center gap-1 text-sm font-medium text-neutral-500 transition-colors hover:text-accent"
-            >
-              <Grid3x3 className="h-4 w-4" />
-              전체 카테고리 보기
-            </Link>
-          </div>
-          <div className="grid grid-cols-4 gap-3 sm:grid-cols-8">
+          <SectionTitle
+            title="어떤 장비를 수리하시나요?"
+            action={
+              <Link
+                href="/categories"
+                className="flex items-center gap-1 text-sm font-medium text-neutral-500 transition-colors hover:text-accent"
+              >
+                <Grid3x3 className="h-4 w-4" />
+                전체 카테고리 보기
+              </Link>
+            }
+          />
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             {popularCategories.map((cat) => {
               const Icon = getCategoryIcon(cat.icon);
+              const sample = cat.children.slice(0, 2).map((c) => c.name).join(" · ");
               return (
                 <Link
                   key={cat.id}
                   href={`/companies?category=${cat.slug}`}
-                  className="group flex flex-col items-center gap-2 rounded-2xl border border-neutral-200/70 bg-white p-3 text-center shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-accent/50 hover:shadow-md dark:border-neutral-800 dark:bg-neutral-900 sm:p-4"
+                  className="group flex items-center gap-3 rounded-2xl border border-neutral-200/70 bg-white p-4 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-md dark:border-neutral-800 dark:bg-neutral-900"
                 >
-                  <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary transition-colors group-hover:bg-accent/20 group-hover:text-accent dark:text-neutral-200">
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors group-hover:bg-accent/20 group-hover:text-accent dark:text-neutral-200">
                     <Icon className="h-5 w-5" />
                   </span>
-                  <span className="text-[11px] font-medium text-neutral-700 dark:text-neutral-300 sm:text-xs">
-                    {cat.name}
+                  <span className="min-w-0">
+                    <span className="block text-sm font-bold text-neutral-900 dark:text-neutral-100">
+                      {cat.name}
+                    </span>
+                    {sample && <span className="block truncate text-xs text-neutral-500">{sample}</span>}
                   </span>
                 </Link>
               );
@@ -303,22 +407,22 @@ export default async function LandingPage() {
           </div>
         </section>
 
-        {/* AI 상담 */}
+        {/* AI 수리진단 소개 */}
         <section id="ai-assistant" className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
           <div className="overflow-hidden rounded-2xl border border-neutral-200/70 bg-white shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
-            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-neutral-100 bg-gradient-to-r from-primary to-primary/85 px-5 py-4 dark:border-neutral-800 sm:px-6">
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-neutral-100 px-5 py-4 dark:border-neutral-800 sm:px-6">
               <div className="flex items-center gap-2.5">
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white/15 text-accent">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
                   <Sparkles className="h-5 w-5" />
                 </span>
                 <div>
-                  <h2 className="text-base font-bold text-white sm:text-lg">
-                    AI 어시스턴트에게 바로 물어보기
+                  <h2 className="text-base font-bold text-neutral-900 dark:text-neutral-100 sm:text-lg">
+                    AI가 먼저 증상을 정리해드립니다
                   </h2>
-                  <p className="text-xs text-white/70 sm:text-sm">
+                  <p className="text-xs text-neutral-500 sm:text-sm">
                     {isPartner
                       ? "블로그, 광고 문구, FAQ, 고객 상담까지 AI로 빠르게 준비해보세요"
-                      : "수리 증상이나 궁금한 점을 지금 바로 상담해보세요"}
+                      : "장비 선택부터 견적 요청까지, 로그인 없이도 진행할 수 있어요"}
                   </p>
                 </div>
               </div>
@@ -328,7 +432,7 @@ export default async function LandingPage() {
                     <Link
                       key={s.href}
                       href={s.href}
-                      className="flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-white/20"
+                      className="flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary transition-colors hover:bg-accent/15 hover:text-accent"
                     >
                       <s.icon className="h-3.5 w-3.5" />
                       {s.label}
@@ -337,61 +441,92 @@ export default async function LandingPage() {
                 </div>
               )}
             </div>
-            {isUser ? (
-              <div className="grid gap-4 p-4 sm:grid-cols-5 sm:p-5">
-                <div className="sm:col-span-3">
-                  <AiChatWidget compact />
-                </div>
-                <Link
-                  href="/dashboard/repair-requests/new"
-                  className="group flex flex-col items-center justify-center gap-3 rounded-2xl bg-gradient-to-br from-accent to-accent/80 p-6 text-center shadow-md transition-transform hover:scale-[1.02] sm:col-span-2"
-                >
-                  <span className="flex h-14 w-14 items-center justify-center rounded-full bg-white/25 text-accent-foreground">
-                    <Wrench className="h-7 w-7" />
-                  </span>
-                  <div>
-                    <p className="text-xl font-extrabold text-accent-foreground">AI 수리 견적 매칭</p>
-                    <p className="mt-1 text-sm text-accent-foreground/80">
-                      증상 입력하고 업체 견적 받아보기
-                    </p>
-                  </div>
-                  <span className="mt-1 flex items-center gap-1 rounded-full bg-white/90 px-4 py-2 text-sm font-bold text-primary transition-transform group-hover:translate-x-1">
-                    지금 시작하기
-                    <ArrowRight className="h-4 w-4" />
-                  </span>
-                </Link>
-              </div>
-            ) : isPartner ? (
+            {isPartner ? (
               <div className="p-4 sm:p-5">
                 <AiChatWidget mode="partner" />
               </div>
             ) : (
-              <div className="flex flex-col items-center gap-3 px-5 py-10 text-center">
-                <p className="text-sm text-neutral-600 dark:text-neutral-400">
-                  로그인하면 AI 상담사에게 고장 증상, 예상 수리비, 업체 추천까지 바로 물어볼 수 있어요.
-                </p>
-                <Link
-                  href="/login"
-                  className="rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm transition-transform hover:scale-[1.02] hover:bg-primary/90"
-                >
-                  로그인하고 AI 상담 받아보기
-                </Link>
+              <div className="grid gap-6 p-5 sm:grid-cols-5 sm:p-6">
+                <div className="sm:col-span-3">
+                  <AiChatWidget compact />
+                </div>
+                <div className="flex flex-col justify-center gap-4 sm:col-span-2">
+                  <ol className="space-y-2.5">
+                    {AI_STEPS.map((step, i) => (
+                      <li key={step} className="flex items-start gap-2.5 text-sm text-neutral-700 dark:text-neutral-300">
+                        <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/10 text-[11px] font-bold text-primary">
+                          {i + 1}
+                        </span>
+                        {step}
+                      </li>
+                    ))}
+                  </ol>
+                  <Link
+                    href="/dashboard/repair-requests/new"
+                    className="flex items-center justify-center gap-1.5 rounded-xl bg-accent px-5 py-3 text-sm font-bold text-accent-foreground shadow-sm transition-transform hover:scale-[1.02] hover:bg-accent/90"
+                  >
+                    AI 수리진단 시작하기
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </div>
               </div>
             )}
           </div>
         </section>
 
-        {/* 인기 업체 + 신규 업체 (좌, 각 한 줄) + 내 주변 지도 (우, 두 줄 높이만큼) */}
+        {/* 내 주변 추천 수리업체 */}
+        {nearby.length > 0 && (
+          <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
+            <SectionTitle title="내 주변 추천 수리업체" subtitle="가까운 거리부터 보여드려요" />
+            <div className="-mx-4 flex gap-4 overflow-x-auto px-4 pb-2 sm:mx-0 sm:grid sm:grid-cols-4 sm:overflow-visible sm:px-0">
+              {nearby.map((c) => (
+                <div key={c.id} className="w-64 shrink-0 sm:w-auto">
+                  <CompanyCard company={c} isUser={isUser} favorited={favoritedIds.has(c.id)} compact />
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* 견적 비교 소개 */}
+        <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
+          <SectionTitle title="여러 업체 견적을 한 번에 비교하세요" subtitle="가격, 기간, 평점까지 나란히 놓고 골라보세요" />
+          <div className="grid gap-4 sm:grid-cols-3">
+            {MOCK_QUOTES.map((q) => (
+              <div
+                key={q.name}
+                className="rounded-2xl border border-neutral-200/70 bg-white p-5 shadow-sm dark:border-neutral-800 dark:bg-neutral-900"
+              >
+                <p className="text-sm font-bold text-neutral-900 dark:text-neutral-100">{q.name}</p>
+                <p className="mt-2 text-2xl font-extrabold text-primary dark:text-neutral-100">{q.price}</p>
+                <div className="mt-3 flex items-center gap-3 text-xs text-neutral-500">
+                  <span>예상 {q.duration}</span>
+                  <span className="flex items-center gap-1">
+                    <Star className="h-3.5 w-3.5 fill-accent text-accent" />
+                    {q.rating}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+          <p className="mt-3 text-center text-xs text-neutral-400">위 카드는 화면 예시이며 실제 견적 데이터가 아닙니다.</p>
+          <div className="mt-6 flex justify-center">
+            <Link
+              href="/compare"
+              className="flex items-center gap-2 rounded-xl bg-primary px-7 py-3.5 text-base font-bold text-primary-foreground shadow-md transition-transform hover:scale-[1.02] hover:bg-primary/90"
+            >
+              <Scale className="h-4.5 w-4.5" />
+              견적 비교 시작하기
+            </Link>
+          </div>
+        </section>
+
+        {/* 인기 업체 + 신규 업체 + 내 주변 지도 */}
         <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
           <div className="grid gap-8 lg:grid-cols-3 lg:items-stretch">
             <div className="flex flex-col gap-10 lg:col-span-2">
               <div>
-                <div className="mb-5">
-                  <h2 className="text-xl font-bold text-neutral-900 dark:text-neutral-100 sm:text-2xl">
-                    지금 인기 있는 업체
-                  </h2>
-                  <p className="mt-1 text-sm text-neutral-500">평점과 추천 지수가 높은 업체예요</p>
-                </div>
+                <SectionTitle title="지금 인기 있는 업체" subtitle="평점과 추천 지수가 높은 업체예요" />
                 {popular.length > 0 ? (
                   <div className="grid gap-5 sm:grid-cols-3">
                     {popular.slice(0, 3).map((c) => (
@@ -399,19 +534,12 @@ export default async function LandingPage() {
                     ))}
                   </div>
                 ) : (
-                  <p className="rounded-2xl border border-dashed border-neutral-300 py-12 text-center text-sm text-neutral-500">
-                    아직 등록된 업체가 없습니다.
-                  </p>
+                  <EmptyState title="아직 등록된 업체가 없습니다." />
                 )}
               </div>
 
               <div>
-                <div className="mb-5">
-                  <h2 className="text-xl font-bold text-neutral-900 dark:text-neutral-100 sm:text-2xl">
-                    새로 합류한 업체
-                  </h2>
-                  <p className="mt-1 text-sm text-neutral-500">소리수리에 최근 등록된 업체예요</p>
-                </div>
+                <SectionTitle title="새로 합류한 업체" subtitle="소리수리에 최근 등록된 업체예요" />
                 {fresh.length > 0 ? (
                   <div className="grid gap-5 sm:grid-cols-3">
                     {fresh.slice(0, 3).map((c) => (
@@ -419,19 +547,13 @@ export default async function LandingPage() {
                     ))}
                   </div>
                 ) : (
-                  <p className="rounded-2xl border border-dashed border-neutral-300 py-12 text-center text-sm text-neutral-500">
-                    아직 등록된 업체가 없습니다.
-                  </p>
+                  <EmptyState title="아직 등록된 업체가 없습니다." />
                 )}
               </div>
             </div>
 
             <div className="flex flex-col">
-              <div className="mb-5">
-                <h2 className="text-xl font-bold text-neutral-900 dark:text-neutral-100 sm:text-2xl">
-                  내 주변 수리업체
-                </h2>
-              </div>
+              <SectionTitle title="내 주변 수리업체" />
               <div className="min-h-[420px] flex-1 overflow-hidden rounded-2xl border border-neutral-200/70 shadow-sm dark:border-neutral-800">
                 <HomeMapPreview companies={mapCompanies} kakaoMapKey={kakaoMapKey} />
               </div>
@@ -451,9 +573,7 @@ export default async function LandingPage() {
         {/* 수리사례 */}
         {workCases.length > 0 && (
           <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
-            <h2 className="mb-5 text-xl font-bold text-neutral-900 dark:text-neutral-100 sm:text-2xl">
-              수리 사례
-            </h2>
+            <SectionTitle title="수리 사례" />
             <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
               {workCases.map((w) => {
                 const photos: string[] = w.photos ? JSON.parse(w.photos) : [];
@@ -461,9 +581,9 @@ export default async function LandingPage() {
                   <Link
                     key={w.id}
                     href={`/companies/${w.company.id}`}
-                    className="group flex flex-col overflow-hidden rounded-2xl border border-neutral-200/70 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg dark:border-neutral-800 dark:bg-neutral-900"
+                    className="group flex flex-col overflow-hidden rounded-2xl border border-neutral-200/70 bg-white shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md dark:border-neutral-800 dark:bg-neutral-900"
                   >
-                    <div className="relative aspect-square w-full overflow-hidden bg-gradient-to-br from-primary/10 to-accent/15">
+                    <div className="relative aspect-square w-full overflow-hidden bg-surface-muted">
                       {photos[0] ? (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img
@@ -472,7 +592,7 @@ export default async function LandingPage() {
                           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                         />
                       ) : (
-                        <div className="flex h-full w-full items-center justify-center text-primary/25">
+                        <div className="flex h-full w-full items-center justify-center text-primary/20">
                           <Wrench className="h-8 w-8" />
                         </div>
                       )}
@@ -493,26 +613,35 @@ export default async function LandingPage() {
         {/* 후기 */}
         {reviews.length > 0 && (
           <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:pb-20">
-            <h2 className="mb-5 text-xl font-bold text-neutral-900 dark:text-neutral-100 sm:text-2xl">
-              실제 이용 후기
-            </h2>
+            <SectionTitle title="실제 이용 후기" />
             <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
               {reviews.map((r) => (
                 <Link
                   key={r.id}
                   href={`/companies/${r.company.id}`}
-                  className="flex flex-col gap-2.5 rounded-2xl border border-neutral-200/70 bg-white p-4 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg dark:border-neutral-800 dark:bg-neutral-900"
+                  className="flex flex-col gap-2.5 rounded-2xl border border-neutral-200/70 bg-white p-4 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md dark:border-neutral-800 dark:bg-neutral-900"
                 >
-                  <div className="flex items-center gap-1 text-accent">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <Star key={i} className="h-3.5 w-3.5" fill={i < r.rating ? "currentColor" : "none"} />
-                    ))}
+                  <div className="flex items-center gap-2.5">
+                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">
+                      {maskName(r.user.name).slice(0, 1)}
+                    </span>
+                    <div className="min-w-0">
+                      <p className="truncate text-xs font-semibold text-neutral-700 dark:text-neutral-300">
+                        {maskName(r.user.name)} 님
+                      </p>
+                      <p className="truncate text-[11px] text-neutral-400">{r.company.name}</p>
+                    </div>
+                    <div className="ml-auto flex shrink-0 items-center gap-1 text-accent">
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <Star key={i} className="h-3 w-3" fill={i < r.rating ? "currentColor" : "none"} />
+                      ))}
+                    </div>
                   </div>
                   <p className="line-clamp-3 flex-1 text-sm text-neutral-700 dark:text-neutral-300">
                     {r.content}
                   </p>
-                  <p className="text-xs text-neutral-500">
-                    {maskName(r.user.name)} 님 · {r.company.name}
+                  <p className="text-[11px] text-neutral-400">
+                    {new Date(r.createdAt).toLocaleDateString("ko-KR")}
                   </p>
                 </Link>
               ))}
@@ -521,7 +650,7 @@ export default async function LandingPage() {
         )}
       </main>
 
-      {/* 통계 바 */}
+      {/* 서비스 신뢰 요소 */}
       <section className="border-t border-neutral-200/70 bg-white px-4 py-10 dark:border-neutral-800 dark:bg-neutral-950 sm:px-6">
         <div className="mx-auto grid max-w-6xl grid-cols-2 gap-6 sm:grid-cols-4">
           {STATS.map((s) => (
