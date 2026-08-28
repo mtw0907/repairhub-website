@@ -16,7 +16,7 @@ import {
   Sparkles,
   ArrowRight,
   Info,
-  Tag,
+  Tag as TagIcon,
   Wrench,
   Award,
 } from "lucide-react";
@@ -24,8 +24,9 @@ import { ReservationForm } from "@/components/company/ReservationForm";
 import { InquiryForm } from "@/components/company/InquiryForm";
 import { ReviewForm } from "@/components/company/ReviewForm";
 import { ReportButton } from "@/components/ReportButton";
+import { Tag } from "@/components/ui/Tag";
 import { maskName } from "@/lib/format";
-import type { CategoryTreeNode } from "@/lib/categories";
+import { getCategoryIcon, type CategoryTreeNode } from "@/lib/categories";
 
 type TabKey = "home" | "services" | "reservation" | "estimate" | "inquiry" | "reviews";
 
@@ -53,6 +54,7 @@ export function CompanyDetailTabs({
   reviewCount,
   ownReview,
   categoryTree,
+  assignedCategories,
 }: {
   companyId: string;
   isUser: boolean;
@@ -67,6 +69,7 @@ export function CompanyDetailTabs({
   reviewCount: number;
   ownReview?: { id: string; rating: number; content: string; photos: string[] };
   categoryTree: CategoryTreeNode[];
+  assignedCategories: { name: string; icon: string | null }[];
 }) {
   const [tab, setTab] = useState<TabKey>("home");
   const [reviewsExpanded, setReviewsExpanded] = useState(false);
@@ -120,6 +123,28 @@ export function CompanyDetailTabs({
       <div className="mt-6">
         {tab === "home" && (
           <div className="space-y-6">
+            {assignedCategories.length > 0 && (
+              <div className="rounded-2xl border border-neutral-200/70 bg-white p-5 shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
+                <div className="mb-3 flex items-center gap-2">
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                    <Wrench className="h-4 w-4" />
+                  </span>
+                  <h2 className="text-sm font-bold text-neutral-900 dark:text-neutral-100">수리 가능 장비</h2>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {assignedCategories.map((c) => {
+                    const Icon = getCategoryIcon(c.icon);
+                    return (
+                      <Tag key={c.name} className="gap-1.5 px-3 py-1.5 text-xs">
+                        <Icon className="h-3.5 w-3.5" />
+                        {c.name}
+                      </Tag>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
             {introduction && (
               <div className="rounded-2xl border border-neutral-200/70 bg-white p-5 shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
                 <div className="mb-3 flex items-center gap-2">
@@ -175,7 +200,7 @@ export function CompanyDetailTabs({
               <div className="rounded-2xl border border-neutral-200/70 bg-white p-5 shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
                 <div className="mb-3 flex items-center gap-2">
                   <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-accent/15 text-accent">
-                    <Tag className="h-4 w-4" />
+                    <TagIcon className="h-4 w-4" />
                   </span>
                   <h2 className="text-sm font-bold text-neutral-900 dark:text-neutral-100">가격표</h2>
                 </div>
@@ -205,14 +230,7 @@ export function CompanyDetailTabs({
               </div>
               <div className="flex flex-wrap gap-1.5">
                 {services.length > 0 ? (
-                  services.map((s) => (
-                    <span
-                      key={s.id}
-                      className="rounded-full bg-primary/8 px-2.5 py-1 text-xs font-medium text-primary dark:bg-primary/15"
-                    >
-                      {s.name}
-                    </span>
-                  ))
+                  services.map((s) => <Tag key={s.id}>{s.name}</Tag>)
                 ) : (
                   <p className="text-sm text-neutral-400">등록된 수리 품목이 없습니다.</p>
                 )}
@@ -227,14 +245,7 @@ export function CompanyDetailTabs({
               </div>
               <div className="flex flex-wrap gap-1.5">
                 {brands.length > 0 ? (
-                  brands.map((b) => (
-                    <span
-                      key={b.id}
-                      className="rounded-full bg-accent/15 px-2.5 py-1 text-xs font-medium text-accent"
-                    >
-                      {b.name}
-                    </span>
-                  ))
+                  brands.map((b) => <Tag key={b.id}>{b.name}</Tag>)
                 ) : (
                   <p className="text-sm text-neutral-400">등록된 브랜드가 없습니다.</p>
                 )}
@@ -259,7 +270,7 @@ export function CompanyDetailTabs({
           (isUser ? (
             <Link
               href="/dashboard/repair-requests/new"
-              className="group flex flex-col items-center justify-center gap-3 rounded-2xl bg-gradient-to-br from-accent to-accent/80 p-8 text-center shadow-md transition-transform hover:scale-[1.01]"
+              className="group flex flex-col items-center justify-center gap-3 rounded-2xl bg-accent p-8 text-center shadow-md transition-transform hover:scale-[1.01]"
             >
               <span className="flex h-14 w-14 items-center justify-center rounded-full bg-white/25 text-accent-foreground">
                 <Sparkles className="h-7 w-7" />

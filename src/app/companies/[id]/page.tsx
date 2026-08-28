@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { BadgeCheck, Guitar, MapPin, Phone, Star } from "lucide-react";
+import { BadgeCheck, Wrench, MapPin, Phone, Star } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -56,6 +56,9 @@ export default async function CompanyDetailPage({
       services: true,
       brands: true,
       priceItems: true,
+      categories: {
+        include: { category: { select: { name: true, icon: true, parent: { select: { icon: true } } } } },
+      },
       reviews: {
         where: { status: "VISIBLE" },
         orderBy: { createdAt: "desc" },
@@ -88,6 +91,12 @@ export default async function CompanyDetailPage({
     reviewCount > 0 ? company.reviews.reduce((s, r) => s + r.rating, 0) / reviewCount : null;
   const photos: string[] = company.photos ? JSON.parse(company.photos) : [];
   const isVerified = company.status === "APPROVED";
+  // "수리 가능 장비" 표시용 — 세부 품목은 자체 아이콘이 없어 상위 대분류
+  // 아이콘을 물려받는다 (src/lib/categories.ts CATEGORY_ICON_MAP 참고).
+  const assignedCategories = company.categories.map((cc) => ({
+    name: cc.category.name,
+    icon: cc.category.parent?.icon ?? cc.category.icon,
+  }));
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -135,8 +144,8 @@ export default async function CompanyDetailPage({
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
           </>
         ) : (
-          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-primary/10 via-surface-muted to-accent/15">
-            <Guitar className="h-16 w-16 text-primary/20" />
+          <div className="flex h-full w-full items-center justify-center bg-surface-muted">
+            <Wrench className="h-16 w-16 text-primary/20" />
           </div>
         )}
       </div>
@@ -144,7 +153,7 @@ export default async function CompanyDetailPage({
       <main className="mx-auto w-full max-w-5xl flex-1 px-4 pb-16 sm:px-6">
         <div className="-mt-14 flex flex-col gap-4 rounded-2xl border border-neutral-200/70 bg-white p-5 shadow-lg dark:border-neutral-800 dark:bg-neutral-900 sm:-mt-16 sm:flex-row sm:items-start sm:justify-between sm:p-6">
           <div className="flex items-start gap-4">
-            <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-br from-primary/15 via-surface-muted to-accent/20 text-xl font-bold text-primary ring-4 ring-white dark:ring-neutral-900">
+            <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-primary/10 text-xl font-bold text-primary ring-4 ring-white dark:ring-neutral-900">
               {company.logoUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={company.logoUrl} alt={company.name} className="h-full w-full object-cover" />
@@ -226,6 +235,7 @@ export default async function CompanyDetailPage({
             companyId={company.id}
             isUser={isUser}
             categoryTree={categoryTree}
+            assignedCategories={assignedCategories}
             introduction={company.introduction}
             businessHoursText={formatBusinessHours(company.businessHours, company.closedDays)}
             onSiteVisit={company.onSiteVisit}
