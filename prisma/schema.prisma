@@ -44,8 +44,33 @@ model User {
   aiUsageLogs       AiUsageLog[]
   payments          Payment[]
   notifications     Notification[]
+  devices           UserDevice[]
 
   @@index([role])
+}
+
+// 마이페이지 "내 장비" — 사용자가 등록한 장비. RepairRequest/Reservation과
+// 선택적으로 연결되어 장비별 수리·예약 이력을 보여준다. 리뷰는 별도 FK 없이
+// deviceId로 연결된 예약/견적의 companyId 집합을 역으로 조회해 구성한다
+// (src/app/(user)/dashboard/devices/[id]/page.tsx 참고).
+model UserDevice {
+  id         String    @id @default(cuid())
+  userId     String
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name       String // 사용자가 붙인 이름, 예: "Fender Stratocaster"
+  categoryId String? // Category.id (세부 품목) — 선택적 연결
+  category   Category? @relation(fields: [categoryId], references: [id])
+  brand      String?
+  model      String?
+  photoUrl   String?
+  memo       String?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  repairRequests RepairRequest[]
+  reservations   Reservation[]
+
+  @@index([userId])
 }
 
 // status: PENDING | APPROVED | SUSPENDED | UNVERIFIED
@@ -118,7 +143,8 @@ model Category {
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
 
-  companies CompanyCategory[]
+  companies   CompanyCategory[]
+  userDevices UserDevice[]
 
   @@index([parentId])
 }
@@ -171,25 +197,27 @@ model PriceItem {
 
 // status: REQUESTED | APPROVED | CONFIRMED | IN_PROGRESS | CHANGED | CANCELED | COMPLETED | NO_SHOW
 model Reservation {
-  id                 String    @id @default(cuid())
+  id                 String      @id @default(cuid())
   userId             String
-  user               User      @relation(fields: [userId], references: [id])
+  user               User        @relation(fields: [userId], references: [id])
   companyId          String
-  company            Company   @relation(fields: [companyId], references: [id])
-  status             String    @default("REQUESTED")
-  method             String    @default("VISIT") // VISIT(방문) | ONSITE(출장) | COURIER(택배)
+  company            Company     @relation(fields: [companyId], references: [id])
+  status             String      @default("REQUESTED")
+  method             String      @default("VISIT") // VISIT(방문) | ONSITE(출장) | COURIER(택배)
   visitAddress       String? // ONSITE 출장 요청 시 방문지 주소 (COURIER 반송 주소로도 재사용)
   instrumentCategory String? // INSTRUMENT | AUDIO_EQUIPMENT (레거시) — 대분류 한글명도 들어올 수 있음
   instrument         String? // 기타/베이스/피아노/... 또는 앰프/스피커/... (RepairRequest.instrument와 동일한 값 집합)
   categoryId         String? // Category.id (대분류) — 구조화 조회용, instrumentCategory와 병행 저장
+  deviceId           String? // UserDevice.id — "내 장비"에서 선택한 경우
+  device             UserDevice? @relation(fields: [deviceId], references: [id])
   brand              String?
   symptom            String?
   scheduledAt        DateTime?
   memo               String? // 파트너 예약 메모
-  notifyEnabled      Boolean   @default(true) // 예약 관련 인앱 알림 수신 여부
+  notifyEnabled      Boolean     @default(true) // 예약 관련 인앱 알림 수신 여부
   completedAmount    Int? // COMPLETED 처리 시 파트너가 직접 입력하는 실 청구 금액 (매출 집계용, 결제 연동 아님)
-  createdAt          DateTime  @default(now())
-  updatedAt          DateTime  @updatedAt
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
 
   statusLogs ReservationStatusLog[]
 
@@ -235,14 +263,17 @@ model Estimate {
 // AI 수리 견적 매칭 시스템: 증상 입력 → AI 분석 → 지역 기반 업체 매칭 → 견적 비교 → 예약.
 // status: SUBMITTED | ANALYZED | MATCHING | QUOTED | RESERVED | CLOSED
 model RepairRequest {
-  id            String  @id @default(cuid())
+  id            String      @id @default(cuid())
   userId        String
-  user          User    @relation(fields: [userId], references: [id])
+  user          User        @relation(fields: [userId], references: [id])
   category      String // 대분류 한글명 (예: 악기/음향기기/드론/사진장비/...) — 레거시 값은 INSTRUMENT | AUDIO_EQUIPMENT
   instrument    String // 세부 품목 또는 직접 입력한 값
   categoryId    String? // Category.id (대분류) — 구조화 조회용, category(String)와 병행 저장
   subcategoryId String? // Category.id (세부 품목, 직접 입력 시에는 null)
   brand         String?
+  model         String? // 모델명 (디자인 리뉴얼 AI 수리진단 위저드 Step 4)
+  deviceId      String? // UserDevice.id — "내 장비"에서 선택한 경우
+  device        UserDevice? @relation(fields: [deviceId], references: [id])
   symptom       String
   photos        String? // JSON array of photo URLs
   videos        String? // JSON array of video URLs

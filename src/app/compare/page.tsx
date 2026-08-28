@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { SiteHeader } from "@/components/SiteHeader";
+import { SiteFooter } from "@/components/SiteFooter";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { CompareBoard, type CompareCompany } from "@/components/compare/CompareBoard";
@@ -96,6 +97,7 @@ export default async function ComparePage({
           </div>
         )}
       </main>
+      <SiteFooter />
     </div>
   );
 }

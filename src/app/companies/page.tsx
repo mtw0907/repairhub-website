@@ -1,4 +1,5 @@
 import { SiteHeader } from "@/components/SiteHeader";
+import { SiteFooter } from "@/components/SiteFooter";
 import { CompanySearchView } from "@/components/company/search/CompanySearchView";
 import type { CompanySummary } from "@/components/company/CompanyCard";
 import { prisma } from "@/lib/prisma";
@@ -182,6 +183,7 @@ export default async function CompaniesPage({
           categoryTree={categoryTree}
         />
       </main>
+      <SiteFooter />
     </div>
   );
 }

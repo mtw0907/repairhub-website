@@ -18,6 +18,7 @@ import {
   Grid3x3,
 } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
+import { SiteFooter } from "@/components/SiteFooter";
 import { CompanyCard, type CompanySummary } from "@/components/company/CompanyCard";
 import { AiChatWidget } from "@/components/ai/AiChatWidget";
 import { HomeMapPreview } from "@/components/home/HomeMapPreview";
@@ -537,9 +538,7 @@ export default async function LandingPage() {
         </div>
       </section>
 
-      <footer className="border-t border-neutral-200 bg-white px-6 py-8 text-center text-xs text-neutral-400 dark:border-neutral-800 dark:bg-neutral-950">
-        © {new Date().getFullYear()} 소리수리. 전국 음향기기 · 악기 수리업체 플랫폼.
-      </footer>
+      <SiteFooter />
     </div>
   );
 }

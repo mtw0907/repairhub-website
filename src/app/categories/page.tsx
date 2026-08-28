@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { SiteHeader } from "@/components/SiteHeader";
+import { SiteFooter } from "@/components/SiteFooter";
 import { getCategoryTree } from "@/lib/categories";
 import { CategoryBrowser } from "@/components/home/CategoryBrowser";
 
@@ -23,6 +24,7 @@ export default async function CategoriesPage() {
         </p>
         <CategoryBrowser tree={categoryTree} />
       </main>
+      <SiteFooter />
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Guitar, Heart } from "lucide-react";
+import { Wrench, Heart } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { ROLE_DASHBOARD_PATH, type Role } from "@/lib/constants";
 import { HeaderSearch } from "@/components/HeaderSearch";
@@ -17,7 +17,7 @@ export async function SiteHeader() {
       <div className="relative mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-4 sm:px-6 sm:py-5">
         <Link href="/" className="flex shrink-0 items-center gap-2">
           <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
-            <Guitar className="h-5 w-5" />
+            <Wrench className="h-5 w-5" />
           </span>
           <span className="text-xl font-extrabold tracking-tight sm:text-2xl">
             <span className="text-primary dark:text-neutral-100">소리</span>
@@ -25,7 +25,7 @@ export async function SiteHeader() {
           </span>
         </Link>
 
-        <SiteNav isUser={isUser} />
+        <SiteNav />
 
         <div className="flex shrink-0 items-center gap-1 sm:gap-1.5">
           <HeaderSearch />

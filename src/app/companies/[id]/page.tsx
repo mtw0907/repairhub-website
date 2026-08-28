@@ -4,6 +4,7 @@ import { BadgeCheck, Guitar, MapPin, Phone, Star } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { SiteHeader } from "@/components/SiteHeader";
+import { SiteFooter } from "@/components/SiteFooter";
 import { FavoriteButton } from "@/components/company/FavoriteButton";
 import { RecordRecentView } from "@/components/company/RecordRecentView";
 import { RecordCompanyView } from "@/components/company/RecordCompanyView";
@@ -255,6 +256,7 @@ export default async function CompanyDetailPage({
           />
         </div>
       </main>
+      <SiteFooter />
     </div>
   );
 }

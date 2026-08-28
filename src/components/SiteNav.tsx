@@ -3,43 +3,39 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CalendarClock, Home, Menu, Sparkles, Store, X } from "lucide-react";
+import { CalendarClock, Home, Menu, Scale, Sparkles, Store, X } from "lucide-react";
 
 type NavItem = { href: string; label: string; icon: typeof Home; match: (path: string) => boolean };
 
-function buildNavItems(isUser: boolean): NavItem[] {
-  const items: NavItem[] = [
-    { href: "/", label: "홈", icon: Home, match: (p) => p === "/" },
-    { href: "/companies", label: "업체 찾기", icon: Store, match: (p) => p.startsWith("/companies") },
-  ];
-  if (isUser) {
-    items.push(
-      {
-        href: "/dashboard/repair-requests/new",
-        label: "AI 견적",
-        icon: Sparkles,
-        match: (p) => p.startsWith("/dashboard/repair-requests"),
-      },
-      {
-        href: "/dashboard/reservations",
-        label: "예약 현황",
-        icon: CalendarClock,
-        match: (p) => p.startsWith("/dashboard/reservations"),
-      },
-    );
-  }
-  return items;
-}
+// 로그인 여부와 무관하게 항상 5개 메뉴 노출. 로그인이 필요한 목적지는 각
+// 페이지의 기존 인증 가드가 로그인으로 유도한다(신규 로직 아님).
+const NAV_ITEMS: NavItem[] = [
+  { href: "/", label: "홈", icon: Home, match: (p) => p === "/" },
+  { href: "/companies", label: "수리업체 찾기", icon: Store, match: (p) => p.startsWith("/companies") },
+  {
+    href: "/dashboard/repair-requests/new",
+    label: "AI 수리진단",
+    icon: Sparkles,
+    match: (p) => p.startsWith("/dashboard/repair-requests"),
+  },
+  { href: "/compare", label: "견적 비교", icon: Scale, match: (p) => p.startsWith("/compare") },
+  {
+    href: "/dashboard/reservations",
+    label: "예약 현황",
+    icon: CalendarClock,
+    match: (p) => p.startsWith("/dashboard/reservations"),
+  },
+];
 
-export function SiteNav({ isUser }: { isUser: boolean }) {
+export function SiteNav() {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const items = buildNavItems(isUser);
+  const items = NAV_ITEMS;
 
   return (
     <>
       {/* 데스크톱 네비게이션 */}
-      <nav className="hidden items-center gap-1 md:flex lg:gap-2">
+      <nav className="hidden items-center gap-1 lg:flex lg:gap-2.5">
         {items.map((item) => {
           const active = item.match(pathname);
           return (
@@ -48,8 +44,8 @@ export function SiteNav({ isUser }: { isUser: boolean }) {
               href={item.href}
               className={
                 active
-                  ? "flex items-center gap-2 rounded-full px-3.5 py-2 text-base font-semibold text-primary lg:px-4"
-                  : "flex items-center gap-2 rounded-full px-3.5 py-2 text-base font-medium text-neutral-600 transition-colors hover:bg-accent/15 hover:text-accent dark:text-neutral-400 dark:hover:border-accent/40 dark:hover:bg-accent/15 dark:hover:text-accent lg:px-4"
+                  ? "flex items-center gap-2 whitespace-nowrap rounded-full px-3.5 py-2.5 text-base font-semibold text-primary xl:px-4"
+                  : "flex items-center gap-2 whitespace-nowrap rounded-full px-3.5 py-2.5 text-base font-medium text-neutral-600 transition-colors hover:bg-accent/15 hover:text-accent dark:text-neutral-400 dark:hover:border-accent/40 dark:hover:bg-accent/15 dark:hover:text-accent xl:px-4"
               }
             >
               <item.icon className={active ? "h-5 w-5 text-primary" : "h-5 w-5"} />
@@ -70,14 +66,14 @@ export function SiteNav({ isUser }: { isUser: boolean }) {
         onClick={() => setMobileOpen((v) => !v)}
         aria-label="메뉴 열기"
         aria-expanded={mobileOpen}
-        className="order-last flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-neutral-600 transition-colors hover:bg-accent/15 hover:text-accent dark:text-neutral-300 dark:hover:border-accent/40 dark:hover:bg-accent/15 dark:hover:text-accent md:hidden"
+        className="order-last flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-neutral-600 transition-colors hover:bg-accent/15 hover:text-accent dark:text-neutral-300 dark:hover:border-accent/40 dark:hover:bg-accent/15 dark:hover:text-accent lg:hidden"
       >
         {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
       </button>
 
       {/* 모바일: 드롭다운 메뉴 */}
       {mobileOpen && (
-        <div className="absolute left-0 right-0 top-full border-b border-neutral-200/80 bg-white/95 px-4 py-3 shadow-lg backdrop-blur-md dark:border-neutral-800/80 dark:bg-neutral-950/95 md:hidden">
+        <div className="absolute left-0 right-0 top-full border-b border-neutral-200/80 bg-white/95 px-4 py-3 shadow-lg backdrop-blur-md dark:border-neutral-800/80 dark:bg-neutral-950/95 lg:hidden">
           <nav className="mx-auto flex max-w-6xl flex-col gap-1">
             {items.map((item) => {
               const active = item.match(pathname);

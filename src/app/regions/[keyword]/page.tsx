@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { SiteHeader } from "@/components/SiteHeader";
+import { SiteFooter } from "@/components/SiteFooter";
 import { CompanyResults } from "@/components/company/CompanyResults";
 import { getSeoLandingData } from "@/lib/seoLanding";
 import { auth } from "@/lib/auth";
@@ -51,6 +52,7 @@ export default async function RegionLandingPage({
           isUser={isUser}
         />
       </main>
+      <SiteFooter />
     </div>
   );
 }
