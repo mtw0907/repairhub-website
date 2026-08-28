@@ -15,7 +15,7 @@ import {
 import { CompanyListPanel } from "@/components/company/search/CompanyListPanel";
 import { CompanyMapView } from "@/components/company/search/CompanyMapView";
 import { MobileCompanySheet } from "@/components/company/search/MobileCompanySheet";
-import { FilterBar } from "@/components/company/search/FilterBar";
+import { FilterSidebar } from "@/components/company/search/FilterSidebar";
 import type { MapBounds, SortBy } from "@/components/company/search/types";
 import { haversineDistanceKm, formatDistanceKm, DEFAULT_MAP_CENTER } from "@/lib/geo";
 import type { CategoryTreeNode } from "@/lib/categories";
@@ -215,17 +215,17 @@ export function CompanySearchView({
           <MobileCompanySheet>{listPanel}</MobileCompanySheet>
         </div>
       ) : (
-        <div className="hidden h-[70vh] min-h-[540px] overflow-hidden rounded-3xl border border-neutral-200 shadow-sm dark:border-neutral-800 sm:flex">
-          <div className="w-[35%] min-w-[320px] border-r border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-900">
-            {listPanel}
+        <div className="hidden gap-4 sm:flex">
+          {/* 왼쪽 25% 고정 필터 */}
+          <div className="w-full max-w-[280px] shrink-0">
+            <FilterSidebar filters={filters} onChange={setFilters} categoryTree={categoryTree} />
           </div>
-          <div className="flex flex-1 flex-col">
-            <FilterBar
-              filters={filters}
-              onChange={setFilters}
-              onOpenMore={() => setFiltersOpen(true)}
-              categoryTree={categoryTree}
-            />
+
+          {/* 오른쪽 지도 + 업체 리스트 */}
+          <div className="flex h-[70vh] min-h-[540px] flex-1 overflow-hidden rounded-3xl border border-neutral-200 shadow-sm dark:border-neutral-800">
+            <div className="w-[38%] min-w-[300px] border-r border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-900">
+              {listPanel}
+            </div>
             <div className="min-h-0 flex-1">{mapView}</div>
           </div>
         </div>
