@@ -4,15 +4,20 @@ import { StaffPageHeader } from "@/components/StaffPageHeader";
 import { CompanyInfoForm } from "@/components/partner/CompanyInfoForm";
 import { TagListManager } from "@/components/partner/TagListManager";
 import { PriceItemManager } from "@/components/partner/PriceItemManager";
+import { CategoryChecklist } from "@/components/partner/CategoryChecklist";
+import { getCategoryTree } from "@/lib/categories";
 
 export default async function PartnerCompanyPage() {
   const session = await auth();
   const companyId = session!.user.companyId!;
 
-  const company = await prisma.company.findUniqueOrThrow({
-    where: { id: companyId },
-    include: { services: true, brands: true, priceItems: true },
-  });
+  const [company, categoryTree] = await Promise.all([
+    prisma.company.findUniqueOrThrow({
+      where: { id: companyId },
+      include: { services: true, brands: true, priceItems: true, categories: { select: { categoryId: true } } },
+    }),
+    getCategoryTree(),
+  ]);
 
   return (
     <div className="min-h-full bg-surface-muted">
@@ -40,6 +45,19 @@ export default async function PartnerCompanyPage() {
               logoUrl: company.logoUrl ?? "",
               photos: company.photos ? JSON.parse(company.photos) : [],
             }}
+          />
+        </div>
+
+        <div>
+          <h2 className="mb-1 text-xl font-bold text-neutral-900 dark:text-neutral-100">
+            수리 가능 카테고리
+          </h2>
+          <p className="mb-4 text-sm text-neutral-500">
+            업체 검색 필터와 AI 견적 매칭에서 이 업체를 노출시킬 카테고리를 선택하세요. 여러 개 선택할 수 있어요.
+          </p>
+          <CategoryChecklist
+            tree={categoryTree}
+            initialSelectedIds={company.categories.map((c) => c.categoryId)}
           />
         </div>
 

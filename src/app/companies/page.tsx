@@ -7,13 +7,14 @@ import { getSetting } from "@/lib/systemSettings";
 import { getOpenStatus, getTodaySlots } from "@/lib/businessHours";
 import { haversineDistanceKm, DEFAULT_MAP_CENTER } from "@/lib/geo";
 import type { ReservationStatus } from "@/lib/constants";
+import { getCategoryTree } from "@/lib/categories";
 
 export default async function CompaniesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ keyword?: string; region?: string }>;
+  searchParams: Promise<{ keyword?: string; region?: string; category?: string }>;
 }) {
-  const { keyword, region } = await searchParams;
+  const { keyword, region, category } = await searchParams;
   const session = await auth();
   const isUser = session?.user?.role === "USER";
 
@@ -23,7 +24,7 @@ export default async function CompaniesPage({
   const endOfToday = new Date(startOfToday);
   endOfToday.setDate(endOfToday.getDate() + 1);
 
-  const [companies, favorites, activeReservations, kakaoMapKey] = await Promise.all([
+  const [companies, favorites, activeReservations, kakaoMapKey, categoryTree] = await Promise.all([
     prisma.company.findMany({
       where: {
         status: "APPROVED",
@@ -34,6 +35,7 @@ export default async function CompaniesPage({
                 { introduction: { contains: keyword } },
                 { services: { some: { name: { contains: keyword } } } },
                 { brands: { some: { name: { contains: keyword } } } },
+                { categories: { some: { category: { name: { contains: keyword } } } } },
               ],
             }
           : {}),
@@ -42,6 +44,9 @@ export default async function CompaniesPage({
       include: {
         services: true,
         brands: true,
+        categories: {
+          include: { category: { select: { name: true, slug: true, parent: { select: { name: true, slug: true } } } } },
+        },
         reviews: { where: { status: "VISIBLE" }, select: { rating: true } },
         priceItems: { select: { price: true } },
         estimates: { select: { status: true } },
@@ -66,6 +71,7 @@ export default async function CompaniesPage({
         })
       : Promise.resolve([]),
     getSetting("KAKAO_MAP_JS_KEY"),
+    getCategoryTree(),
   ]);
 
   const favoritedIds = favorites.map((f) => f.companyId);
@@ -108,6 +114,15 @@ export default async function CompaniesPage({
       introduction: c.introduction,
       services: c.services.map((s) => s.name),
       brands: c.brands.map((b) => b.name),
+      // 세부 품목 slug와 그 상위 대분류 slug를 함께 넣어야, 검색 필터의
+      // 대분류 단위 "수리 분야" 선택(예: "drone")이 세부 품목만 선택된
+      // 업체(예: "drone-body")도 정상적으로 찾아낸다.
+      categorySlugs: Array.from(
+        new Set(c.categories.flatMap((cc) => [cc.category.slug, cc.category.parent?.slug].filter((s): s is string => !!s))),
+      ),
+      categoryNames: Array.from(
+        new Set(c.categories.flatMap((cc) => [cc.category.name, cc.category.parent?.name].filter((s): s is string => !!s))),
+      ),
       onSiteVisit: c.onSiteVisit,
       courierDrop: c.courierDrop,
       avgRating,
@@ -163,6 +178,8 @@ export default async function CompaniesPage({
           isUser={isUser}
           kakaoMapKey={kakaoMapKey}
           initialKeyword={keyword ?? ""}
+          initialCategorySlug={category ?? null}
+          categoryTree={categoryTree}
         />
       </main>
     </div>

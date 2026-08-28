@@ -17,16 +17,16 @@ datasource db {
 // role: USER | PARTNER | ADMIN | SUPER_ADMIN
 // status: ACTIVE | SUSPENDED | DELETED
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  password  String?
-  name      String
-  phone     String?
-  role      String   @default("USER")
-  status    String   @default("ACTIVE")
+  id            String    @id @default(cuid())
+  email         String    @unique
+  password      String?
+  name          String
+  phone         String?
+  role          String    @default("USER")
+  status        String    @default("ACTIVE")
   termsAgreedAt DateTime? // 이용약관·개인정보처리방침 동의 시각 (가입 폼 경유 시에만 설정)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
   // Set when role == PARTNER: the company this user manages.
   companyId String?
@@ -50,38 +50,38 @@ model User {
 
 // status: PENDING | APPROVED | SUSPENDED | UNVERIFIED
 model Company {
-  id            String   @id @default(cuid())
-  name          String
-  ownerName     String? // 대표자
-  bizRegNo      String? // 사업자번호
-  address       String?
-  region        String? // AI 지역 페이지 생성용 (시/도, 시/군/구)
-  phone         String?
-  homepage      String?
-  sns           String? // JSON: { instagram, youtube, facebook, ... }
-  introduction  String?
-  seoDescription String? // AI SEO 생성용 메타 설명
-  logoUrl       String?
-  photos        String? // JSON array of photo URLs
-  businessHours String? // JSON: { mon: "10:00-19:00", ... }
-  closedDays    String? // JSON array e.g. ["SUN"]
-  latitude      Float?
-  longitude     Float?
-  certificateUrl String? // 사업자등록증 이미지 URL (자기가입 시 제출)
+  id                   String   @id @default(cuid())
+  name                 String
+  ownerName            String? // 대표자
+  bizRegNo             String? // 사업자번호
+  address              String?
+  region               String? // AI 지역 페이지 생성용 (시/도, 시/군/구)
+  phone                String?
+  homepage             String?
+  sns                  String? // JSON: { instagram, youtube, facebook, ... }
+  introduction         String?
+  seoDescription       String? // AI SEO 생성용 메타 설명
+  logoUrl              String?
+  photos               String? // JSON array of photo URLs
+  businessHours        String? // JSON: { mon: "10:00-19:00", ... }
+  closedDays           String? // JSON array e.g. ["SUN"]
+  latitude             Float?
+  longitude            Float?
+  certificateUrl       String? // 사업자등록증 이미지 URL (자기가입 시 제출)
   aiVerificationResult String? // JSON: AI 1차 검토 결과 (참고용, 최종 승인은 관리자가 함) — {ok:true,...} | {ok:false,reason}
-  status        String   @default("UNVERIFIED")
-  isPremium     Boolean  @default(false)
-  isFeatured    Boolean  @default(false)
-  billingKey         String? // 토스페이먼츠 빌링키 (자동결제용 카드 등록 시 발급)
-  billingCustomerKey String? // 빌링키 발급에 쓰인 고유 식별자
-  autoRenew          Boolean @default(true) // false면 만료일에 자동 재청구하지 않음
-  onSiteVisit   Boolean  @default(false) // 출장 가능
-  courierDrop   Boolean  @default(false) // 택배 가능
-  viewCount     Int      @default(0)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  status               String   @default("UNVERIFIED")
+  isPremium            Boolean  @default(false)
+  isFeatured           Boolean  @default(false)
+  billingKey           String? // 토스페이먼츠 빌링키 (자동결제용 카드 등록 시 발급)
+  billingCustomerKey   String? // 빌링키 발급에 쓰인 고유 식별자
+  autoRenew            Boolean  @default(true) // false면 만료일에 자동 재청구하지 않음
+  onSiteVisit          Boolean  @default(false) // 출장 가능
+  courierDrop          Boolean  @default(false) // 택배 가능
+  viewCount            Int      @default(0)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
 
-  owners        User[]         @relation("CompanyOwner")
+  owners        User[]            @relation("CompanyOwner")
   services      Service[]
   brands        Brand[]
   priceItems    PriceItem[]
@@ -95,9 +95,47 @@ model Company {
   subscriptions Subscription[]
   workCases     WorkCase[]
   quotes        Quote[]
+  categories    CompanyCategory[]
 
   @@index([status])
   @@index([region])
+}
+
+// 계층형 수리 대상 카테고리. parentId가 null이면 대분류(악기/음향기기/드론/...),
+// 있으면 그 하위 세부 품목(리프). 홈 화면·업체 등록·업체 검색 필터·AI 견적
+// 매칭이 전부 이 테이블을 공용 소스로 사용한다 (src/lib/categories.ts 참고).
+model Category {
+  id          String     @id @default(cuid())
+  name        String
+  slug        String     @unique
+  icon        String? // src/lib/categories.ts의 CATEGORY_ICON_MAP 조회 키
+  parentId    String?
+  parent      Category?  @relation("CategoryChildren", fields: [parentId], references: [id])
+  children    Category[] @relation("CategoryChildren")
+  description String?
+  isActive    Boolean    @default(true)
+  sortOrder   Int        @default(0)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  companies CompanyCategory[]
+
+  @@index([parentId])
+}
+
+// 업체 ↔ 카테고리 다대다 조인. 한 업체가 여러 카테고리(대분류/세부품목 모두)를
+// 동시에 선택할 수 있다.
+model CompanyCategory {
+  id         String   @id @default(cuid())
+  companyId  String
+  company    Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+
+  @@unique([companyId, categoryId])
+  @@index([companyId])
+  @@index([categoryId])
 }
 
 model Service {
@@ -133,24 +171,25 @@ model PriceItem {
 
 // status: REQUESTED | APPROVED | CONFIRMED | IN_PROGRESS | CHANGED | CANCELED | COMPLETED | NO_SHOW
 model Reservation {
-  id            String    @id @default(cuid())
-  userId        String
-  user          User      @relation(fields: [userId], references: [id])
-  companyId     String
-  company       Company   @relation(fields: [companyId], references: [id])
-  status        String    @default("REQUESTED")
-  method        String    @default("VISIT") // VISIT(방문) | ONSITE(출장) | COURIER(택배)
-  visitAddress  String? // ONSITE 출장 요청 시 방문지 주소 (COURIER 반송 주소로도 재사용)
-  instrumentCategory String? // INSTRUMENT | AUDIO_EQUIPMENT
-  instrument    String? // 기타/베이스/피아노/... 또는 앰프/스피커/... (RepairRequest.instrument와 동일한 값 집합)
-  brand         String?
-  symptom       String?
-  scheduledAt   DateTime?
-  memo          String? // 파트너 예약 메모
-  notifyEnabled Boolean   @default(true) // 예약 관련 인앱 알림 수신 여부
-  completedAmount Int? // COMPLETED 처리 시 파트너가 직접 입력하는 실 청구 금액 (매출 집계용, 결제 연동 아님)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id                 String    @id @default(cuid())
+  userId             String
+  user               User      @relation(fields: [userId], references: [id])
+  companyId          String
+  company            Company   @relation(fields: [companyId], references: [id])
+  status             String    @default("REQUESTED")
+  method             String    @default("VISIT") // VISIT(방문) | ONSITE(출장) | COURIER(택배)
+  visitAddress       String? // ONSITE 출장 요청 시 방문지 주소 (COURIER 반송 주소로도 재사용)
+  instrumentCategory String? // INSTRUMENT | AUDIO_EQUIPMENT (레거시) — 대분류 한글명도 들어올 수 있음
+  instrument         String? // 기타/베이스/피아노/... 또는 앰프/스피커/... (RepairRequest.instrument와 동일한 값 집합)
+  categoryId         String? // Category.id (대분류) — 구조화 조회용, instrumentCategory와 병행 저장
+  brand              String?
+  symptom            String?
+  scheduledAt        DateTime?
+  memo               String? // 파트너 예약 메모
+  notifyEnabled      Boolean   @default(true) // 예약 관련 인앱 알림 수신 여부
+  completedAmount    Int? // COMPLETED 처리 시 파트너가 직접 입력하는 실 청구 금액 (매출 집계용, 결제 연동 아님)
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
 
   statusLogs ReservationStatusLog[]
 
@@ -196,16 +235,18 @@ model Estimate {
 // AI 수리 견적 매칭 시스템: 증상 입력 → AI 분석 → 지역 기반 업체 매칭 → 견적 비교 → 예약.
 // status: SUBMITTED | ANALYZED | MATCHING | QUOTED | RESERVED | CLOSED
 model RepairRequest {
-  id        String @id @default(cuid())
-  userId    String
-  user      User   @relation(fields: [userId], references: [id])
-  category  String // INSTRUMENT | AUDIO_EQUIPMENT
-  instrument String // 기타/베이스/피아노/바이올린/드럼/관악기/앰프/스피커/믹서/마이크/오디오인터페이스
-  brand     String?
-  symptom   String
-  photos    String? // JSON array of photo URLs
-  videos    String? // JSON array of video URLs
-  aiResult  String? // JSON: {causes:[{rank,label,description}], priceMin, priceMax, specialties:string[]}
+  id            String  @id @default(cuid())
+  userId        String
+  user          User    @relation(fields: [userId], references: [id])
+  category      String // 대분류 한글명 (예: 악기/음향기기/드론/사진장비/...) — 레거시 값은 INSTRUMENT | AUDIO_EQUIPMENT
+  instrument    String // 세부 품목 또는 직접 입력한 값
+  categoryId    String? // Category.id (대분류) — 구조화 조회용, category(String)와 병행 저장
+  subcategoryId String? // Category.id (세부 품목, 직접 입력 시에는 null)
+  brand         String?
+  symptom       String
+  photos        String? // JSON array of photo URLs
+  videos        String? // JSON array of video URLs
+  aiResult      String? // JSON: {causes:[{rank,label,description}], priceMin, priceMax, specialties:string[]}
 
   // 업체 매칭 설정 (Step 4) — regionScope: DONG | GU | SI
   regionScope String?
@@ -213,7 +254,7 @@ model RepairRequest {
   filters     String? // JSON: {onSiteOnly, sameDayOnly, brandSpecialist, instrumentSpecialist, highRatedOnly}
 
   matchedCompanyIds String? // JSON array of Company.id selected by the matching algorithm (max 5)
-  status            String  @default("SUBMITTED")
+  status            String   @default("SUBMITTED")
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 

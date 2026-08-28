@@ -2,19 +2,46 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireRole, toErrorResponse } from "@/lib/rbac";
 import { notifyCompanyOwners } from "@/lib/notify";
-import { RESERVATION_METHODS, REPAIR_TARGETS, type ReservationMethod } from "@/lib/constants";
+import { RESERVATION_METHODS, type ReservationMethod } from "@/lib/constants";
+
+// Used by the mobile app (the web dashboard queries Prisma directly in its
+// server component instead — src/app/(user)/dashboard/reservations/page.tsx).
+export async function GET() {
+  try {
+    const user = await requireRole(["USER"]);
+    const reservations = await prisma.reservation.findMany({
+      where: { userId: user.id },
+      include: { company: { select: { id: true, name: true, phone: true, address: true } } },
+      orderBy: { createdAt: "desc" },
+    });
+    return NextResponse.json(
+      reservations.map((r) => ({ ...r, scheduledAt: r.scheduledAt?.toISOString() ?? null, createdAt: r.createdAt.toISOString() })),
+    );
+  } catch (error) {
+    return toErrorResponse(error);
+  }
+}
 
 export async function POST(req: Request) {
   try {
     const user = await requireRole(["USER"]);
-    const { companyId, scheduledAt, memo, method, visitAddress, instrumentCategory, instrument, brand, symptom } =
-      await req.json();
+    const {
+      companyId,
+      scheduledAt,
+      memo,
+      method,
+      visitAddress,
+      instrumentCategory,
+      instrument,
+      categoryId,
+      brand,
+      symptom,
+    } = await req.json();
     if (!companyId) {
       return NextResponse.json({ error: "companyId가 필요합니다." }, { status: 400 });
     }
     if (
-      !instrumentCategory ||
-      !(instrumentCategory in REPAIR_TARGETS) ||
+      !String(instrumentCategory ?? "").trim() ||
       !instrument ||
       !String(brand ?? "").trim() ||
       !String(symptom ?? "").trim()
@@ -54,6 +81,7 @@ export async function POST(req: Request) {
         visitAddress: visitAddress || null,
         instrumentCategory,
         instrument,
+        categoryId: categoryId || null,
         brand: String(brand).trim(),
         symptom: String(symptom).trim(),
         scheduledAt: scheduledAt ? new Date(scheduledAt) : null,

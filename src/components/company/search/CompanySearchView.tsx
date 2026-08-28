@@ -18,6 +18,7 @@ import { MobileCompanySheet } from "@/components/company/search/MobileCompanyShe
 import { FilterBar } from "@/components/company/search/FilterBar";
 import type { MapBounds, SortBy } from "@/components/company/search/types";
 import { haversineDistanceKm, formatDistanceKm, DEFAULT_MAP_CENTER } from "@/lib/geo";
+import type { CategoryTreeNode } from "@/lib/categories";
 
 function useIsMobile(): boolean {
   const [isMobile, setIsMobile] = useState(false);
@@ -42,18 +43,25 @@ export function CompanySearchView({
   isUser,
   kakaoMapKey,
   initialKeyword = "",
+  initialCategorySlug = null,
+  categoryTree,
 }: {
   companies: CompanySummary[];
   favoritedIds: string[];
   isUser: boolean;
   initialKeyword?: string;
+  initialCategorySlug?: string | null;
+  categoryTree: CategoryTreeNode[];
   kakaoMapKey: string | null;
 }) {
   const isMobile = useIsMobile();
 
   const [keyword, setKeyword] = useState(initialKeyword);
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
-  const [filters, setFilters] = useState<SearchFilters>(DEFAULT_FILTERS);
+  const [filters, setFilters] = useState<SearchFilters>({
+    ...DEFAULT_FILTERS,
+    categorySlug: initialCategorySlug,
+  });
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [compareSelected, setCompareSelected] = useState<string[]>([]);
@@ -90,7 +98,7 @@ export function CompanySearchView({
     const kw = keyword.trim().toLowerCase();
     const cat = activeCategory?.toLowerCase() ?? null;
     return withDistance.filter((c) => {
-      const haystack = [c.name, c.introduction ?? "", ...c.services, ...c.brands]
+      const haystack = [c.name, c.introduction ?? "", ...c.services, ...c.brands, ...(c.categoryNames ?? [])]
         .join(" ")
         .toLowerCase();
       if (kw && !haystack.includes(kw)) return false;
@@ -106,6 +114,7 @@ export function CompanySearchView({
         const regionMatch = filters.regionDistrict || filters.regionSido;
         if (!(c.region ?? "").includes(regionMatch)) return false;
       }
+      if (filters.categorySlug && !(c.categorySlugs ?? []).includes(filters.categorySlug)) return false;
       if (filters.onSiteOnly && !c.onSiteVisit) return false;
       if (filters.courierOnly && !c.courierDrop) return false;
       if (filters.availableTodayOnly && !(c.todaySlots && c.todaySlots.length > 0)) return false;
@@ -211,7 +220,12 @@ export function CompanySearchView({
             {listPanel}
           </div>
           <div className="flex flex-1 flex-col">
-            <FilterBar filters={filters} onChange={setFilters} onOpenMore={() => setFiltersOpen(true)} />
+            <FilterBar
+              filters={filters}
+              onChange={setFilters}
+              onOpenMore={() => setFiltersOpen(true)}
+              categoryTree={categoryTree}
+            />
             <div className="min-h-0 flex-1">{mapView}</div>
           </div>
         </div>
@@ -222,6 +236,7 @@ export function CompanySearchView({
         filters={filters}
         onChange={setFilters}
         onClose={() => setFiltersOpen(false)}
+        categoryTree={categoryTree}
       />
 
       {compareSelected.length >= 2 && (

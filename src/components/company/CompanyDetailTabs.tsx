@@ -25,6 +25,7 @@ import { InquiryForm } from "@/components/company/InquiryForm";
 import { ReviewForm } from "@/components/company/ReviewForm";
 import { ReportButton } from "@/components/ReportButton";
 import { maskName } from "@/lib/format";
+import type { CategoryTreeNode } from "@/lib/categories";
 
 type TabKey = "home" | "services" | "reservation" | "estimate" | "inquiry" | "reviews";
 
@@ -51,6 +52,7 @@ export function CompanyDetailTabs({
   reviews,
   reviewCount,
   ownReview,
+  categoryTree,
 }: {
   companyId: string;
   isUser: boolean;
@@ -64,6 +66,7 @@ export function CompanyDetailTabs({
   reviews: ReviewItem[];
   reviewCount: number;
   ownReview?: { id: string; rating: number; content: string; photos: string[] };
+  categoryTree: CategoryTreeNode[];
 }) {
   const [tab, setTab] = useState<TabKey>("home");
   const [reviewsExpanded, setReviewsExpanded] = useState(false);
@@ -247,6 +250,7 @@ export function CompanyDetailTabs({
               isUser={isUser}
               onSiteVisit={onSiteVisit}
               courierDrop={courierDrop}
+              categoryTree={categoryTree}
             />
           </div>
         )}

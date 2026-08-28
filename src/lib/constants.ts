@@ -66,9 +66,24 @@ export const ROLE_DASHBOARD_PATH: Record<Role, string> = {
 
 export const PRO_PLAN_PRICE = 9900; // KRW/월, 원 단위. 별도 요금제 체계 없이 단일 Pro 플랜.
 
-// 랜딩/검색 페이지의 카테고리 바로가기용 큐레이션 목록. Service는 파트너가
-// 자유 텍스트로 입력하므로 DB에 실제 카테고리 테이블은 없음 — 이 목록은
-// /companies?keyword= 검색으로 연결되는 UI 전용 shortcut이며 실데이터 분류가 아님.
+// 홈 화면 "인기 카테고리"에 노출할 대분류 slug 8개 (Category.slug, sortOrder
+// 순서가 아니라 명시적으로 큐레이션한 목록 — DJ/공연장비는 제외). 나머지
+// 대분류를 포함한 전체 목록은 /categories 페이지에서 확인 가능. src/lib/categories.ts
+// 참고.
+export const POPULAR_CATEGORY_SLUGS = [
+  "instrument",
+  "audio",
+  "photo",
+  "video",
+  "drone",
+  "3d-printer",
+  "hobby",
+  "outdoor",
+] as const;
+
+// 레거시: 실제 Category DB 테이블(src/lib/categories.ts) 도입 이전에 쓰이던
+// 홈 화면 카테고리 바로가기용 하드코딩 목록. 신규 코드는 사용하지 말 것 —
+// 남겨두는 이유는 과거 데이터/링크 호환 때문.
 export const INSTRUMENT_CATEGORIES = [
   { label: "기타", icon: "guitar" },
   { label: "베이스", icon: "guitar" },
@@ -80,7 +95,10 @@ export const INSTRUMENT_CATEGORIES = [
   { label: "마이크·음향장비", icon: "mic" },
 ] as const;
 
-// AI 수리 견적 매칭(RepairRequest) Step 1 선택지. category: INSTRUMENT | AUDIO_EQUIPMENT
+// 레거시: Category DB 테이블(src/lib/categories.ts, CategoryInstrumentPicker.tsx)
+// 도입 이전에 AI 견적 매칭/예약 폼에서 쓰이던 하드코딩 2종 카테고리. 신규
+// 코드는 사용하지 말 것 — 과거 RepairRequest/Reservation 데이터의 category
+// 값("INSTRUMENT"|"AUDIO_EQUIPMENT")과의 호환을 위해 값만 유지.
 export const REPAIR_TARGETS: Record<"INSTRUMENT" | "AUDIO_EQUIPMENT", { label: string; items: string[] }> = {
   INSTRUMENT: {
     label: "악기",

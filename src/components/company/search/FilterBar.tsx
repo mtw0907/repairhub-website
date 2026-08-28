@@ -4,6 +4,7 @@ import { SlidersHorizontal } from "lucide-react";
 import type { SearchFilters } from "@/components/company/search/FilterPanel";
 import { KOREAN_REGIONS } from "@/lib/koreanRegions";
 import { SelectMenu } from "@/components/ui/SelectMenu";
+import type { CategoryTreeNode } from "@/lib/categories";
 
 const TOGGLES: [keyof SearchFilters, string][] = [
   ["aiRecommendOnly", "AI 추천"],
@@ -17,10 +18,12 @@ export function FilterBar({
   filters,
   onChange,
   onOpenMore,
+  categoryTree,
 }: {
   filters: SearchFilters;
   onChange: (filters: SearchFilters) => void;
   onOpenMore: () => void;
+  categoryTree: CategoryTreeNode[];
 }) {
   const districtOptions = KOREAN_REGIONS.find((r) => r.name === filters.regionSido)?.districts ?? [];
 
@@ -48,6 +51,18 @@ export function FilterBar({
           options={[
             { value: "", label: filters.regionSido ? `${filters.regionSido} 전체` : "구/군/시" },
             ...districtOptions.map((d) => ({ value: d, label: d })),
+          ]}
+        />
+      </div>
+      <div className="w-28">
+        <SelectMenu
+          compact
+          placeholder="수리 분야"
+          value={filters.categorySlug ?? ""}
+          onChange={(v) => onChange({ ...filters, categorySlug: v || null })}
+          options={[
+            { value: "", label: "전체 분야" },
+            ...categoryTree.map((c) => ({ value: c.slug, label: c.name })),
           ]}
         />
       </div>

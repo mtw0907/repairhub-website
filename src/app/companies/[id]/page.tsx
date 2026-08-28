@@ -10,6 +10,7 @@ import { RecordCompanyView } from "@/components/company/RecordCompanyView";
 import { CompanyDetailTabs } from "@/components/company/CompanyDetailTabs";
 import { ReportButton } from "@/components/ReportButton";
 import { formatBusinessHours } from "@/lib/businessHours";
+import { getCategoryTree } from "@/lib/categories";
 
 export async function generateMetadata({
   params,
@@ -69,7 +70,7 @@ export default async function CompanyDetailPage({
   const session = await auth();
   const isUser = session?.user?.role === "USER";
 
-  const [favorite, ownReview] = await Promise.all([
+  const [favorite, ownReview, categoryTree] = await Promise.all([
     isUser
       ? prisma.favorite.findUnique({
           where: { userId_companyId: { userId: session!.user.id, companyId: company.id } },
@@ -78,6 +79,7 @@ export default async function CompanyDetailPage({
     isUser
       ? prisma.review.findFirst({ where: { userId: session!.user.id, companyId: company.id } })
       : null,
+    getCategoryTree(),
   ]);
 
   const reviewCount = company.reviews.length;
@@ -222,6 +224,7 @@ export default async function CompanyDetailPage({
           <CompanyDetailTabs
             companyId={company.id}
             isUser={isUser}
+            categoryTree={categoryTree}
             introduction={company.introduction}
             businessHoursText={formatBusinessHours(company.businessHours, company.closedDays)}
             onSiteVisit={company.onSiteVisit}

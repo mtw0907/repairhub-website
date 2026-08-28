@@ -2,24 +2,28 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Sparkles, Guitar, Speaker, ChevronLeft, HelpCircle } from "lucide-react";
-import { REPAIR_TARGETS } from "@/lib/constants";
-
-type Category = "INSTRUMENT" | "AUDIO_EQUIPMENT";
+import { Sparkles, ChevronLeft, HelpCircle } from "lucide-react";
+import type { CategoryTreeNode } from "@/lib/categories";
+import {
+  CategoryInstrumentPicker,
+  EMPTY_CATEGORY_SELECTION,
+  type CategorySelection,
+} from "@/components/repair/CategoryInstrumentPicker";
 
 export function NewRepairRequestForm({
   remaining,
   dailyLimit,
+  categoryTree,
 }: {
   remaining: number;
   dailyLimit: number;
+  categoryTree: CategoryTreeNode[];
 }) {
   const router = useRouter();
   const limitReached = remaining <= 0;
   const [step, setStep] = useState(1);
-  const [category, setCategory] = useState<Category | null>(null);
-  const [instrument, setInstrument] = useState("");
-  const [isCustomInstrument, setIsCustomInstrument] = useState(false);
+  const [selection, setSelection] = useState<CategorySelection>(EMPTY_CATEGORY_SELECTION);
+  const { categoryId, categoryName, subcategoryId, instrument } = selection;
   const [brand, setBrand] = useState("");
   const [symptom, setSymptom] = useState("");
   const [photos, setPhotos] = useState<string[]>([]);
@@ -63,7 +67,7 @@ export function NewRepairRequestForm({
       const res = await fetch("/api/repair-requests/clarify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ category, instrument, brand, symptom }),
+        body: JSON.stringify({ category: categoryName, instrument, brand, symptom }),
       });
       const data = await res.json().catch(() => null);
       const questions: string[] = Array.isArray(data?.questions) ? data.questions : [];
@@ -96,7 +100,16 @@ export function NewRepairRequestForm({
     const res = await fetch("/api/repair-requests", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ category, instrument, brand, symptom: finalSymptom, photos, videos }),
+      body: JSON.stringify({
+        category: categoryName,
+        instrument,
+        categoryId,
+        subcategoryId,
+        brand,
+        symptom: finalSymptom,
+        photos,
+        videos,
+      }),
     });
     const data = await res.json().catch(() => null);
     setSubmitting(false);
@@ -144,82 +157,7 @@ export function NewRepairRequestForm({
 
       {step === 1 && (
         <div className="space-y-5 p-5 sm:p-6">
-          <div className="grid gap-3 sm:grid-cols-2">
-            {(Object.entries(REPAIR_TARGETS) as [Category, (typeof REPAIR_TARGETS)[Category]][]).map(
-              ([key, group]) => {
-                const Icon = key === "INSTRUMENT" ? Guitar : Speaker;
-                return (
-                  <button
-                    key={key}
-                    type="button"
-                    onClick={() => {
-                      setCategory(key);
-                      setInstrument("");
-                      setIsCustomInstrument(false);
-                    }}
-                    className={
-                      category === key
-                        ? "flex items-center gap-3 rounded-xl border border-primary bg-primary/10 p-4 text-left transition-colors"
-                        : "flex items-center gap-3 rounded-xl border border-neutral-200 p-4 text-left transition-colors hover:border-accent/50 dark:border-neutral-700"
-                    }
-                  >
-                    <Icon className="h-5 w-5 text-primary" />
-                    <span className="font-semibold text-neutral-900 dark:text-neutral-100">{group.label}</span>
-                  </button>
-                );
-              },
-            )}
-          </div>
-
-          {category && (
-            <div>
-              <label className="mb-2 block text-sm font-medium text-neutral-700 dark:text-neutral-300">
-                세부 종류
-              </label>
-              <div className="flex flex-wrap gap-2">
-                {REPAIR_TARGETS[category].items.map((item) => (
-                  <button
-                    key={item}
-                    type="button"
-                    onClick={() => {
-                      setInstrument(item);
-                      setIsCustomInstrument(false);
-                    }}
-                    className={
-                      !isCustomInstrument && instrument === item
-                        ? "rounded-full bg-primary px-4 py-1.5 text-sm font-semibold text-primary-foreground"
-                        : "rounded-full border border-neutral-300 px-4 py-1.5 text-sm text-neutral-600 transition-colors hover:border-accent/50 dark:border-neutral-700 dark:text-neutral-300"
-                    }
-                  >
-                    {item}
-                  </button>
-                ))}
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsCustomInstrument(true);
-                    setInstrument("");
-                  }}
-                  className={
-                    isCustomInstrument
-                      ? "rounded-full bg-primary px-4 py-1.5 text-sm font-semibold text-primary-foreground"
-                      : "rounded-full border border-dashed border-neutral-300 px-4 py-1.5 text-sm text-neutral-500 transition-colors hover:border-accent/50 dark:border-neutral-700 dark:text-neutral-400"
-                  }
-                >
-                  직접 입력
-                </button>
-              </div>
-              {isCustomInstrument && (
-                <input
-                  autoFocus
-                  value={instrument}
-                  onChange={(e) => setInstrument(e.target.value)}
-                  placeholder="목록에 없는 종류를 직접 입력해주세요"
-                  className="mt-2 w-full rounded-xl border border-neutral-200 bg-surface-muted px-3 py-2.5 text-sm outline-none transition-colors focus:border-primary/40 focus:ring-2 focus:ring-primary/10 dark:border-neutral-700 dark:bg-neutral-800"
-                />
-              )}
-            </div>
-          )}
+          <CategoryInstrumentPicker tree={categoryTree} value={selection} onChange={setSelection} />
 
           <div>
             <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">
@@ -235,7 +173,7 @@ export function NewRepairRequestForm({
 
           <button
             type="button"
-            disabled={!category || !instrument}
+            disabled={!categoryId || !instrument}
             onClick={() => setStep(2)}
             className="w-full rounded-xl bg-primary px-5 py-3 text-sm font-bold text-primary-foreground shadow-sm transition-transform hover:scale-[1.01] hover:bg-primary/90 disabled:opacity-40 disabled:hover:scale-100"
           >

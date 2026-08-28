@@ -2,9 +2,15 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ChevronLeft, ChevronRight, Store, Truck, Package, Guitar, Speaker } from "lucide-react";
-import { RESERVATION_METHOD_LABEL, REPAIR_TARGETS, type ReservationMethod } from "@/lib/constants";
+import { ChevronLeft, ChevronRight, Store, Truck, Package } from "lucide-react";
+import { RESERVATION_METHOD_LABEL, type ReservationMethod } from "@/lib/constants";
 import { AddressSearchField } from "@/components/AddressSearchField";
+import type { CategoryTreeNode } from "@/lib/categories";
+import {
+  CategoryInstrumentPicker,
+  EMPTY_CATEGORY_SELECTION,
+  type CategorySelection,
+} from "@/components/repair/CategoryInstrumentPicker";
 
 const WEEKDAY_LABELS = ["일", "월", "화", "수", "목", "금", "토"];
 
@@ -13,8 +19,6 @@ const METHOD_ICON: Record<ReservationMethod, typeof Store> = {
   ONSITE: Truck,
   COURIER: Package,
 };
-
-type RepairCategory = "INSTRUMENT" | "AUDIO_EQUIPMENT";
 
 function startOfMonth(d: Date) {
   return new Date(d.getFullYear(), d.getMonth(), 1);
@@ -31,11 +35,13 @@ export function ReservationForm({
   isUser,
   onSiteVisit,
   courierDrop,
+  categoryTree,
 }: {
   companyId: string;
   isUser: boolean;
   onSiteVisit: boolean;
   courierDrop: boolean;
+  categoryTree: CategoryTreeNode[];
 }) {
   const router = useRouter();
   const today = new Date();
@@ -50,12 +56,11 @@ export function ReservationForm({
   const [method, setMethod] = useState<ReservationMethod>("VISIT");
   const needsSchedule = method !== "COURIER";
 
-  const [category, setCategory] = useState<RepairCategory | null>(null);
-  const [instrument, setInstrument] = useState("");
-  const [isCustomInstrument, setIsCustomInstrument] = useState(false);
+  const [selection, setSelection] = useState<CategorySelection>(EMPTY_CATEGORY_SELECTION);
+  const { categoryId, categoryName, instrument } = selection;
   const [brand, setBrand] = useState("");
   const [symptom, setSymptom] = useState("");
-  const repairInfoComplete = !!category && !!instrument && !!brand.trim() && !!symptom.trim();
+  const repairInfoComplete = !!categoryId && !!instrument && !!brand.trim() && !!symptom.trim();
 
   const [viewMonth, setViewMonth] = useState(startOfMonth(today));
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -124,8 +129,9 @@ export function ReservationForm({
         method,
         scheduledAt,
         visitAddress: method === "ONSITE" || method === "COURIER" ? visitAddress || null : null,
-        instrumentCategory: category,
+        instrumentCategory: categoryName,
         instrument,
+        categoryId,
         brand,
         symptom,
         memo,
@@ -140,9 +146,7 @@ export function ReservationForm({
       setAddressBase("");
       setAddressDetail("");
       setMemo("");
-      setCategory(null);
-      setInstrument("");
-      setIsCustomInstrument(false);
+      setSelection(EMPTY_CATEGORY_SELECTION);
       setBrand("");
       setSymptom("");
     } else {
@@ -155,82 +159,7 @@ export function ReservationForm({
     <form onSubmit={handleSubmit} className="space-y-5">
       <div className="rounded-2xl border border-neutral-200/70 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-900">
         <p className="mb-2 text-sm font-medium text-neutral-700 dark:text-neutral-300">수리 정보</p>
-        <div className="grid grid-cols-2 gap-2">
-          {(Object.entries(REPAIR_TARGETS) as [RepairCategory, (typeof REPAIR_TARGETS)[RepairCategory]][]).map(
-            ([key, group]) => {
-              const Icon = key === "INSTRUMENT" ? Guitar : Speaker;
-              return (
-                <button
-                  key={key}
-                  type="button"
-                  onClick={() => {
-                    setCategory(key);
-                    setInstrument("");
-                    setIsCustomInstrument(false);
-                  }}
-                  className={
-                    category === key
-                      ? "flex items-center gap-2 rounded-xl border border-primary bg-primary/10 p-3 text-left transition-colors"
-                      : "group flex items-center gap-2 rounded-xl border border-neutral-200 p-3 text-left transition-colors hover:border-accent/50 hover:bg-accent/10 dark:border-neutral-700 dark:hover:border-accent/40 dark:hover:bg-accent/15"
-                  }
-                >
-                  <Icon className="h-4.5 w-4.5 text-primary" />
-                  <span className="text-sm font-semibold text-neutral-900 transition-colors group-hover:text-accent dark:text-neutral-100 dark:group-hover:text-accent">
-                    {group.label}
-                  </span>
-                </button>
-              );
-            },
-          )}
-        </div>
-
-        {category && (
-          <div className="mt-3">
-            <p className="mb-1.5 text-xs font-medium text-neutral-500">세부 종류</p>
-            <div className="flex flex-wrap gap-2">
-              {REPAIR_TARGETS[category].items.map((item) => (
-                <button
-                  key={item}
-                  type="button"
-                  onClick={() => {
-                    setInstrument(item);
-                    setIsCustomInstrument(false);
-                  }}
-                  className={
-                    !isCustomInstrument && instrument === item
-                      ? "rounded-full bg-primary px-3.5 py-1.5 text-sm font-semibold text-primary-foreground"
-                      : "rounded-full border border-neutral-300 px-3.5 py-1.5 text-sm text-neutral-600 transition-colors hover:border-accent/50 dark:border-neutral-700 dark:text-neutral-300"
-                  }
-                >
-                  {item}
-                </button>
-              ))}
-              <button
-                type="button"
-                onClick={() => {
-                  setIsCustomInstrument(true);
-                  setInstrument("");
-                }}
-                className={
-                  isCustomInstrument
-                    ? "rounded-full bg-primary px-3.5 py-1.5 text-sm font-semibold text-primary-foreground"
-                    : "rounded-full border border-dashed border-neutral-300 px-3.5 py-1.5 text-sm text-neutral-500 transition-colors hover:border-accent/50 dark:border-neutral-700 dark:text-neutral-400"
-                }
-              >
-                직접 입력
-              </button>
-            </div>
-            {isCustomInstrument && (
-              <input
-                autoFocus
-                value={instrument}
-                onChange={(e) => setInstrument(e.target.value)}
-                placeholder="목록에 없는 종류를 직접 입력해주세요"
-                className="mt-2 w-full rounded-xl border border-neutral-200 bg-surface-muted px-3 py-2.5 text-sm outline-none transition-colors focus:border-primary/40 focus:ring-2 focus:ring-primary/10 dark:border-neutral-700 dark:bg-neutral-800"
-              />
-            )}
-          </div>
-        )}
+        <CategoryInstrumentPicker tree={categoryTree} value={selection} onChange={setSelection} />
 
         <div className="mt-3">
           <label className="mb-1 block text-xs font-medium text-neutral-500">브랜드</label>

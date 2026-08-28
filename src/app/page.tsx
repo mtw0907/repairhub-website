@@ -1,13 +1,6 @@
 import Link from "next/link";
 import {
   Search,
-  Guitar,
-  Drum,
-  Piano,
-  Wind,
-  Music,
-  Speaker,
-  Mic,
   Star,
   Wrench,
   ArrowRight,
@@ -22,6 +15,7 @@ import {
   CalendarCheck,
   Building2,
   ShieldCheck,
+  Grid3x3,
 } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { CompanyCard, type CompanySummary } from "@/components/company/CompanyCard";
@@ -30,7 +24,8 @@ import { HomeMapPreview } from "@/components/home/HomeMapPreview";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { getSetting } from "@/lib/systemSettings";
-import { INSTRUMENT_CATEGORIES } from "@/lib/constants";
+import { POPULAR_CATEGORY_SLUGS } from "@/lib/constants";
+import { getCategoryTree, getCategoryIcon } from "@/lib/categories";
 import { maskName } from "@/lib/format";
 
 const PARTNER_AI_SHORTCUTS = [
@@ -61,16 +56,6 @@ const FEATURE_LINKS = [
     icon: MessageCircle,
   },
 ];
-
-const CATEGORY_ICONS: Record<string, typeof Guitar> = {
-  guitar: Guitar,
-  drum: Drum,
-  piano: Piano,
-  wind: Wind,
-  music: Music,
-  speaker: Speaker,
-  mic: Mic,
-};
 
 function toCompanySummary(c: {
   id: string;
@@ -124,7 +109,7 @@ export default async function LandingPage() {
     reviews: { where: { status: "VISIBLE" as const }, select: { rating: true } },
   };
 
-  const [popularRaw, newRaw, workCases, reviews, kakaoMapKey, approvedCompanyCount] = await Promise.all([
+  const [popularRaw, newRaw, workCases, reviews, kakaoMapKey, approvedCompanyCount, categoryTree] = await Promise.all([
     prisma.company.findMany({
       where: { status: "APPROVED" },
       include: companyInclude,
@@ -150,7 +135,12 @@ export default async function LandingPage() {
     }),
     getSetting("KAKAO_MAP_JS_KEY"),
     prisma.company.count({ where: { status: "APPROVED" } }),
+    getCategoryTree(),
   ]);
+
+  const popularCategories = POPULAR_CATEGORY_SLUGS.map((slug) =>
+    categoryTree.find((c) => c.slug === slug),
+  ).filter((c): c is NonNullable<typeof c> => c !== undefined);
 
   const popular = popularRaw.map(toCompanySummary);
   const fresh = newRaw.map(toCompanySummary);
@@ -277,25 +267,34 @@ export default async function LandingPage() {
           </div>
         </section>
 
-        {/* 악기 카테고리 */}
+        {/* 인기 카테고리 */}
         <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
-          <h2 className="mb-5 text-xl font-bold text-neutral-900 dark:text-neutral-100 sm:text-2xl">
-            악기 카테고리별로 찾기
-          </h2>
+          <div className="mb-5 flex items-center justify-between">
+            <h2 className="text-xl font-bold text-neutral-900 dark:text-neutral-100 sm:text-2xl">
+              인기 카테고리
+            </h2>
+            <Link
+              href="/categories"
+              className="flex items-center gap-1 text-sm font-medium text-neutral-500 transition-colors hover:text-accent"
+            >
+              <Grid3x3 className="h-4 w-4" />
+              전체 카테고리 보기
+            </Link>
+          </div>
           <div className="grid grid-cols-4 gap-3 sm:grid-cols-8">
-            {INSTRUMENT_CATEGORIES.map((cat) => {
-              const Icon = CATEGORY_ICONS[cat.icon] ?? Music;
+            {popularCategories.map((cat) => {
+              const Icon = getCategoryIcon(cat.icon);
               return (
                 <Link
-                  key={cat.label}
-                  href={`/companies?keyword=${encodeURIComponent(cat.label)}`}
+                  key={cat.id}
+                  href={`/companies?category=${cat.slug}`}
                   className="group flex flex-col items-center gap-2 rounded-2xl border border-neutral-200/70 bg-white p-3 text-center shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-accent/50 hover:shadow-md dark:border-neutral-800 dark:bg-neutral-900 sm:p-4"
                 >
                   <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary transition-colors group-hover:bg-accent/20 group-hover:text-accent dark:text-neutral-200">
                     <Icon className="h-5 w-5" />
                   </span>
                   <span className="text-[11px] font-medium text-neutral-700 dark:text-neutral-300 sm:text-xs">
-                    {cat.label}
+                    {cat.name}
                   </span>
                 </Link>
               );

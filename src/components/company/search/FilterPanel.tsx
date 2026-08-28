@@ -1,11 +1,13 @@
 "use client";
 
 import { X } from "lucide-react";
+import type { CategoryTreeNode } from "@/lib/categories";
 
 export type SearchFilters = {
   minRating: number | null;
   regionSido: string | null; // null = 지역 필터 없음
   regionDistrict: string | null; // null = regionSido 전체
+  categorySlug: string | null; // null = 수리 분야 필터 없음 (Category.slug, 대분류 기준)
   onSiteOnly: boolean;
   courierOnly: boolean;
   availableTodayOnly: boolean;
@@ -17,6 +19,7 @@ export const DEFAULT_FILTERS: SearchFilters = {
   minRating: null,
   regionSido: null,
   regionDistrict: null,
+  categorySlug: null,
   onSiteOnly: false,
   courierOnly: false,
   availableTodayOnly: false,
@@ -28,6 +31,7 @@ export function countActiveFilters(f: SearchFilters): number {
   let n = 0;
   if (f.minRating !== null) n++;
   if (f.regionSido !== null) n++;
+  if (f.categorySlug !== null) n++;
   if (f.onSiteOnly) n++;
   if (f.courierOnly) n++;
   if (f.availableTodayOnly) n++;
@@ -43,11 +47,13 @@ export function FilterPanel({
   filters,
   onChange,
   onClose,
+  categoryTree,
 }: {
   open: boolean;
   filters: SearchFilters;
   onChange: (filters: SearchFilters) => void;
   onClose: () => void;
+  categoryTree: CategoryTreeNode[];
 }) {
   if (!open) return null;
 
@@ -70,6 +76,26 @@ export function FilterPanel({
         </div>
 
         <div className="space-y-6">
+          <div>
+            <p className="mb-2 text-sm font-semibold text-neutral-700 dark:text-neutral-300">수리 분야</p>
+            <div className="flex flex-wrap gap-2">
+              {categoryTree.map((c) => (
+                <button
+                  key={c.id}
+                  type="button"
+                  onClick={() => toggle("categorySlug", c.slug)}
+                  className={
+                    filters.categorySlug === c.slug
+                      ? "rounded-full bg-primary px-3.5 py-1.5 text-xs font-semibold text-primary-foreground transition-transform hover:scale-105"
+                      : "rounded-full border border-neutral-200 px-3.5 py-1.5 text-xs font-medium text-neutral-600 transition-colors hover:border-accent/50 hover:text-accent dark:border-neutral-700 dark:text-neutral-300 dark:hover:border-accent/40 dark:hover:text-accent"
+                  }
+                >
+                  {c.name}
+                </button>
+              ))}
+            </div>
+          </div>
+
           <div>
             <p className="mb-2 text-sm font-semibold text-neutral-700 dark:text-neutral-300">평점</p>
             <div className="flex flex-wrap gap-2">

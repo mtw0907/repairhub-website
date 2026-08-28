@@ -38,6 +38,11 @@ export type CompanySummary = {
   aiRecommendReasons?: string[] | null;
   reservationStatus?: ReservationStatus | null;
   priceRange?: { min: number; max: number } | null;
+  // 업체가 선택한 수리 가능 카테고리 slug/이름 목록 (대분류+세부품목). slug는
+  // "수리 분야" 필터링에, name은 키워드 검색 haystack에 쓰인다 —
+  // src/components/company/search/CompanySearchView.tsx.
+  categorySlugs?: string[];
+  categoryNames?: string[];
 };
 
 const OPEN_STATUS_STYLE: Record<string, string> = {
