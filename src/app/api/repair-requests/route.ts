@@ -15,7 +15,7 @@ function buildSystemPrompt(category: string) {
 export async function POST(req: Request) {
   try {
     const user = await requireRole(["USER"]);
-    const { category, instrument, categoryId, subcategoryId, brand, model, symptom, photos, videos } =
+    const { category, instrument, categoryId, subcategoryId, brand, model, deviceId, symptom, photos, videos } =
       await req.json();
 
     if (!category || !instrument || !symptom) {
@@ -35,6 +35,14 @@ export async function POST(req: Request) {
         { error: `AI 수리 견적 매칭은 하루 최대 ${REPAIR_REQUEST_DAILY_LIMIT}회까지 이용 가능합니다. 내일 다시 시도해주세요.` },
         { status: 429 },
       );
+    }
+
+    let verifiedDeviceId: string | null = null;
+    if (deviceId) {
+      const device = await prisma.userDevice.findUnique({ where: { id: deviceId } });
+      if (device && device.userId === user.id) {
+        verifiedDeviceId = deviceId;
+      }
     }
 
     const userPrompt = `종류: ${instrument}${brand ? `\n브랜드: ${brand}` : ""}${model ? `\n모델명: ${model}` : ""}\n증상: ${symptom}`;
@@ -66,6 +74,7 @@ export async function POST(req: Request) {
         subcategoryId: subcategoryId || null,
         brand: brand || null,
         model: model || null,
+        deviceId: verifiedDeviceId,
         symptom,
         photos: Array.isArray(photos) && photos.length > 0 ? JSON.stringify(photos) : null,
         videos: Array.isArray(videos) && videos.length > 0 ? JSON.stringify(videos) : null,

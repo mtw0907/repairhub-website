@@ -10,11 +10,16 @@ export default async function NewRepairRequestPage() {
   const session = await auth();
   const todayStart = new Date();
   todayStart.setHours(0, 0, 0, 0);
-  const [todayCount, categoryTree] = await Promise.all([
+  const [todayCount, categoryTree, devices] = await Promise.all([
     prisma.repairRequest.count({
       where: { userId: session!.user.id, createdAt: { gte: todayStart } },
     }),
     getCategoryTree(),
+    prisma.userDevice.findMany({
+      where: { userId: session!.user.id },
+      select: { id: true, name: true },
+      orderBy: { createdAt: "desc" },
+    }),
   ]);
   const remaining = Math.max(REPAIR_REQUEST_DAILY_LIMIT - todayCount, 0);
 
@@ -37,7 +42,12 @@ export default async function NewRepairRequestPage() {
             오늘 남은 이용 횟수 {remaining}/{REPAIR_REQUEST_DAILY_LIMIT}
           </span>
         </div>
-        <NewRepairRequestForm remaining={remaining} dailyLimit={REPAIR_REQUEST_DAILY_LIMIT} categoryTree={categoryTree} />
+        <NewRepairRequestForm
+          remaining={remaining}
+          dailyLimit={REPAIR_REQUEST_DAILY_LIMIT}
+          categoryTree={categoryTree}
+          devices={devices}
+        />
       </main>
     </div>
   );

@@ -55,6 +55,7 @@ export function CompanyDetailTabs({
   ownReview,
   categoryTree,
   assignedCategories,
+  devices,
 }: {
   companyId: string;
   isUser: boolean;
@@ -70,6 +71,7 @@ export function CompanyDetailTabs({
   ownReview?: { id: string; rating: number; content: string; photos: string[] };
   categoryTree: CategoryTreeNode[];
   assignedCategories: { name: string; icon: string | null }[];
+  devices?: { id: string; name: string }[];
 }) {
   const [tab, setTab] = useState<TabKey>("home");
   const [reviewsExpanded, setReviewsExpanded] = useState(false);
@@ -262,6 +264,7 @@ export function CompanyDetailTabs({
               onSiteVisit={onSiteVisit}
               courierDrop={courierDrop}
               categoryTree={categoryTree}
+              devices={devices}
             />
           </div>
         )}

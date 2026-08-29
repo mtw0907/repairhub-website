@@ -34,6 +34,7 @@ export async function POST(req: Request) {
       instrumentCategory,
       instrument,
       categoryId,
+      deviceId,
       brand,
       symptom,
     } = await req.json();
@@ -73,6 +74,14 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "출장 방문 주소를 입력해주세요." }, { status: 400 });
     }
 
+    let verifiedDeviceId: string | null = null;
+    if (deviceId) {
+      const device = await prisma.userDevice.findUnique({ where: { id: deviceId } });
+      if (device && device.userId === user.id) {
+        verifiedDeviceId = deviceId;
+      }
+    }
+
     const reservation = await prisma.reservation.create({
       data: {
         userId: user.id,
@@ -82,6 +91,7 @@ export async function POST(req: Request) {
         instrumentCategory,
         instrument,
         categoryId: categoryId || null,
+        deviceId: verifiedDeviceId,
         brand: String(brand).trim(),
         symptom: String(symptom).trim(),
         scheduledAt: scheduledAt ? new Date(scheduledAt) : null,

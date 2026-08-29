@@ -9,6 +9,7 @@ import {
   EMPTY_CATEGORY_SELECTION,
   type CategorySelection,
 } from "@/components/repair/CategoryInstrumentPicker";
+import { SelectMenu } from "@/components/ui/SelectMenu";
 
 // 지시서 SECTION 8: 카테고리 → 세부장비 → 브랜드 → 모델명 → 증상 → 사진 →
 // AI분석 7단계 위저드. 카테고리/세부장비는 CategoryInstrumentPicker 한
@@ -21,10 +22,12 @@ export function NewRepairRequestForm({
   remaining,
   dailyLimit,
   categoryTree,
+  devices = [],
 }: {
   remaining: number;
   dailyLimit: number;
   categoryTree: CategoryTreeNode[];
+  devices?: { id: string; name: string }[];
 }) {
   const router = useRouter();
   const limitReached = remaining <= 0;
@@ -33,6 +36,7 @@ export function NewRepairRequestForm({
   const { categoryId, categoryName, subcategoryId, instrument } = selection;
   const [brand, setBrand] = useState("");
   const [model, setModel] = useState("");
+  const [deviceId, setDeviceId] = useState<string | null>(null);
   const [symptom, setSymptom] = useState("");
   const [photos, setPhotos] = useState<string[]>([]);
   const [videos, setVideos] = useState<string[]>([]);
@@ -115,6 +119,7 @@ export function NewRepairRequestForm({
         subcategoryId,
         brand,
         model,
+        deviceId,
         symptom: finalSymptom,
         photos,
         videos,
@@ -192,7 +197,22 @@ export function NewRepairRequestForm({
         )}
 
         {step === 1 && (
-          <CategoryInstrumentPicker tree={categoryTree} value={selection} onChange={setSelection} mode="category" />
+          <>
+            {devices.length > 0 && (
+              <div>
+                <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">
+                  내 장비와 연결 (선택)
+                </label>
+                <SelectMenu
+                  placeholder="연결 안 함"
+                  value={deviceId ?? ""}
+                  onChange={(v) => setDeviceId(v || null)}
+                  options={[{ value: "", label: "연결 안 함" }, ...devices.map((d) => ({ value: d.id, label: d.name }))]}
+                />
+              </div>
+            )}
+            <CategoryInstrumentPicker tree={categoryTree} value={selection} onChange={setSelection} mode="category" />
+          </>
         )}
         {step === 2 && (
           <CategoryInstrumentPicker tree={categoryTree} value={selection} onChange={setSelection} mode="subcategory" />

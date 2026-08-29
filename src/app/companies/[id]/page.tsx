@@ -74,7 +74,7 @@ export default async function CompanyDetailPage({
   const session = await auth();
   const isUser = session?.user?.role === "USER";
 
-  const [favorite, ownReview, categoryTree] = await Promise.all([
+  const [favorite, ownReview, categoryTree, devices] = await Promise.all([
     isUser
       ? prisma.favorite.findUnique({
           where: { userId_companyId: { userId: session!.user.id, companyId: company.id } },
@@ -84,6 +84,13 @@ export default async function CompanyDetailPage({
       ? prisma.review.findFirst({ where: { userId: session!.user.id, companyId: company.id } })
       : null,
     getCategoryTree(),
+    isUser
+      ? prisma.userDevice.findMany({
+          where: { userId: session!.user.id },
+          select: { id: true, name: true },
+          orderBy: { createdAt: "desc" },
+        })
+      : [],
   ]);
 
   const reviewCount = company.reviews.length;
@@ -236,6 +243,7 @@ export default async function CompanyDetailPage({
             isUser={isUser}
             categoryTree={categoryTree}
             assignedCategories={assignedCategories}
+            devices={devices}
             introduction={company.introduction}
             businessHoursText={formatBusinessHours(company.businessHours, company.closedDays)}
             onSiteVisit={company.onSiteVisit}

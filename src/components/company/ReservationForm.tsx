@@ -11,6 +11,7 @@ import {
   EMPTY_CATEGORY_SELECTION,
   type CategorySelection,
 } from "@/components/repair/CategoryInstrumentPicker";
+import { SelectMenu } from "@/components/ui/SelectMenu";
 
 const WEEKDAY_LABELS = ["일", "월", "화", "수", "목", "금", "토"];
 
@@ -36,12 +37,14 @@ export function ReservationForm({
   onSiteVisit,
   courierDrop,
   categoryTree,
+  devices = [],
 }: {
   companyId: string;
   isUser: boolean;
   onSiteVisit: boolean;
   courierDrop: boolean;
   categoryTree: CategoryTreeNode[];
+  devices?: { id: string; name: string }[];
 }) {
   const router = useRouter();
   const today = new Date();
@@ -58,6 +61,7 @@ export function ReservationForm({
 
   const [selection, setSelection] = useState<CategorySelection>(EMPTY_CATEGORY_SELECTION);
   const { categoryId, categoryName, instrument } = selection;
+  const [deviceId, setDeviceId] = useState<string | null>(null);
   const [brand, setBrand] = useState("");
   const [symptom, setSymptom] = useState("");
   const repairInfoComplete = !!categoryId && !!instrument && !!brand.trim() && !!symptom.trim();
@@ -132,6 +136,7 @@ export function ReservationForm({
         instrumentCategory: categoryName,
         instrument,
         categoryId,
+        deviceId,
         brand,
         symptom,
         memo,
@@ -147,6 +152,7 @@ export function ReservationForm({
       setAddressDetail("");
       setMemo("");
       setSelection(EMPTY_CATEGORY_SELECTION);
+      setDeviceId(null);
       setBrand("");
       setSymptom("");
     } else {
@@ -159,6 +165,17 @@ export function ReservationForm({
     <form onSubmit={handleSubmit} className="space-y-5">
       <div className="rounded-2xl border border-neutral-200/70 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-900">
         <p className="mb-2 text-sm font-medium text-neutral-700 dark:text-neutral-300">수리 정보</p>
+        {devices.length > 0 && (
+          <div className="mb-3">
+            <label className="mb-1 block text-xs font-medium text-neutral-500">내 장비와 연결 (선택)</label>
+            <SelectMenu
+              placeholder="연결 안 함"
+              value={deviceId ?? ""}
+              onChange={(v) => setDeviceId(v || null)}
+              options={[{ value: "", label: "연결 안 함" }, ...devices.map((d) => ({ value: d.id, label: d.name }))]}
+            />
+          </div>
+        )}
         <CategoryInstrumentPicker tree={categoryTree} value={selection} onChange={setSelection} />
 
         <div className="mt-3">

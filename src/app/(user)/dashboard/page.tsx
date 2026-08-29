@@ -27,6 +27,7 @@ export default async function UserDashboardPage() {
           items: [
             { label: "예약 조회 · 취소", href: "/dashboard/reservations" },
             { label: "견적 요청 내역", href: "/dashboard/estimates" },
+            { label: "내 장비", href: "/dashboard/devices" },
           ],
         },
         {
