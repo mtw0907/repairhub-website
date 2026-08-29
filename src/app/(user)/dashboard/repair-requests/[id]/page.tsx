@@ -1,12 +1,13 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, Wrench, CalendarDays } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { UserPageHeader } from "@/components/UserPageHeader";
 import { AiAnalysisCard, type AiAnalysisResult } from "@/components/repair/AiAnalysisCard";
 import { AnalyzedStep } from "@/components/repair/AnalyzedStep";
 import { QuoteCompareList, type QuoteSummary } from "@/components/repair/QuoteCompareList";
+import { Card } from "@/components/ui/Card";
 
 export default async function RepairRequestDetailPage({
   params,
@@ -40,6 +41,7 @@ export default async function RepairRequestDetailPage({
   const aiResult: AiAnalysisResult | null = repairRequest.aiResult
     ? JSON.parse(repairRequest.aiResult)
     : null;
+  const requestPhotos: string[] = repairRequest.photos ? JSON.parse(repairRequest.photos) : [];
 
   const quotes: QuoteSummary[] = repairRequest.quotes.map((q) => {
     const reviewCount = q.company.reviews.length;
@@ -67,14 +69,33 @@ export default async function RepairRequestDetailPage({
       <UserPageHeader />
       <main className="mx-auto max-w-3xl space-y-6 px-4 py-8 sm:px-6 sm:py-10">
         <div>
-          <h1 className="text-2xl font-extrabold tracking-tight text-primary dark:text-neutral-100">
+          <h1 className="mb-3 text-2xl font-extrabold tracking-tight text-primary dark:text-neutral-100">
             {repairRequest.instrument} 수리 요청
           </h1>
-          <p className="mt-1 text-sm text-neutral-500">
-            {[repairRequest.brand, repairRequest.model].filter(Boolean).join(" ")}
-            {(repairRequest.brand || repairRequest.model) && " · "}
-            {repairRequest.symptom}
-          </p>
+          <Card className="flex gap-4 p-4">
+            <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-surface-muted">
+              {requestPhotos[0] ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={requestPhotos[0]} alt="장비 사진" className="h-full w-full object-cover" />
+              ) : (
+                <Wrench className="h-6 w-6 text-primary/30" />
+              )}
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="font-semibold text-neutral-900 dark:text-neutral-100">
+                {repairRequest.category} · {repairRequest.instrument}
+                {[repairRequest.brand, repairRequest.model].filter(Boolean).length > 0 &&
+                  ` · ${[repairRequest.brand, repairRequest.model].filter(Boolean).join(" ")}`}
+              </p>
+              <p className="mt-1 line-clamp-2 text-sm text-neutral-600 dark:text-neutral-400">
+                {repairRequest.symptom}
+              </p>
+              <p className="mt-1.5 flex items-center gap-1 text-xs text-neutral-400">
+                <CalendarDays className="h-3.5 w-3.5" />
+                {repairRequest.createdAt.toLocaleDateString("ko-KR")} 요청
+              </p>
+            </div>
+          </Card>
         </div>
 
         {repairRequest.status === "RESERVED" ? (
