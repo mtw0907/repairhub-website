@@ -410,7 +410,7 @@ export default async function LandingPage() {
         {/* AI 수리진단 소개 */}
         <section id="ai-assistant" className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
           <div className="overflow-hidden rounded-2xl border border-neutral-200/70 bg-white shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
-            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-neutral-100 px-5 py-4 dark:border-neutral-800 sm:px-6">
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-neutral-100 bg-primary/5 px-5 py-4 dark:border-neutral-800 dark:bg-primary/10 sm:px-6">
               <div className="flex items-center gap-2.5">
                 <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
                   <Sparkles className="h-5 w-5" />
@@ -650,17 +650,18 @@ export default async function LandingPage() {
         )}
       </main>
 
-      {/* 서비스 신뢰 요소 */}
-      <section className="border-t border-neutral-200/70 bg-white px-4 py-10 dark:border-neutral-800 dark:bg-neutral-950 sm:px-6">
+      {/* 서비스 신뢰 요소 — 흰 카드가 이어지는 본문 끝에 네이비 톤을 한 번
+          눌러줘서 Hero의 네이비와 위아래로 호응하게 만드는 지점. */}
+      <section className="bg-primary px-4 py-10 sm:px-6">
         <div className="mx-auto grid max-w-6xl grid-cols-2 gap-6 sm:grid-cols-4">
           {STATS.map((s) => (
             <div key={s.title} className="flex items-start gap-3">
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/10 text-accent">
                 <s.icon className="h-5 w-5" />
               </span>
               <div>
-                <p className="text-sm font-bold text-neutral-900 dark:text-neutral-100">{s.title}</p>
-                <p className="text-xs text-neutral-500">{s.desc}</p>
+                <p className="text-sm font-bold text-primary-foreground">{s.title}</p>
+                <p className="text-xs text-primary-foreground/70">{s.desc}</p>
               </div>
             </div>
           ))}
