@@ -351,7 +351,7 @@ export default async function LandingPage() {
               <Link
                 key={f.href}
                 href={f.href}
-                className="group flex items-center gap-3 rounded-2xl border border-neutral-200/70 bg-white p-4 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-md dark:border-neutral-800 dark:bg-neutral-900"
+                className="group flex items-center gap-3 rounded-2xl border border-primary/15 bg-white p-4 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-md dark:border-primary/25 dark:bg-neutral-900"
               >
                 <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors group-hover:bg-accent/20 group-hover:text-accent">
                   <f.icon className="h-5 w-5" />
@@ -390,7 +390,7 @@ export default async function LandingPage() {
                 <Link
                   key={cat.id}
                   href={`/companies?category=${cat.slug}`}
-                  className="group flex items-center gap-3 rounded-2xl border border-neutral-200/70 bg-white p-4 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-md dark:border-neutral-800 dark:bg-neutral-900"
+                  className="group flex items-center gap-3 rounded-2xl border border-primary/15 bg-white p-4 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-md dark:border-primary/25 dark:bg-neutral-900"
                 >
                   <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors group-hover:bg-accent/20 group-hover:text-accent dark:text-neutral-200">
                     <Icon className="h-5 w-5" />
@@ -409,8 +409,8 @@ export default async function LandingPage() {
 
         {/* AI 수리진단 소개 */}
         <section id="ai-assistant" className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
-          <div className="overflow-hidden rounded-2xl border border-neutral-200/70 bg-white shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
-            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-neutral-100 bg-primary/5 px-5 py-4 dark:border-neutral-800 dark:bg-primary/10 sm:px-6">
+          <div className="overflow-hidden rounded-2xl border border-primary/15 bg-white shadow-sm dark:border-primary/25 dark:bg-neutral-900">
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-neutral-100 bg-primary/5 px-5 py-4 dark:border-primary/25 dark:bg-primary/10 sm:px-6">
               <div className="flex items-center gap-2.5">
                 <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
                   <Sparkles className="h-5 w-5" />
@@ -495,7 +495,7 @@ export default async function LandingPage() {
             {MOCK_QUOTES.map((q) => (
               <div
                 key={q.name}
-                className="rounded-2xl border border-neutral-200/70 bg-white p-5 shadow-sm dark:border-neutral-800 dark:bg-neutral-900"
+                className="rounded-2xl border border-primary/15 bg-white p-5 shadow-sm dark:border-primary/25 dark:bg-neutral-900"
               >
                 <p className="text-sm font-bold text-neutral-900 dark:text-neutral-100">{q.name}</p>
                 <p className="mt-2 text-2xl font-extrabold text-primary dark:text-neutral-100">{q.price}</p>
@@ -554,7 +554,7 @@ export default async function LandingPage() {
 
             <div className="flex flex-col">
               <SectionTitle title="내 주변 수리업체" />
-              <div className="min-h-[420px] flex-1 overflow-hidden rounded-2xl border border-neutral-200/70 shadow-sm dark:border-neutral-800">
+              <div className="min-h-[420px] flex-1 overflow-hidden rounded-2xl border border-primary/15 shadow-sm dark:border-primary/25">
                 <HomeMapPreview companies={mapCompanies} kakaoMapKey={kakaoMapKey} />
               </div>
             </div>
@@ -581,7 +581,7 @@ export default async function LandingPage() {
                   <Link
                     key={w.id}
                     href={`/companies/${w.company.id}`}
-                    className="group flex flex-col overflow-hidden rounded-2xl border border-neutral-200/70 bg-white shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md dark:border-neutral-800 dark:bg-neutral-900"
+                    className="group flex flex-col overflow-hidden rounded-2xl border border-primary/15 bg-white shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md dark:border-primary/25 dark:bg-neutral-900"
                   >
                     <div className="relative aspect-square w-full overflow-hidden bg-surface-muted">
                       {photos[0] ? (
@@ -619,7 +619,7 @@ export default async function LandingPage() {
                 <Link
                   key={r.id}
                   href={`/companies/${r.company.id}`}
-                  className="flex flex-col gap-2.5 rounded-2xl border border-neutral-200/70 bg-white p-4 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md dark:border-neutral-800 dark:bg-neutral-900"
+                  className="flex flex-col gap-2.5 rounded-2xl border border-primary/15 bg-white p-4 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md dark:border-primary/25 dark:bg-neutral-900"
                 >
                   <div className="flex items-center gap-2.5">
                     <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">

@@ -9,7 +9,7 @@ export type AiAnalysisResult = {
 
 export function AiAnalysisCard({ result }: { result: AiAnalysisResult }) {
   return (
-    <div className="overflow-hidden rounded-2xl border border-neutral-200/70 bg-white shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
+    <div className="overflow-hidden rounded-2xl border border-primary/15 bg-white shadow-sm dark:border-primary/25 dark:bg-neutral-900">
       <div className="bg-gradient-to-r from-primary to-primary/85 px-5 py-4">
         <h2 className="text-base font-bold text-white">AI 분석 결과</h2>
       </div>

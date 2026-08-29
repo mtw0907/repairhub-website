@@ -99,7 +99,7 @@ export default async function RepairRequestDetailPage({
         </div>
 
         {repairRequest.status === "RESERVED" ? (
-          <div className="flex flex-col items-center gap-3 rounded-2xl border border-neutral-200/70 bg-white p-8 text-center shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
+          <div className="flex flex-col items-center gap-3 rounded-2xl border border-primary/15 bg-white p-8 text-center shadow-sm dark:border-primary/25 dark:bg-neutral-900">
             <CheckCircle2 className="h-10 w-10 text-primary" />
             <p className="text-base font-bold text-neutral-900 dark:text-neutral-100">
               예약이 완료되었습니다!

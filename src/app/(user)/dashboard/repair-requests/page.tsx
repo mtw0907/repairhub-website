@@ -42,7 +42,7 @@ export default async function RepairRequestsPage() {
             <Link
               key={r.id}
               href={`/dashboard/repair-requests/${r.id}`}
-              className="group flex items-center justify-between gap-3 rounded-2xl border border-neutral-200/70 bg-white p-4 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md dark:border-neutral-800 dark:bg-neutral-900"
+              className="group flex items-center justify-between gap-3 rounded-2xl border border-primary/15 bg-white p-4 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md dark:border-primary/25 dark:bg-neutral-900"
             >
               <div>
                 <p className="font-semibold text-neutral-900 group-hover:text-accent dark:text-neutral-100">

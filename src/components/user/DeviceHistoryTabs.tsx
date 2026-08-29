@@ -65,7 +65,7 @@ export function DeviceHistoryTabs({
 
   return (
     <div>
-      <div className="scrollbar-none flex gap-1 overflow-x-auto rounded-2xl border border-neutral-200/70 bg-white p-1.5 shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
+      <div className="scrollbar-none flex gap-1 overflow-x-auto rounded-2xl border border-primary/15 bg-white p-1.5 shadow-sm dark:border-primary/25 dark:bg-neutral-900">
         {TABS.map((t) => {
           const active = tab === t.key;
           return (
@@ -106,7 +106,7 @@ export function DeviceHistoryTabs({
               <Link
                 key={rr.id}
                 href={`/dashboard/repair-requests/${rr.id}`}
-                className="group flex items-center justify-between gap-2 rounded-2xl border border-neutral-200/70 bg-white p-4 shadow-sm transition-shadow hover:shadow-md dark:border-neutral-800 dark:bg-neutral-900"
+                className="group flex items-center justify-between gap-2 rounded-2xl border border-primary/15 bg-white p-4 shadow-sm transition-shadow hover:shadow-md dark:border-primary/25 dark:bg-neutral-900"
               >
                 <p className="line-clamp-1 text-sm text-neutral-700 group-hover:text-accent dark:text-neutral-300">
                   {rr.symptom}
@@ -123,7 +123,7 @@ export function DeviceHistoryTabs({
             reviews.map((rv) => (
               <div
                 key={rv.id}
-                className="rounded-2xl border border-neutral-200/70 bg-white p-4 shadow-sm dark:border-neutral-800 dark:bg-neutral-900"
+                className="rounded-2xl border border-primary/15 bg-white p-4 shadow-sm dark:border-primary/25 dark:bg-neutral-900"
               >
                 <div className="flex items-center justify-between">
                   <p className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">{rv.companyName}</p>
@@ -148,7 +148,7 @@ function ReservationRow({ r }: { r: DeviceReservation }) {
   const method = (r.method || "VISIT") as ReservationMethod;
   const MethodIcon = METHOD_ICON[method] ?? Store;
   return (
-    <div className="flex items-start justify-between gap-2 rounded-2xl border border-neutral-200/70 bg-white p-4 shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
+    <div className="flex items-start justify-between gap-2 rounded-2xl border border-primary/15 bg-white p-4 shadow-sm dark:border-primary/25 dark:bg-neutral-900">
       <div>
         <p className="font-semibold text-neutral-900 dark:text-neutral-100">{r.companyName}</p>
         <span className="mt-1 flex w-fit items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[11px] font-semibold text-primary">

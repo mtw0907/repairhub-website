@@ -26,7 +26,7 @@ export default async function RecentViewsPage() {
             <Link
               key={v.id}
               href={`/companies/${v.company.id}`}
-              className="group flex items-center justify-between rounded-2xl border border-neutral-200/70 bg-white p-4 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md dark:border-neutral-800 dark:bg-neutral-900"
+              className="group flex items-center justify-between rounded-2xl border border-primary/15 bg-white p-4 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md dark:border-primary/25 dark:bg-neutral-900"
             >
               <div>
                 <p className="font-semibold text-neutral-900 group-hover:text-accent dark:text-neutral-100">

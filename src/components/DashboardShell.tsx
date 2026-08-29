@@ -18,7 +18,7 @@ export function DashboardShell({
 }) {
   return (
     <div className="min-h-full bg-surface-muted">
-      <header className="border-b border-neutral-200/80 bg-white/90 backdrop-blur-md dark:border-neutral-800/80 dark:bg-neutral-950/90">
+      <header className="border-b border-neutral-200/80 bg-white/90 backdrop-blur-md dark:border-primary/25/80 dark:bg-neutral-950/90">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-5">
           <div className="flex items-center gap-3">
             <Link href="/" className="flex items-center gap-2">
@@ -51,7 +51,7 @@ export function DashboardShell({
             return (
               <div
                 key={section.title}
-                className="group rounded-2xl border border-neutral-200/70 bg-white p-6 shadow-sm transition-all hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-md dark:border-neutral-800 dark:bg-neutral-900"
+                className="group rounded-2xl border border-primary/15 bg-white p-6 shadow-sm transition-all hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-md dark:border-primary/25 dark:bg-neutral-900"
               >
                 <div className="mb-4 flex items-center gap-3">
                   <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors group-hover:bg-accent/20 group-hover:text-accent dark:text-neutral-200">

@@ -137,7 +137,7 @@ export default async function ReservationDetailPage({
         </h1>
         <p className="mt-1 text-sm text-neutral-500">현재 예약의 진행 상태를 한눈에 확인할 수 있습니다.</p>
 
-        <div className="mt-6 rounded-2xl border border-neutral-200/70 bg-white p-5 shadow-sm dark:border-neutral-800 dark:bg-neutral-900 sm:p-6">
+        <div className="mt-6 rounded-2xl border border-primary/15 bg-white p-5 shadow-sm dark:border-primary/25 dark:bg-neutral-900 sm:p-6">
           <ReservationStepTracker steps={steps} />
 
           <div
@@ -173,7 +173,7 @@ export default async function ReservationDetailPage({
         <div className="mt-6 grid gap-6 lg:grid-cols-2">
           <div
             id="reservation-info"
-            className="scroll-mt-6 rounded-2xl border border-neutral-200/70 bg-white p-5 shadow-sm dark:border-neutral-800 dark:bg-neutral-900 sm:p-6"
+            className="scroll-mt-6 rounded-2xl border border-primary/15 bg-white p-5 shadow-sm dark:border-primary/25 dark:bg-neutral-900 sm:p-6"
           >
             <div className="mb-4 flex items-center gap-2">
               <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
@@ -319,7 +319,7 @@ export default async function ReservationDetailPage({
             </dl>
           </div>
 
-          <div className="rounded-2xl border border-neutral-200/70 bg-white p-5 shadow-sm dark:border-neutral-800 dark:bg-neutral-900 sm:p-6">
+          <div className="rounded-2xl border border-primary/15 bg-white p-5 shadow-sm dark:border-primary/25 dark:bg-neutral-900 sm:p-6">
             <div className="mb-4 flex items-center gap-2">
               <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-accent/10 text-accent">
                 <Store className="h-4 w-4" />
@@ -368,7 +368,7 @@ export default async function ReservationDetailPage({
                   전화하기
                 </a>
               ) : (
-                <span className="flex items-center justify-center gap-1.5 rounded-xl border border-neutral-200 px-3 py-2 text-sm text-neutral-300 dark:border-neutral-800">
+                <span className="flex items-center justify-center gap-1.5 rounded-xl border border-neutral-200 px-3 py-2 text-sm text-neutral-300 dark:border-primary/25">
                   <Phone className="h-4 w-4" />
                   전화하기
                 </span>

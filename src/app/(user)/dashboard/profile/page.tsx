@@ -16,7 +16,7 @@ export default async function ProfilePage() {
           <UserCircle className="h-6 w-6 text-accent" />
           마이페이지
         </h1>
-        <div className="rounded-2xl border border-neutral-200/70 bg-white p-5 shadow-sm dark:border-neutral-800 dark:bg-neutral-900 sm:p-6">
+        <div className="rounded-2xl border border-primary/15 bg-white p-5 shadow-sm dark:border-primary/25 dark:bg-neutral-900 sm:p-6">
           <p className="mb-6 text-sm text-neutral-500">이메일: {user.email}</p>
           <ProfileForm
             initialName={user.name}

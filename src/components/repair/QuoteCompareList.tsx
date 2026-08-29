@@ -104,7 +104,7 @@ export function QuoteCompareList({ quotes }: { quotes: QuoteSummary[] }) {
               if (e.key === "Enter" || e.key === " ") setSelectedId((prev) => (prev === q.id ? null : q.id));
             }}
             className={`flex cursor-pointer flex-col gap-3 rounded-2xl border bg-white p-4 shadow-sm transition-shadow hover:shadow-md dark:bg-neutral-900 ${
-              selectedId === q.id ? "border-2 border-primary" : "border-neutral-200/70 dark:border-neutral-800"
+              selectedId === q.id ? "border-2 border-primary" : "border-primary/15 dark:border-primary/25"
             }`}
           >
             <div className="flex items-start justify-between gap-2">

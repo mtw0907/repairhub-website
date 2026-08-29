@@ -101,7 +101,7 @@ export function CompanyDetailTabs({
 
   return (
     <div>
-      <div className="scrollbar-none flex gap-1 overflow-x-auto rounded-2xl border border-neutral-200/70 bg-white p-1.5 shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
+      <div className="scrollbar-none flex gap-1 overflow-x-auto rounded-2xl border border-primary/15 bg-white p-1.5 shadow-sm dark:border-primary/25 dark:bg-neutral-900">
         {TABS.map((t) => {
           const active = tab === t.key;
           return (
@@ -126,7 +126,7 @@ export function CompanyDetailTabs({
         {tab === "home" && (
           <div className="space-y-6">
             {assignedCategories.length > 0 && (
-              <div className="rounded-2xl border border-neutral-200/70 bg-white p-5 shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
+              <div className="rounded-2xl border border-primary/15 bg-white p-5 shadow-sm dark:border-primary/25 dark:bg-neutral-900">
                 <div className="mb-3 flex items-center gap-2">
                   <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
                     <Wrench className="h-4 w-4" />
@@ -148,7 +148,7 @@ export function CompanyDetailTabs({
             )}
 
             {introduction && (
-              <div className="rounded-2xl border border-neutral-200/70 bg-white p-5 shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
+              <div className="rounded-2xl border border-primary/15 bg-white p-5 shadow-sm dark:border-primary/25 dark:bg-neutral-900">
                 <div className="mb-3 flex items-center gap-2">
                   <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
                     <Info className="h-4 w-4" />
@@ -161,7 +161,7 @@ export function CompanyDetailTabs({
               </div>
             )}
 
-            <div className="rounded-2xl border border-neutral-200/70 bg-white p-5 shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
+            <div className="rounded-2xl border border-primary/15 bg-white p-5 shadow-sm dark:border-primary/25 dark:bg-neutral-900">
               <div className="mb-3 flex items-center gap-2">
                 <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
                   <Clock className="h-4 w-4" />
@@ -191,7 +191,7 @@ export function CompanyDetailTabs({
                 </span>
               </div>
               {businessHoursText && (
-                <p className="mt-3 flex items-center gap-1.5 border-t border-neutral-100 pt-3 text-sm text-neutral-500 dark:border-neutral-800">
+                <p className="mt-3 flex items-center gap-1.5 border-t border-neutral-100 pt-3 text-sm text-neutral-500 dark:border-primary/25">
                   <Clock className="h-3.5 w-3.5 shrink-0" />
                   {businessHoursText}
                 </p>
@@ -199,14 +199,14 @@ export function CompanyDetailTabs({
             </div>
 
             {priceItems.length > 0 && (
-              <div className="rounded-2xl border border-neutral-200/70 bg-white p-5 shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
+              <div className="rounded-2xl border border-primary/15 bg-white p-5 shadow-sm dark:border-primary/25 dark:bg-neutral-900">
                 <div className="mb-3 flex items-center gap-2">
                   <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-accent/15 text-accent">
                     <TagIcon className="h-4 w-4" />
                   </span>
                   <h2 className="text-sm font-bold text-neutral-900 dark:text-neutral-100">가격표</h2>
                 </div>
-                <ul className="divide-y divide-neutral-100 rounded-xl border border-neutral-100 text-sm dark:divide-neutral-800 dark:border-neutral-800">
+                <ul className="divide-y divide-neutral-100 rounded-xl border border-neutral-100 text-sm dark:divide-neutral-800 dark:border-primary/25">
                   {priceItems.map((p) => (
                     <li key={p.id} className="flex justify-between px-4 py-2.5">
                       <span>{p.label}</span>
@@ -222,7 +222,7 @@ export function CompanyDetailTabs({
         )}
 
         {tab === "services" && (
-          <div className="grid gap-5 rounded-2xl border border-neutral-200/70 bg-white p-5 shadow-sm dark:border-neutral-800 dark:bg-neutral-900 sm:grid-cols-2">
+          <div className="grid gap-5 rounded-2xl border border-primary/15 bg-white p-5 shadow-sm dark:border-primary/25 dark:bg-neutral-900 sm:grid-cols-2">
             <div>
               <div className="mb-2.5 flex items-center gap-2">
                 <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
@@ -257,7 +257,7 @@ export function CompanyDetailTabs({
         )}
 
         {tab === "reservation" && (
-          <div className="rounded-2xl border border-neutral-200/70 bg-white p-5 shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
+          <div className="rounded-2xl border border-primary/15 bg-white p-5 shadow-sm dark:border-primary/25 dark:bg-neutral-900">
             <ReservationForm
               companyId={companyId}
               isUser={isUser}
@@ -290,7 +290,7 @@ export function CompanyDetailTabs({
               </span>
             </Link>
           ) : (
-            <div className="flex flex-col items-center gap-3 rounded-2xl border border-neutral-200/70 bg-white px-5 py-10 text-center shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
+            <div className="flex flex-col items-center gap-3 rounded-2xl border border-primary/15 bg-white px-5 py-10 text-center shadow-sm dark:border-primary/25 dark:bg-neutral-900">
               <p className="text-sm text-neutral-600 dark:text-neutral-400">
                 로그인하면 AI가 증상을 분석해 견적을 받아볼 수 있어요.
               </p>
@@ -304,7 +304,7 @@ export function CompanyDetailTabs({
           ))}
 
         {tab === "inquiry" && (
-          <div className="rounded-2xl border border-neutral-200/70 bg-white p-5 shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
+          <div className="rounded-2xl border border-primary/15 bg-white p-5 shadow-sm dark:border-primary/25 dark:bg-neutral-900">
             <InquiryForm companyId={companyId} isUser={isUser} />
           </div>
         )}
@@ -329,7 +329,7 @@ export function CompanyDetailTabs({
                 {visibleReviews.map((r) => (
                   <div key={r.id} className="relative">
                     <div className="absolute -top-1.5 left-6 h-3 w-3 rotate-45 rounded-[2px] bg-white dark:bg-neutral-900" />
-                    <div className="relative rounded-2xl border border-l-4 border-neutral-200/70 border-l-accent bg-white p-4 text-sm shadow-sm dark:border-neutral-800 dark:border-l-accent">
+                    <div className="relative rounded-2xl border border-l-4 border-primary/15 border-l-accent bg-white p-4 text-sm shadow-sm dark:border-primary/25 dark:border-l-accent">
                       <div className="flex items-center justify-between">
                         <span className="font-semibold text-neutral-900 dark:text-neutral-100">
                           {maskName(r.user.name)}

@@ -163,7 +163,7 @@ export function ReservationForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
-      <div className="rounded-2xl border border-neutral-200/70 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-900">
+      <div className="rounded-2xl border border-primary/15 bg-white p-4 dark:border-primary/25 dark:bg-neutral-900">
         <p className="mb-2 text-sm font-medium text-neutral-700 dark:text-neutral-300">수리 정보</p>
         {devices.length > 0 && (
           <div className="mb-3">
@@ -235,7 +235,7 @@ export function ReservationForm({
 
       {repairInfoComplete && needsSchedule && (
         <>
-          <div className="rounded-2xl border border-neutral-200/70 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-900">
+          <div className="rounded-2xl border border-primary/15 bg-white p-4 dark:border-primary/25 dark:bg-neutral-900">
             <div className="mb-3 flex items-center justify-between">
               <button
                 type="button"

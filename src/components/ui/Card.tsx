@@ -10,7 +10,7 @@ export function Card({
 }: ComponentPropsWithoutRef<"div"> & { hoverable?: boolean }) {
   return (
     <div
-      className={`rounded-2xl border border-neutral-200/70 bg-white shadow-sm dark:border-neutral-800 dark:bg-neutral-900 ${
+      className={`rounded-2xl border border-primary/15 bg-white shadow-sm dark:border-primary/25 dark:bg-neutral-900 ${
         hoverable
           ? "transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-md"
           : ""

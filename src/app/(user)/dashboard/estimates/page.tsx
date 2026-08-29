@@ -24,7 +24,7 @@ export default async function EstimatesPage() {
           {estimates.map((e) => (
             <div
               key={e.id}
-              className="rounded-2xl border border-neutral-200/70 bg-white p-4 shadow-sm transition-shadow hover:shadow-md dark:border-neutral-800 dark:bg-neutral-900"
+              className="rounded-2xl border border-primary/15 bg-white p-4 shadow-sm transition-shadow hover:shadow-md dark:border-primary/25 dark:bg-neutral-900"
             >
               <div className="flex items-start justify-between gap-2">
                 <Link

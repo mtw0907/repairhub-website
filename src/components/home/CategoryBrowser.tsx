@@ -19,7 +19,7 @@ export function CategoryBrowser({ tree }: { tree: CategoryTreeNode[] }) {
             className={
               open
                 ? "overflow-hidden rounded-2xl border border-primary bg-white shadow-sm dark:border-primary dark:bg-neutral-900"
-                : "overflow-hidden rounded-2xl border border-neutral-200/70 bg-white shadow-sm transition-colors hover:border-accent/50 dark:border-neutral-800 dark:bg-neutral-900"
+                : "overflow-hidden rounded-2xl border border-primary/15 bg-white shadow-sm transition-colors hover:border-accent/50 dark:border-primary/25 dark:bg-neutral-900"
             }
           >
             <button
@@ -48,7 +48,7 @@ export function CategoryBrowser({ tree }: { tree: CategoryTreeNode[] }) {
             </button>
 
             {open && (
-              <div className="flex flex-wrap gap-2 border-t border-neutral-100 px-4 py-3 dark:border-neutral-800">
+              <div className="flex flex-wrap gap-2 border-t border-neutral-100 px-4 py-3 dark:border-primary/25">
                 {top.children.map((sub) => (
                   <Link
                     key={sub.id}

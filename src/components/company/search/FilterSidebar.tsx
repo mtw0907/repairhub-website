@@ -34,7 +34,7 @@ export function FilterSidebar({
   }
 
   return (
-    <div className="space-y-6 rounded-2xl border border-neutral-200/70 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-900">
+    <div className="space-y-6 rounded-2xl border border-primary/15 bg-white p-4 dark:border-primary/25 dark:bg-neutral-900">
       <div>
         <p className="mb-2 text-xs font-semibold text-neutral-500">지역</p>
         <div className="space-y-2">

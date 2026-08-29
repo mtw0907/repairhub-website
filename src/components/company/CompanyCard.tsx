@@ -81,7 +81,7 @@ export function CompanyCard({
       className={`group relative flex flex-col overflow-hidden rounded-2xl border bg-surface shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md ${
         highlighted
           ? "border-primary ring-2 ring-primary/30"
-          : "border-neutral-200/70 dark:border-neutral-800"
+          : "border-primary/15 dark:border-primary/25"
       }`}
     >
       <Link href={`/companies/${company.id}`} className="flex flex-1 flex-col">
@@ -239,7 +239,7 @@ export function CompanyCard({
       </Link>
 
       {showActions && (
-        <div className="flex gap-2 border-t border-neutral-100 p-3 dark:border-neutral-800">
+        <div className="flex gap-2 border-t border-neutral-100 p-3 dark:border-primary/25">
           <Link
             href={`/companies/${company.id}#예약`}
             className="flex-1 rounded-xl bg-primary py-2 text-center text-xs font-bold text-primary-foreground transition-transform hover:scale-[1.02]"

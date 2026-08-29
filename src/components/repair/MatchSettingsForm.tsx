@@ -61,7 +61,7 @@ export function MatchSettingsForm({ repairRequestId }: { repairRequestId: string
   return (
     <form
       onSubmit={handleSubmit}
-      className="space-y-5 rounded-2xl border border-neutral-200/70 bg-white p-5 shadow-sm dark:border-neutral-800 dark:bg-neutral-900 sm:p-6"
+      className="space-y-5 rounded-2xl border border-primary/15 bg-white p-5 shadow-sm dark:border-primary/25 dark:bg-neutral-900 sm:p-6"
     >
       <div>
         <label className="mb-2 flex items-center gap-1.5 text-sm font-bold text-neutral-900 dark:text-neutral-100">

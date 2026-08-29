@@ -38,7 +38,7 @@ export function AiChatWidget({ mode, compact }: { mode?: "partner"; compact?: bo
     <div
       className={
         (compact ? "flex h-[320px] flex-col" : "flex h-[500px] flex-col") +
-        " rounded-2xl border border-neutral-200/70 bg-white dark:border-neutral-800 dark:bg-neutral-900"
+        " rounded-2xl border border-primary/15 bg-white dark:border-primary/25 dark:bg-neutral-900"
       }
     >
       <div className="flex-1 space-y-3 overflow-y-auto p-4">
@@ -59,7 +59,7 @@ export function AiChatWidget({ mode, compact }: { mode?: "partner"; compact?: bo
         )}
         {error && <p className="text-sm text-amber-700 dark:text-amber-400">{error}</p>}
       </div>
-      <form onSubmit={handleSubmit} className="flex gap-2 border-t border-neutral-100 p-3 dark:border-neutral-800">
+      <form onSubmit={handleSubmit} className="flex gap-2 border-t border-neutral-100 p-3 dark:border-primary/25">
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}

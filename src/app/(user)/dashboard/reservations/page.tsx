@@ -40,7 +40,7 @@ export default async function ReservationsPage() {
           {reservations.map((r) => (
             <div
               key={r.id}
-              className="rounded-2xl border border-neutral-200/70 bg-white p-4 shadow-sm transition-shadow hover:shadow-md dark:border-neutral-800 dark:bg-neutral-900"
+              className="rounded-2xl border border-primary/15 bg-white p-4 shadow-sm transition-shadow hover:shadow-md dark:border-primary/25 dark:bg-neutral-900"
             >
               <Link
                 href={`/dashboard/reservations/${r.id}`}

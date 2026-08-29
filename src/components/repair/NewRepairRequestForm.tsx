@@ -136,7 +136,7 @@ export function NewRepairRequestForm({
 
   if (limitReached) {
     return (
-      <div className="flex flex-col items-center gap-2 rounded-2xl border border-neutral-200/70 bg-white p-8 text-center shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
+      <div className="flex flex-col items-center gap-2 rounded-2xl border border-primary/15 bg-white p-8 text-center shadow-sm dark:border-primary/25 dark:bg-neutral-900">
         <p className="text-base font-bold text-neutral-900 dark:text-neutral-100">
           오늘의 AI 수리진단 이용 횟수를 모두 사용했습니다.
         </p>
@@ -156,8 +156,8 @@ export function NewRepairRequestForm({
     step === 6;
 
   return (
-    <div className="rounded-2xl border border-neutral-200/70 bg-white shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
-      <div className="border-b border-neutral-100 px-5 py-4 dark:border-neutral-800">
+    <div className="rounded-2xl border border-primary/15 bg-white shadow-sm dark:border-primary/25 dark:bg-neutral-900">
+      <div className="border-b border-neutral-100 px-5 py-4 dark:border-primary/25">
         <div className="flex items-center gap-1">
           {STEP_LABELS.map((label, i) => {
             const n = i + 1;
