@@ -410,16 +410,16 @@ export default async function LandingPage() {
         {/* AI 수리진단 소개 */}
         <section id="ai-assistant" className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
           <div className="overflow-hidden rounded-2xl border border-primary/15 bg-white shadow-sm dark:border-primary/25 dark:bg-neutral-900">
-            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-neutral-100 bg-primary/5 px-5 py-4 dark:border-primary/25 dark:bg-primary/10 sm:px-6">
+            <div className="flex flex-wrap items-center justify-between gap-3 bg-primary px-5 py-4 sm:px-6">
               <div className="flex items-center gap-2.5">
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white/15 text-accent">
                   <Sparkles className="h-5 w-5" />
                 </span>
                 <div>
-                  <h2 className="text-base font-bold text-neutral-900 dark:text-neutral-100 sm:text-lg">
+                  <h2 className="text-base font-bold text-primary-foreground sm:text-lg">
                     AI가 먼저 증상을 정리해드립니다
                   </h2>
-                  <p className="text-xs text-neutral-500 sm:text-sm">
+                  <p className="text-xs text-primary-foreground/70 sm:text-sm">
                     {isPartner
                       ? "블로그, 광고 문구, FAQ, 고객 상담까지 AI로 빠르게 준비해보세요"
                       : "장비 선택부터 견적 요청까지, 로그인 없이도 진행할 수 있어요"}
@@ -432,7 +432,7 @@ export default async function LandingPage() {
                     <Link
                       key={s.href}
                       href={s.href}
-                      className="flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary transition-colors hover:bg-accent/15 hover:text-accent"
+                      className="flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-xs font-medium text-primary-foreground transition-colors hover:bg-accent/20 hover:text-accent"
                     >
                       <s.icon className="h-3.5 w-3.5" />
                       {s.label}
@@ -453,8 +453,8 @@ export default async function LandingPage() {
                 <div className="flex flex-col justify-center gap-4 sm:col-span-2">
                   <ol className="space-y-2.5">
                     {AI_STEPS.map((step, i) => (
-                      <li key={step} className="flex items-start gap-2.5 text-sm text-neutral-700 dark:text-neutral-300">
-                        <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/10 text-[11px] font-bold text-primary">
+                      <li key={step} className="flex items-start gap-2.5 text-sm font-medium text-primary dark:text-neutral-100">
+                        <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/10 text-[11px] font-bold text-primary dark:text-neutral-100">
                           {i + 1}
                         </span>
                         {step}
