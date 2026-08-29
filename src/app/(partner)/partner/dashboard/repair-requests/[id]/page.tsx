@@ -60,6 +60,12 @@ export default async function PartnerRepairRequestDetailPage({
                 <dd className="text-neutral-800 dark:text-neutral-200">{repairRequest.brand}</dd>
               </div>
             )}
+            {repairRequest.model && (
+              <div className="flex gap-2">
+                <dt className="w-20 shrink-0 font-medium text-neutral-500">모델명</dt>
+                <dd className="text-neutral-800 dark:text-neutral-200">{repairRequest.model}</dd>
+              </div>
+            )}
             <div className="flex gap-2">
               <dt className="w-20 shrink-0 font-medium text-neutral-500">증상</dt>
               <dd className="whitespace-pre-line text-neutral-800 dark:text-neutral-200">{repairRequest.symptom}</dd>

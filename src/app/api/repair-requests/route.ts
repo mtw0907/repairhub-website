@@ -15,7 +15,8 @@ function buildSystemPrompt(category: string) {
 export async function POST(req: Request) {
   try {
     const user = await requireRole(["USER"]);
-    const { category, instrument, categoryId, subcategoryId, brand, symptom, photos, videos } = await req.json();
+    const { category, instrument, categoryId, subcategoryId, brand, model, symptom, photos, videos } =
+      await req.json();
 
     if (!category || !instrument || !symptom) {
       return NextResponse.json(
@@ -36,7 +37,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const userPrompt = `종류: ${instrument}${brand ? `\n브랜드: ${brand}` : ""}\n증상: ${symptom}`;
+    const userPrompt = `종류: ${instrument}${brand ? `\n브랜드: ${brand}` : ""}${model ? `\n모델명: ${model}` : ""}\n증상: ${symptom}`;
 
     const raw = await runAiCompletion({
       type: "REPAIR_MATCH_ANALYSIS",
@@ -64,6 +65,7 @@ export async function POST(req: Request) {
         categoryId: categoryId || null,
         subcategoryId: subcategoryId || null,
         brand: brand || null,
+        model: model || null,
         symptom,
         photos: Array.isArray(photos) && photos.length > 0 ? JSON.stringify(photos) : null,
         videos: Array.isArray(videos) && videos.length > 0 ? JSON.stringify(videos) : null,

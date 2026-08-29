@@ -25,12 +25,19 @@ export function CategoryInstrumentPicker({
   tree,
   value,
   onChange,
+  mode = "both",
 }: {
   tree: CategoryTreeNode[];
   value: CategorySelection;
   onChange: (next: CategorySelection) => void;
+  /** AI 견적 위저드처럼 대분류/세부품목을 서로 다른 스텝 화면으로 나눠
+   * 보여줘야 할 때 "category"/"subcategory"로 한쪽만 렌더링한다. 기본값
+   * "both"는 기존처럼(예약 폼 등) 한 화면에 이어서 보여준다. */
+  mode?: "both" | "category" | "subcategory";
 }) {
   const selectedTop = tree.find((t) => t.id === value.categoryId) ?? null;
+  const showCategory = mode === "both" || mode === "category";
+  const showSubcategory = mode === "both" || mode === "subcategory";
 
   function selectTop(top: CategoryTreeNode) {
     onChange({ categoryId: top.id, categoryName: top.name, subcategoryId: null, instrument: "", isCustom: false });
@@ -46,36 +53,38 @@ export function CategoryInstrumentPicker({
 
   return (
     <div className="space-y-5">
-      <div>
-        <label className="mb-2 block text-sm font-medium text-neutral-700 dark:text-neutral-300">
-          어떤 장비인가요?
-        </label>
-        <div className="grid grid-cols-3 gap-2 sm:grid-cols-5">
-          {tree.map((top) => {
-            const Icon = getCategoryIcon(top.icon);
-            const active = value.categoryId === top.id;
-            return (
-              <button
-                key={top.id}
-                type="button"
-                onClick={() => selectTop(top)}
-                className={
-                  active
-                    ? "flex flex-col items-center gap-1.5 rounded-xl border border-primary bg-primary/10 p-3 text-center transition-colors"
-                    : "flex flex-col items-center gap-1.5 rounded-xl border border-neutral-200 p-3 text-center transition-colors hover:border-accent/50 dark:border-neutral-700"
-                }
-              >
-                <Icon className={active ? "h-5 w-5 text-primary" : "h-5 w-5 text-neutral-500 dark:text-neutral-400"} />
-                <span className="text-xs font-semibold leading-tight text-neutral-900 dark:text-neutral-100">
-                  {top.name}
-                </span>
-              </button>
-            );
-          })}
+      {showCategory && (
+        <div>
+          <label className="mb-2 block text-sm font-medium text-neutral-700 dark:text-neutral-300">
+            어떤 장비인가요?
+          </label>
+          <div className="grid grid-cols-3 gap-2 sm:grid-cols-5">
+            {tree.map((top) => {
+              const Icon = getCategoryIcon(top.icon);
+              const active = value.categoryId === top.id;
+              return (
+                <button
+                  key={top.id}
+                  type="button"
+                  onClick={() => selectTop(top)}
+                  className={
+                    active
+                      ? "flex flex-col items-center gap-1.5 rounded-xl border border-primary bg-primary/10 p-3 text-center transition-colors"
+                      : "flex flex-col items-center gap-1.5 rounded-xl border border-neutral-200 p-3 text-center transition-colors hover:border-accent/50 dark:border-neutral-700"
+                  }
+                >
+                  <Icon className={active ? "h-5 w-5 text-primary" : "h-5 w-5 text-neutral-500 dark:text-neutral-400"} />
+                  <span className="text-xs font-semibold leading-tight text-neutral-900 dark:text-neutral-100">
+                    {top.name}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
         </div>
-      </div>
+      )}
 
-      {selectedTop && (
+      {showSubcategory && selectedTop && (
         <div>
           <label className="mb-2 block text-sm font-medium text-neutral-700 dark:text-neutral-300">
             세부 종류

@@ -71,7 +71,8 @@ export default async function RepairRequestDetailPage({
             {repairRequest.instrument} 수리 요청
           </h1>
           <p className="mt-1 text-sm text-neutral-500">
-            {repairRequest.brand ? `${repairRequest.brand} · ` : ""}
+            {[repairRequest.brand, repairRequest.model].filter(Boolean).join(" ")}
+            {(repairRequest.brand || repairRequest.model) && " · "}
             {repairRequest.symptom}
           </p>
         </div>
