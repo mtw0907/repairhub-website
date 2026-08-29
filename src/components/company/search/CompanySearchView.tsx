@@ -207,7 +207,7 @@ export function CompanySearchView({
         onZoomIn={() => setZoomLevel((z) => Math.max(z - 1, 1))}
         activeFilterCount={countActiveFilters(filters)}
       />
-      <CategoryPills active={activeCategory} onChange={setActiveCategory} />
+      <CategoryPills active={activeCategory} onChange={setActiveCategory} categoryTree={categoryTree} />
 
       {isMobile ? (
         <div className="relative -mx-4 h-[62vh] min-h-[380px] sm:hidden">
